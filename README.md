@@ -5,4 +5,4 @@ CONTACT INFO: panacier@gmail.com
 GnoMenu
 =======
 
-GnoMenu is a traditionally styled, full featured Gnome-Shell apps-menu, that aims to offer all the essentials in a simple uncluttered intuitive interface.
+GnoMenu - is a traditional styled full featured Gnome-Shell apps-menu, that aims to offer all the essentials in a simple uncluttered intuitive interface.
