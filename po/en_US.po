@@ -70,5 +70,18 @@ msgstr ""
 msgid "Shutdown"
 msgstr ""
 
+
+#: placeDisplay.js
+
+msgid "Failed to launch \"%s\""
+msgstr ""
+
+msgid "Home"
+msgstr ""
+
+msgid "Browse Network"
+msgstr ""
+
+
 #: prefs.js
 

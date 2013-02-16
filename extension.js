@@ -27,12 +27,13 @@ const Mainloop = imports.mainloop;
 const Lang = imports.lang;
 const Signals = imports.signals;
 const Gettext = imports.gettext;
-const _ = imports.gettext.domain('gnomenu').gettext;
+const _ = Gettext.domain('gnomenu').gettext;
 
 const Params = imports.misc.params;
 const Config = imports.misc.config;
 const GnomeSession = imports.misc.gnomeSession;
 
+const AppFavorites = imports.ui.appFavorites;
 const Layout = imports.ui.layout;
 const Main = imports.ui.main;
 const Panel = imports.ui.panel;
@@ -80,12 +81,10 @@ const CategoryListButton = new Lang.Class({
             categoryIconName =  app.get_icon().get_names().toString();
         }
 
-        if (categoryIconName) {
-            ////this._icon = new St.Icon({icon_name: categoryIconName, icon_size: iconSize});
-            //this.icon = new St.Icon({ style_class: 'popup-menu-icon' });
-            //this.icon.icon_name = categoryIconName;
-            //this.buttonbox.add(this.icon, {x_fill: false, y_fill: false, x_align: St.Align.START, y_align: St.Align.MIDDLE});
-        }
+        //if (categoryIconName) {
+        //    this.icon = new St.Icon({icon_name: categoryIconName, icon_size: iconSize});
+        //    this.buttonbox.add(this.icon, {x_fill: false, y_fill: false, x_align: St.Align.START, y_align: St.Align.MIDDLE});
+        //}
         this.label = new St.Label({ text: categoryNameText, style_class: 'gnomenu-category-button-label' });
         this.buttonbox.add(this.label, {x_fill: false, y_fill: true, x_align: St.Align.START, y_align: St.Align.MIDDLE});
 
@@ -1372,7 +1371,7 @@ const PanelMenuButton = new Lang.Class({
         this.placesBox = new St.BoxLayout({ style_class: 'gnomenu-places-box', vertical: true });
 
         // Load 'all places' category
-        let placesCategory = new CategoryListButton(null, _('All Places'), 'folder');
+        let placesCategory = new CategoryListButton(null, _('All Places'));
         placesCategory.actor.connect('enter-event', Lang.bind(this, function() {
             this._selectAllPlaces(placesCategory);
             this.selectedAppTitle.set_text(placesCategory.label.get_text());
@@ -1385,7 +1384,7 @@ const PanelMenuButton = new Lang.Class({
         this.placesBox.add_actor(placesCategory.actor);
 
         //// Load computer category
-        //let computerCategory = new CategoryListButton(null, _('Computer'), 'folder');
+        //let computerCategory = new CategoryListButton(null, _('Computer'));
         //computerCategory.actor.connect('enter-event', Lang.bind(this, function() {
             //this._selectComputer(computerCategory);
             //this.selectedAppTitle.set_text(computerCategory.label.get_text());
@@ -1607,12 +1606,15 @@ const GnoMenuButton = new Lang.Class({
 
         // Connect theme context for when theme changes
         this._themeChangedId = St.ThemeContext.get_for_stage(global.stage).connect('changed', Lang.bind(this, this._onStyleChanged));
+        
+        // Connect gtk icontheme for when icons change
+        this._iconsChangedId = IconTheme.get_default().connect('changed', Lang.bind(this, this._onIconsChanged));
+
+        // Load gnomenu stylesheet (checks for theme support)
         this._loadGnomenuStylesheet();
         
         // Initialize GnoMenuButton actor
         this.actor = new St.BoxLayout({ style_class: 'gnomenu-panel-box' });
-
-        //this.actor.connect('realize', Lang.bind(this, this._loadExtensionTheme));
         this.actor.connect('notify::allocation', Lang.bind(this, this._onGnoMenuPanelButtonAllocate));
         
         // Initialize view button
@@ -1629,6 +1631,9 @@ const GnoMenuButton = new Lang.Class({
 
         // Connect to AppSys for when new application installed
         this._installedChangedId = Shell.AppSystem.get_default().connect('installed-changed', Lang.bind(this, this._onAppInstalledChanged));
+        
+        // Connect to AppFavorites for when favorites change
+        this._favoritesChangedId = AppFavorites.getAppFavorites().connect('changed', Lang.bind(this, this._onFavoritesChanged));
         
         // Add hotspot area 1px high at top of appsMenuButton
         this._hotspot = new Clutter.Rectangle({reactive: true, opacity:0});
@@ -1844,7 +1849,7 @@ const GnoMenuButton = new Lang.Class({
                 }
             }
             if (found) {
-                // theme.unload_stylesheet(gnomenuExtStylesheet);                
+                // theme.unload_stylesheet(gnomenuExtStylesheet);
                 // ISSUE: just trying to unload stylesheet crashes GS36 when returning from lock screen
                 // WORKAROUND:
                 let cssStylesheet = Main._defaultCssStylesheet;
@@ -1869,9 +1874,23 @@ const GnoMenuButton = new Lang.Class({
         this.appsMenuButton.refresh();
     },
     
+    // handler for when favorites change
+    _onFavoritesChanged: function() {
+        if (_DEBUG_) global.log("_onFavoritesChanged");
+        this.appsMenuButton.refresh();
+    },
+    
+    // handler for when icons change
+    _onIconsChanged: function() {
+        if (_DEBUG_) global.log("_onIconsChanged");
+        this.appsMenuButton.refresh();
+    },
+    
     destroy: function() {
         // Disconnect global signals
         Shell.AppSystem.get_default().disconnect(this._installedChangedId);
+        AppFavorites.getAppFavorites().disconnect(this._favoritesChangedId);
+        IconTheme.get_default().disconnect(this._iconsChangedId);
         St.ThemeContext.get_for_stage(global.stage).disconnect(this._themeChangedId);
 
         // Destroy main clutter actor: this should be sufficient
@@ -1948,6 +1967,8 @@ function disable() {
 
 function init() {
     // Add extension icons to icon theme directory path
+    // TODO: move this to enable/disable?
+    // GS patch https://bugzilla.gnome.org/show_bug.cgi?id=675561
     let theme = IconTheme.get_default();
     if (gsVersion[1] > 4) {
         theme.append_search_path(Me.path + "/icons/24");
