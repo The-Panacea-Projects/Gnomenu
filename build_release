@@ -1,0 +1,22 @@
+extension_dir=~/.local/share/gnome-shell/extensions/gnomenu@panacier.gmail.com
+temp_dir=~/.local/share/gnome-shell/extensions/gnomenu@panacier.gmail.com/releases/build
+
+del -R $temp_dir
+mkdir $temp_dir
+cd $extension_dir
+
+cat extension.js | grep -v '_DEBUG_' > $temp_dir/extension.js
+cat placeDisplay.js | grep -v '_DEBUG_' > $temp_dir/placeDisplay.js
+
+cp metadata.json $temp_dir/
+cp -R icons/ $temp_dir/
+cp -R themes/ $temp_dir/
+cp -R locale/ $temp_dir/
+
+#del gnomenu@panacier.gmail.com.zip
+
+cd $temp_dir/
+zip -r gnomenu@panacier.gmail.com.zip *
+
+#cp gnomenu@panacier.gmail.com.zip $extension_dir/
+

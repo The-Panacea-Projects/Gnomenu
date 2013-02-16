@@ -1,0 +1,11 @@
+{
+  "name": "GnoMenu",
+  "description": "GnoMenu is a traditional styled full featured Gnome-Shell apps-menu, that aims to offer all the essentials in a simple uncluttered intuitive interface.",
+  "shell-version": [
+    "3.4", "3.6"
+  ], 
+  "uuid": "gnomenu@panacier.gmail.com", 
+  "url": "https://github.com/The-Panacea-Projects/Gnomenu", 
+  "gettext-domain": "gnomenu",
+  "version": 0
+}
