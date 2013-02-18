@@ -330,8 +330,6 @@ const PanelMenuButton = new Lang.Class({
         this._selectedItemIndex = null;
         this._previousSelectedItemIndex = null;
         this._activeContainer = null;
-        this._searchInactiveIcon = new St.Icon({ style_class: 'search-entry-icon', icon_name: 'edit-find-symbolic' });
-        this._searchActiveIcon = new St.Icon({ style_class: 'search-entry-icon', icon_name: 'edit-clear-symbolic' });
 
         this._session = new GnomeSession.SessionManager();        
         this.recentManager = Gtk.RecentManager.get_default();
@@ -1274,6 +1272,8 @@ const PanelMenuButton = new Lang.Class({
 
         
         // SearchBox
+        this._searchInactiveIcon = new St.Icon({ style_class: 'search-entry-icon', icon_name: 'edit-find-symbolic' });
+        this._searchActiveIcon = new St.Icon({ style_class: 'search-entry-icon', icon_name: 'edit-clear-symbolic' });
         this.searchBox = new St.BoxLayout({ style_class: 'gnomenu-search-box' });
         this.searchEntry = new St.Entry({ name: 'searchEntry',
                                      hint_text: _("Type to search..."),
