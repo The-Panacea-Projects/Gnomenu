@@ -404,21 +404,34 @@ const PanelMenuButton = new Lang.Class({
     },
 
     _loadCategories: function(dir, root) {
+        var rootDir = root;
+        if (_DEBUG_) global.log("_loadCategories: dir="+dir.get_menu_id()+" root="+rootDir);
         var iter = dir.iter();
         var nextType;
         while ((nextType = iter.next()) != GMenu.TreeItemType.INVALID) {
             if (nextType == GMenu.TreeItemType.ENTRY) {
+                if (_DEBUG_) global.log("_loadCategories: TreeItemType.ENTRY");
                 var entry = iter.get_entry();
                 if (!entry.get_app_info().get_nodisplay()) {
+                    if (_DEBUG_) global.log("_loadCategories: entry valid");
                     var app = Shell.AppSystem.get_default().lookup_app_by_tree_entry(entry);
-                    if (root) {
-                        this.applicationsByCategory[root.get_menu_id()].push(app);
+                    if (rootDir) {
+                        if (_DEBUG_) global.log("_loadCategories: push root.get_menu_id = "+rootDir.get_menu_id());
+                        if (rootDir.get_menu_id())
+                            this.applicationsByCategory[rootDir.get_menu_id()].push(app);
                     } else {
-                        this.applicationsByCategory[dir.get_menu_id()].push(app);
+                        if (_DEBUG_) global.log("_loadCategories: push dir.get_menu_id = "+dir.get_menu_id());
+                        if (dir.get_menu_id())
+                            this.applicationsByCategory[dir.get_menu_id()].push(app);
                     }
                 }
             } else if (nextType == GMenu.TreeItemType.DIRECTORY) {
-                this._loadCategories(iter.get_directory(), dir);
+                if (_DEBUG_) global.log("_loadCategories: TreeItemType.DIRECTORY");
+                if (rootDir) {
+                    this._loadCategories(iter.get_directory(), rootDir);
+                } else {
+                    this._loadCategories(iter.get_directory(), dir);
+                }
             }
         }
     },
