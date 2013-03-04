@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="gnome-shell-extensions">
+  <enum id='org.gnome.shell.extensions.gnomenu.viewMode'>
+    <value value='0' nick='List'/>
+    <value value='1' nick='Grid'/>
+  </enum>
+  <enum id='org.gnome.shell.extensions.gnomenu.appsDisplay'>
+    <value value='0' nick='All'/>
+    <value value='1' nick='Favorites'/>
+    <value value='2' nick='Places'/>
+    <value value='3' nick='Recent'/>
+  </enum>
+  <enum id='org.gnome.shell.extensions.gnomenu.selectMethod'>
+    <value value='0' nick='Hover'/>
+    <value value='1' nick='Click'/>
+  </enum>
+  <schema path="/org/gnome/shell/extensions/gnomenu/" id="org.gnome.shell.extensions.gnomenu">
+    <key type="b" name="hide-panel-view">
+      <default>false</default>
+      <summary>Remove the view button from the panel</summary>
+      <description>Remove the view button from the panel</description>
+    </key>
+    <key type="b" name="disable-panel-view-hotcorner">
+      <default>false</default>
+      <summary>Disable the view button hot corner</summary>
+      <description>Disable the view button hot corner</description>
+    </key>
+    <key type="b" name="hide-panel-apps">
+      <default>false</default>
+      <summary>Remove the apps button from the panel</summary>
+      <description>Remove the apps button from the panel</description>
+    </key>
+    <key type="b" name="hide-panel-menu">
+      <default>false</default>
+      <summary>Remove the menu button from the panel</summary>
+      <description>Remove the menu button from the panel</description>
+    </key>
+    <key type="b" name="disable-panel-menu-hotspot">
+      <default>false</default>
+      <summary>Disable the menu button hot spot</summary>
+      <description>Disable the menu button hot spot</description>
+    </key>
+    <key enum="org.gnome.shell.extensions.gnomenu.viewMode" name="startup-view-mode">
+      <default>'Grid'</default>
+      <summary>Startup applications view mode</summary>
+      <description>Startup applications view mode</description>
+    </key>
+    <key enum="org.gnome.shell.extensions.gnomenu.appsDisplay" name="startup-apps-display">
+      <default>'All'</default>
+      <summary>Startup applications to display</summary>
+      <description>Startup applications to display</description>
+    </key>
+    <key enum="org.gnome.shell.extensions.gnomenu.selectMethod" name="category-selection-method">
+      <default>'Hover'</default>
+      <summary>Method of selecting categories</summary>
+      <description>Method of selecting categories</description>
+    </key>
+    <key type="i" name="apps-list-icon-size">
+      <default>28</default>
+      <summary>Applications list icon size</summary>
+      <description>Applications list icon size</description>
+    </key>
+    <key type="i" name="apps-grid-icon-size">
+      <default>64</default>
+      <summary>Applications grid icon size</summary>
+      <description>Applications grid icon size</description>
+    </key>
+  </schema>
+</schemalist>

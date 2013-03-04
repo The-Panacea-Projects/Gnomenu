@@ -11,7 +11,7 @@
  * ========================================================================================================
  */
 
-const _DEBUG_ = false;
+const _DEBUG_ = true;
 
 const IconTheme = imports.gi.Gtk.IconTheme;
 const GLib = imports.gi.GLib;
@@ -26,8 +26,6 @@ const Pango = imports.gi.Pango;
 const Mainloop = imports.mainloop;
 const Lang = imports.lang;
 const Signals = imports.signals;
-const Gettext = imports.gettext;
-const _ = Gettext.domain('gnomenu').gettext;
 
 const Params = imports.misc.params;
 const Config = imports.misc.config;
@@ -39,8 +37,15 @@ const Main = imports.ui.main;
 const Panel = imports.ui.panel;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
+const AppDisplay = imports.ui.appDisplay;
+
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Convenience = Me.imports.convenience;
+let settings = Convenience.getSettings('org.gnome.shell.extensions.gnomenu');
+
+const Gettext = imports.gettext.domain(Me.metadata['gettext-domain']);
+const _ = Gettext.gettext;
 
 const gsVersion = Config.PACKAGE_VERSION.split('.');
 let PlaceDisplay;
@@ -52,7 +57,17 @@ if (gsVersion[1] > 4) {
     PlaceDisplay = imports.ui.placeDisplay;
 }
 
+const appsDisplay = {
+    ALL: 0,
+    FAVORITES: 1,
+    PLACES: 2,
+    RECENT: 3
+};
 
+const selectMethod = {
+    HOVER: 0,
+    CLICK: 1
+};
 
 /* =========================================================================
 /* name:    CategoryListButton
@@ -63,7 +78,8 @@ const CategoryListButton = new Lang.Class({
     Name: 'GnoMenu.CategoryListButton',
 
     _init: function (app, altNameText, altIconName) {
-        this.actor = new St.Button({ reactive: true, style_class: 'gnomenu-category-button', x_align: St.Align.START, y_align: St.Align.START });
+        let style = (gsVersion[1] > 4) ? 'popup-menu-item gnomenu-category-button' : 'gnomenu-category-button';
+        this.actor = new St.Button({ reactive: true, style_class: style, x_align: St.Align.START, y_align: St.Align.START });
         this.actor._delegate = this;
         this.buttonbox = new St.BoxLayout();
         let iconSize = 28;
@@ -103,10 +119,11 @@ const FavoriteButton = new Lang.Class({
 
     _init: function (app) {
         this._app = app;
-        this.actor = new St.Button({ reactive: true, style_class: 'gnomenu-favorite-button', x_align: St.Align.MIDDLE, y_align: St.Align.START });
+        let style = (gsVersion[1] > 4) ? 'popup-menu-item gnomenu-favorite-button' : 'gnomenu-favorite-button';
+        this.actor = new St.Button({ reactive: true, style_class: style, x_align: St.Align.MIDDLE, y_align: St.Align.START });
         this.actor._delegate = this;
+        
         let iconSize = 32;
-
         this.icon = this._app.create_icon_texture(iconSize);
         //this.label = new St.Label({ text: app.get_name(), style_class: 'favorite-button-label' });
 
@@ -131,9 +148,10 @@ const AppListButton = new Lang.Class({
     _init: function (app, appType) {
         this._app = app;
         this._type = appType;
-        this.actor = new St.Button({ reactive: true, style_class: 'gnomenu-application-button', x_align: St.Align.START, y_align: St.Align.START });
+        let style = (gsVersion[1] > 4) ? 'popup-menu-item gnomenu-application-button' : 'gnomenu-application-button';
+        this.actor = new St.Button({ reactive: true, style_class: style, x_align: St.Align.START, y_align: St.Align.MIDDLE});
         this.actor._delegate = this;
-        let iconSize = 28;
+        let iconSize = (settings.get_int('apps-list-icon-size') > 0) ? settings.get_int('apps-list-icon-size') : 28;
 
         // appType should probably be enumerated
         // appType 0 = application, appType 1 = place
@@ -143,10 +161,10 @@ const AppListButton = new Lang.Class({
         } else if (appType == 1) {
             if (gsVersion[1] > 4) {
                 this.icon = new St.Icon({gicon: app.icon, icon_size: iconSize});
-                if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR});
+                if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR, style_class: 'overview-icon'});
             } else {
                 this.icon = app.iconFactory(iconSize);
-                if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR});
+                if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR, style_class: 'overview-icon'});
             }
             this.label = new St.Label({ text: app.name, style_class: 'gnomenu-application-button-label' });
         } else if (appType == 2) {
@@ -179,10 +197,10 @@ const AppGridButton = new Lang.Class({
     _init: function(app, appType, includeText) {
         this._app = app;
         this._type = appType;
-        this.actor = new St.Button({ reactive: true, style_class: 'gnomenu-application-grid-button', x_align: St.Align.MIDDLE, y_align: St.Align.START });
+        let style = (gsVersion[1] > 4) ? 'popup-menu-item gnomenu-application-grid-button' : 'gnomenu-application-grid-button';
+        this.actor = new St.Button({ reactive: true, style_class: style, x_align: St.Align.MIDDLE, y_align: St.Align.MIDDLE});
         this.actor._delegate = this;
-        this.buttonbox = new St.BoxLayout({vertical: true});
-        let iconSize = 64;
+        let iconSize = (settings.get_int('apps-grid-icon-size') > 0) ? settings.get_int('apps-grid-icon-size') : 64;
         
         // appType should probably be enumerated
         // appType 0 = application, appType 1 = place, appType 2 = recent
@@ -204,13 +222,17 @@ const AppGridButton = new Lang.Class({
             if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR});
             this.label = new St.Label({ text: app.name, style_class: 'gnomenu-application-grid-button-label' });
         }
+
+        this.buttonbox = new St.BoxLayout({vertical: true});
         this.buttonbox.add(this.icon, {x_fill: false, y_fill: false,x_align: St.Align.MIDDLE, y_align: St.Align.START});
         if(includeText){
+            // Use pango to wrap label text
             //this.label.clutter_text.line_wrap_mode = Pango.WrapMode.WORD;
             //this.label.clutter_text.line_wrap = true;
-            this.buttonbox.add(this.label, {x_fill: false, y_fill: true,x_align: St.Align.MIDDLE, y_align: St.Align.START});
+            this.buttonbox.add(this.label, {x_fill: false, y_fill: true,x_align: St.Align.MIDDLE, y_align: St.Align.MIDDLE});
         }
         this.actor.set_child(this.buttonbox);
+
     }
 });
 Signals.addSignalMethods(AppGridButton.prototype);
@@ -227,10 +249,10 @@ const GroupButton = new Lang.Class({
     
     _init: function(iconName, iconSize, labelText, params) {
         
-        // TODO: parse parameters for button
-        //params = Params.parse(params, { style_class: 'gnomenu-view-option-button' }, true);
-        
-        this.actor = new St.Button({ reactive: true, style_class: params.style_class, x_align: St.Align.MIDDLE, y_align: St.Align.MIDDLE });
+        let style = (gsVersion[1] > 4) ? 'popup-menu-item' : '';
+        this.actor = new St.Button({ reactive: true, style_class: style, x_align: St.Align.MIDDLE, y_align: St.Align.MIDDLE });
+        this.actor.add_style_class_name(params.style_class);
+
         this.actor._delegate = this;
         this.buttonbox = new St.BoxLayout({vertical: true});
         
@@ -264,8 +286,6 @@ const PanelButton = new Lang.Class({
 
         this.parent(0.0, '', true);
 
-        //this.actor.remove_style_class_name('panel-button');
-        //this.actor.remove_style_class_name('panel-menu');
         this._box = new St.BoxLayout({ style_class: 'gnomenu-panel-button' });
         this.actor.add_actor(this._box);
         
@@ -301,8 +321,6 @@ const PanelMenuButton = new Lang.Class({
         // NOTE: can't get label to take using this method. Possible Gnome Shell bug?
         this.parent(0.0, '');
         
-        //this.actor.remove_style_class_name('panel-button');
-        //this.actor.remove_style_class_name('panel-menu');
         this.actor.add_style_class_name('panel-status-button');
         this._box = new St.BoxLayout({ style_class: 'gnomenu-panel-menu-button' });
         this.actor.add_actor(this._box);
@@ -319,11 +337,12 @@ const PanelMenuButton = new Lang.Class({
         this.menu.connect('open-state-changed', Lang.bind(this, this._onOpenStateToggled));
 
         this.applicationsByCategory = {};
+        this.favorites = [];
         this._applications = new Array();
         this._places = new Array();
         this._recent = new Array();
 
-        this._applicationsViewMode = 1;
+        this._applicationsViewMode = settings.get_enum('startup-view-mode');
         this._appGridColumns = 5;
         this._searchTimeoutId = 0;
         this._searchIconClickedId = 0;
@@ -372,9 +391,16 @@ const PanelMenuButton = new Lang.Class({
             // Load All Applications category
             this._selectedItemIndex = null;
             this._activeContainer = null;
-            let allApplicationsCategory = this.categoriesBox.get_first_child()._delegate;
-            this._clearApplicationsBox(allApplicationsCategory);
-            this._displayApplications(this._listApplications(null));
+            
+            this._applicationsViewMode = settings.get_enum('startup-view-mode');
+            if (settings.get_enum('startup-apps-display') == appsDisplay.FAVORITES) {
+                this._clearApplicationsBox();
+                this._displayApplications(this._listApplications('favorites'));
+            } else {
+                let allApplicationsCategory = this.categoriesBox.get_first_child()._delegate;
+                this._clearApplicationsBox(allApplicationsCategory);
+                this._displayApplications(this._listApplications(null));
+            }
 
             // Set height (we also set constraints on scrollboxes
             // Why does height need to be set when already set constraints? because of issue noted below
@@ -518,8 +544,12 @@ const PanelMenuButton = new Lang.Class({
             for (let i = 0; i < categoryActors.length; i++) {
                 let actor = categoryActors[i];
                 if (selectedCategory && (actor == selectedCategory.actor)) {
+                    actor.add_style_pseudo_class('selected');
+                    actor.add_style_pseudo_class('active');
                     actor.add_style_class_name("gnomenu-category-button-selected");
                 } else {
+                    actor.remove_style_pseudo_class('selected');
+                    actor.remove_style_pseudo_class('active');
                     actor.remove_style_class_name("gnomenu-category-button-selected");
                 }
             }
@@ -530,16 +560,24 @@ const PanelMenuButton = new Lang.Class({
         let viewMode = this._applicationsViewMode;
         this.applicationsListBox.get_children().forEach(function(actor) {
             if (selectedApplication && (actor == selectedApplication)) {
+                actor.add_style_pseudo_class('selected');
+                actor.add_style_pseudo_class('active');
                 actor.add_style_class_name("gnomenu-application-button-selected");
             } else {
+                actor.remove_style_pseudo_class('selected');
+                actor.remove_style_pseudo_class('active');
                 actor.remove_style_class_name("gnomenu-application-button-selected");
             }
         });
 
         this.applicationsGridBox.get_children().forEach(function(actor) {
             if (selectedApplication && (actor == selectedApplication)) {
+                actor.add_style_pseudo_class('selected');
+                actor.add_style_pseudo_class('active');
                 actor.add_style_class_name("gnomenu-application-grid-button-selected");
             } else {
+                actor.remove_style_pseudo_class('selected');
+                actor.remove_style_pseudo_class('active');
                 actor.remove_style_class_name("gnomenu-application-grid-button-selected");
             }
         });
@@ -571,8 +609,10 @@ const PanelMenuButton = new Lang.Class({
             for (let i = 0; i < categoryActors.length; i++) {
                 let actor = categoryActors[i];
                 if (selectedCategory && (actor == selectedCategory.actor)) {
+                    actor.add_style_pseudo_class('active');
                     actor.add_style_class_name("gnomenu-category-button-selected");
                 } else {
+                    actor.remove_style_pseudo_class('active');
                     actor.remove_style_class_name("gnomenu-category-button-selected");
                 }
             }
@@ -583,8 +623,10 @@ const PanelMenuButton = new Lang.Class({
             for (let i = 0; i < placesActors.length; i++) {
                 let actor = placesActors[i];
                 if (selectedCategory && (actor == selectedCategory.actor)) {
+                    actor.add_style_pseudo_class('active');
                     actor.add_style_class_name("gnomenu-category-button-selected");
                 } else {
+                    actor.remove_style_pseudo_class('active');
                     actor.remove_style_class_name("gnomenu-category-button-selected");
                 }
             }
@@ -651,12 +693,17 @@ const PanelMenuButton = new Lang.Class({
     
     _listApplications: function(category_menu_id, pattern) {
         let applist;
-        if (category_menu_id) {
-            applist = this.applicationsByCategory[category_menu_id];
+
+        if (category_menu_id == 'favorites') {
+            applist = this.favorites;
         } else {
-            applist = new Array();
-            for (directory in this.applicationsByCategory)
-                applist = applist.concat(this.applicationsByCategory[directory]);
+            if (category_menu_id) {
+                applist = this.applicationsByCategory[category_menu_id];
+            } else {
+                applist = new Array();
+                for (directory in this.applicationsByCategory)
+                    applist = applist.concat(this.applicationsByCategory[directory]);
+            }
         }
 
         let res;
@@ -671,10 +718,13 @@ const PanelMenuButton = new Lang.Class({
             res = applist;
         }
 
-        res.sort(function(a,b) {
-            return a.get_name().toLowerCase() > b.get_name().toLowerCase();
-        });
-
+        // Ignore favorites when sorting
+        if (!category_menu_id == 'favorites') {
+            res.sort(function(a,b) {
+                return a.get_name().toLowerCase() > b.get_name().toLowerCase();
+            });
+        }
+        
         return res;
     },
 
@@ -702,15 +752,18 @@ const PanelMenuButton = new Lang.Class({
                     if (viewMode == 0) { // ListView
                         let appListButton = new AppListButton(app, appType);
                         appListButton.actor.connect('enter-event', Lang.bind(this, function() {
+                           appListButton.actor.add_style_pseudo_class('active');
                            this.selectedAppTitle.set_text(appListButton._app.get_name());
                            if (appListButton._app.get_description()) this.selectedAppDescription.set_text(appListButton._app.get_description());
                            else this.selectedAppDescription.set_text("");
                         }));
                         appListButton.actor.connect('leave-event', Lang.bind(this, function() {
+                           if (!appListButton.actor.has_style_pseudo_class('selected')) appListButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
                         }));
                         appListButton.actor.connect('button-release-event', Lang.bind(this, function() {
+                           appListButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
                            appListButton._app.open_new_window(-1);
@@ -720,15 +773,18 @@ const PanelMenuButton = new Lang.Class({
                     } else { // GridView
                         let appGridButton = new AppGridButton(app, appType, true);
                         appGridButton.actor.connect('enter-event', Lang.bind(this, function() {
+                           appGridButton.actor.add_style_pseudo_class('active');
                            this.selectedAppTitle.set_text(appGridButton._app.get_name());
                            if (appGridButton._app.get_description()) this.selectedAppDescription.set_text(appGridButton._app.get_description());
                            else this.selectedAppDescription.set_text("");
                         }));
                         appGridButton.actor.connect('leave-event', Lang.bind(this, function() {
+                           if (!appGridButton.actor.has_style_pseudo_class('selected')) appGridButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
                         }));
                         appGridButton.actor.connect('button-release-event', Lang.bind(this, function() {
+                           appGridButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
                            appGridButton._app.open_new_window(-1);
@@ -762,15 +818,18 @@ const PanelMenuButton = new Lang.Class({
                     if (viewMode == 0) { // ListView
                         let appListButton = new AppListButton(app, appType);
                         appListButton.actor.connect('enter-event', Lang.bind(this, function() {
+                           appListButton.actor.add_style_pseudo_class('active');
                            this.selectedAppTitle.set_text(appListButton._app.name);
                            if (appListButton._app.description) this.selectedAppDescription.set_text(appListButton._app.description);
                            else this.selectedAppDescription.set_text("");
                         }));
                         appListButton.actor.connect('leave-event', Lang.bind(this, function() {
+                           if (!appListButton.actor.has_style_pseudo_class('selected')) appListButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
                         }));
                         appListButton.actor.connect('button-release-event', Lang.bind(this, function() {
+                           appListButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
                            appListButton._app.launch();
@@ -780,15 +839,18 @@ const PanelMenuButton = new Lang.Class({
                     } else { // GridView
                         let appGridButton = new AppGridButton(app, appType, true);
                         appGridButton.actor.connect('enter-event', Lang.bind(this, function() {
+                           appGridButton.actor.add_style_pseudo_class('active');
                            this.selectedAppTitle.set_text(appGridButton._app.name);
                            if (appGridButton._app.description) this.selectedAppDescription.set_text(appGridButton._app.description);
                            else this.selectedAppDescription.set_text("");
                         }));
                         appGridButton.actor.connect('leave-event', Lang.bind(this, function() {
+                           if (!appGridButton.actor.has_style_pseudo_class('selected')) appGridButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
                         }));
                         appGridButton.actor.connect('button-release-event', Lang.bind(this, function() {
+                           appGridButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
                            appGridButton._app.launch();
@@ -823,15 +885,18 @@ const PanelMenuButton = new Lang.Class({
                     if (viewMode == 0) { // ListView
                         let appListButton = new AppListButton(app, appType);
                         appListButton.actor.connect('enter-event', Lang.bind(this, function() {
+                           appListButton.actor.add_style_pseudo_class('active');
                            this.selectedAppTitle.set_text(appListButton._app.name);
                            if (appListButton._app.description) this.selectedAppDescription.set_text(appListButton._app.description);
                            else this.selectedAppDescription.set_text("");
                         }));
                         appListButton.actor.connect('leave-event', Lang.bind(this, function() {
+                           if (!appListButton.actor.has_style_pseudo_class('selected')) appListButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
                         }));
                         appListButton.actor.connect('button-release-event', Lang.bind(this, function() {
+                           appListButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
                            Gio.app_info_launch_default_for_uri(app.uri, global.create_app_launch_context());
@@ -841,15 +906,18 @@ const PanelMenuButton = new Lang.Class({
                     } else { // GridView
                         let appGridButton = new AppGridButton(app, appType, true);
                         appGridButton.actor.connect('enter-event', Lang.bind(this, function() {
+                           appGridButton.actor.add_style_pseudo_class('active');
                            this.selectedAppTitle.set_text(appGridButton._app.name);
                            if (appGridButton._app.description) this.selectedAppDescription.set_text(appGridButton._app.description);
                            else this.selectedAppDescription.set_text("");
                         }));
                         appGridButton.actor.connect('leave-event', Lang.bind(this, function() {
+                           if (!appGridButton.actor.has_style_pseudo_class('selected')) appGridButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
                         }));
                         appGridButton.actor.connect('button-release-event', Lang.bind(this, function() {
+                           appGridButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
                            Gio.app_info_launch_default_for_uri(app.uri, global.create_app_launch_context());
@@ -1027,11 +1095,13 @@ const PanelMenuButton = new Lang.Class({
     },
 
     _onSearchTextChanged: function (se, prop) {
-        let allApplicationsCategoryButton = this.categoriesBox.get_first_child()._delegate;
-        if (this.searchEntry.get_text() == "") {
-            this._clearCategorySelections(this.categoriesBox, allApplicationsCategoryButton);
-        } else {
-            this._clearCategorySelections(this.categoriesBox);
+        if (this.searchActive) {
+            let startupApplications = this.categoriesBox.get_first_child()._delegate;
+            if (this.searchEntry.get_text() == "") {
+                this._clearCategorySelections(this.categoriesBox, startupApplications);
+            } else {
+                this._clearCategorySelections(this.categoriesBox);
+            }
         }
         this._clearCategorySelections(this.placesBox);
         this._clearApplicationSelections();
@@ -1149,7 +1219,7 @@ const PanelMenuButton = new Lang.Class({
         let section = new PopupMenu.PopupMenuSection();
 
         // mainbox holds the topPane and bottomPane
-        this.mainBox = new St.BoxLayout({ style_class: 'gnomenu-main-menu-box', vertical:true });
+        this.mainBox = new St.BoxLayout({ name: 'gnomenuMenuMainbox', style_class: 'gnomenu-main-menu-box', vertical:true });
         
         // Top pane holds user group, view mode, and search (packed horizonally)
         let topPane = new St.BoxLayout({ style_class: 'gnomenu-menu-top-pane' });
@@ -1165,15 +1235,18 @@ const PanelMenuButton = new Lang.Class({
         this.userGroupBox = new St.BoxLayout({ style_class: 'gnomenu-user-group-box' });
         let logoutUser = new GroupButton('user-logout-symbolic', 24, null, {style_class: 'gnomenu-user-group-button'});
         logoutUser.actor.connect('enter-event', Lang.bind(this, function() {
+            logoutUser.actor.add_style_pseudo_class('active');
             this.selectedAppTitle.set_text(_('Logout User'));
             this.selectedAppDescription.set_text('');
         }));
         logoutUser.actor.connect('leave-event', Lang.bind(this, function() {
+            logoutUser.actor.remove_style_pseudo_class('active');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
         }));
         logoutUser.actor.connect('button-release-event', Lang.bind(this, function() {
             // code to logout user
+            logoutUser.actor.remove_style_pseudo_class('active');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
             this.menu.close();
@@ -1181,15 +1254,18 @@ const PanelMenuButton = new Lang.Class({
         }));
         let lockScreen = new GroupButton('user-lock-symbolic', 24, null, {style_class: 'gnomenu-user-group-button'});
         lockScreen.actor.connect('enter-event', Lang.bind(this, function() {
+            lockScreen.actor.add_style_pseudo_class('active');
             this.selectedAppTitle.set_text(_('Lock Screen'));
             this.selectedAppDescription.set_text('');
         }));
         lockScreen.actor.connect('leave-event', Lang.bind(this, function() {
+            lockScreen.actor.remove_style_pseudo_class('active');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
         }));
         lockScreen.actor.connect('button-release-event', Lang.bind(this, function() {
             // code for lock options
+            lockScreen.actor.remove_style_pseudo_class('active');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
             this.menu.close();
@@ -1204,15 +1280,18 @@ const PanelMenuButton = new Lang.Class({
         }));
         let tweakTool = new GroupButton( 'tweak-tool-symbolic', 24, null, {style_class: 'gnomenu-user-group-button'});
         tweakTool.actor.connect('enter-event', Lang.bind(this, function() {
+            tweakTool.actor.add_style_pseudo_class('active');
             this.selectedAppTitle.set_text(_('Advanced Settings'));
             this.selectedAppDescription.set_text('');
         }));
         tweakTool.actor.connect('leave-event', Lang.bind(this, function() {
+            tweakTool.actor.remove_style_pseudo_class('active');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
         }));
         tweakTool.actor.connect('button-release-event', Lang.bind(this, function() {
             // code to launch tweak tool
+            tweakTool.actor.remove_style_pseudo_class('active');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
             this.menu.close();
@@ -1221,15 +1300,18 @@ const PanelMenuButton = new Lang.Class({
         }));
         let controlCenter = new GroupButton( 'control-center-symbolic', 24, null, {style_class: 'gnomenu-user-group-button'});
         controlCenter.actor.connect('enter-event', Lang.bind(this, function() {
+            controlCenter.actor.add_style_pseudo_class('active');
             this.selectedAppTitle.set_text(_('System Settings'));
             this.selectedAppDescription.set_text('');
         }));
         controlCenter.actor.connect('leave-event', Lang.bind(this, function() {
+            controlCenter.actor.remove_style_pseudo_class('active');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
         }));
         controlCenter.actor.connect('button-release-event', Lang.bind(this, function() {
             // code to launch control center
+            controlCenter.actor.remove_style_pseudo_class('active');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
             this.menu.close();
@@ -1253,28 +1335,34 @@ const PanelMenuButton = new Lang.Class({
         this.viewModeBox = new St.BoxLayout({ style_class: 'gnomenu-view-mode-box' });
         let listView = new GroupButton('list-symbolic', 24, null, {style_class: 'gnomenu-view-mode-button'});
         listView.actor.connect('enter-event', Lang.bind(this, function() {
+            listView.actor.add_style_pseudo_class('active');
             this.selectedAppTitle.set_text(_('List View'));
             this.selectedAppDescription.set_text('');
         }));
         listView.actor.connect('leave-event', Lang.bind(this, function() {
+            listView.actor.remove_style_pseudo_class('active');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
         }));
         listView.actor.connect('button-release-event', Lang.bind(this, function() {
+            listView.actor.remove_style_pseudo_class('active');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
             this._switchApplicationsView(0);
         }));
         let gridView = new GroupButton( 'grid-symbolic', 24, null, {style_class: 'gnomenu-view-mode-button'});
         gridView.actor.connect('enter-event', Lang.bind(this, function() {
+            gridView.actor.add_style_pseudo_class('active');
             this.selectedAppTitle.set_text(_('Grid View'));
             this.selectedAppDescription.set_text('');
         }));
         gridView.actor.connect('leave-event', Lang.bind(this, function() {
+            gridView.actor.remove_style_pseudo_class('active');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
         }));
         gridView.actor.connect('button-release-event', Lang.bind(this, function() {
+            gridView.actor.remove_style_pseudo_class('active');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
             this._switchApplicationsView(1);
@@ -1309,23 +1397,28 @@ const PanelMenuButton = new Lang.Class({
         this.favoritesScrollBox.set_mouse_scrolling(true);
         
         //Load favorites
+        this.favorites = [];
         let launchers = global.settings.get_strv('favorite-apps');
         let j = 0;
         for ( let i = 0; i < launchers.length; ++i ) {
             let app = Shell.AppSystem.get_default().lookup_app(launchers[i]);
             if (app) {
+                this.favorites.push(app);
                 let favoriteButton = new FavoriteButton(app);
                 this.favoritesBox.add_actor(favoriteButton.actor);
                 favoriteButton.actor.connect('enter-event', Lang.bind(this, function() {
-                   this.selectedAppTitle.set_text(favoriteButton._app.get_name());
-                   if (favoriteButton._app.get_description()) this.selectedAppDescription.set_text(favoriteButton._app.get_description());
-                   else this.selectedAppDescription.set_text("");
+                    favoriteButton.actor.add_style_pseudo_class('active');
+                    this.selectedAppTitle.set_text(favoriteButton._app.get_name());
+                    if (favoriteButton._app.get_description()) this.selectedAppDescription.set_text(favoriteButton._app.get_description());
+                    else this.selectedAppDescription.set_text("");
                 }));
                 favoriteButton.actor.connect('leave-event', Lang.bind(this, function() {
-                   this.selectedAppTitle.set_text("");
-                   this.selectedAppDescription.set_text("");
+                    favoriteButton.actor.remove_style_pseudo_class('active');
+                    this.selectedAppTitle.set_text("");
+                    this.selectedAppDescription.set_text("");
                 }));
                 favoriteButton.actor.connect('button-release-event', Lang.bind(this, function() {
+                    favoriteButton.actor.remove_style_pseudo_class('active');
                     this.selectedAppTitle.set_text("");
                     this.selectedAppDescription.set_text("");
                     favoriteButton._app.open_new_window(-1);
@@ -1342,15 +1435,23 @@ const PanelMenuButton = new Lang.Class({
         // Load 'all applications' category
         this.applicationsByCategory = {};
         let appCategory = new CategoryListButton(null, _('All Applications'));
-        appCategory.actor.connect('enter-event', Lang.bind(this, function() {
-            this._selectCategory(appCategory);
-            this.selectedAppTitle.set_text(appCategory.label.get_text());
-            this.selectedAppDescription.set_text('');
-        }));
-        appCategory.actor.connect('leave-event', Lang.bind(this, function() {
-            this.selectedAppTitle.set_text('');
-            this.selectedAppDescription.set_text('');
-        }));
+        if (settings.get_enum('category-selection-method') == selectMethod.HOVER ) {
+            appCategory.actor.connect('enter-event', Lang.bind(this, function() {
+                this._selectCategory(appCategory);
+                this.selectedAppTitle.set_text(appCategory.label.get_text());
+                this.selectedAppDescription.set_text('');
+            }));
+            appCategory.actor.connect('leave-event', Lang.bind(this, function() {
+                this.selectedAppTitle.set_text('');
+                this.selectedAppDescription.set_text('');
+            }));
+        } else {
+            appCategory.actor.connect('clicked', Lang.bind(this, function() {
+                this._selectCategory(appCategory);
+                this.selectedAppTitle.set_text(appCategory.label.get_text());
+                this.selectedAppDescription.set_text('');
+            }));
+        }
         this.categoriesBox.add_actor(appCategory.actor);
 
         // Load rest of categories
@@ -1365,15 +1466,23 @@ const PanelMenuButton = new Lang.Class({
                 this._loadCategories(dir);
                 if (this.applicationsByCategory[dir.get_menu_id()].length>0){
                     let appCategory = new CategoryListButton(dir);
-                    appCategory.actor.connect('enter-event', Lang.bind(this, function() {
-                        this._selectCategory(appCategory);
-                        this.selectedAppTitle.set_text(appCategory.label.get_text());
-                        this.selectedAppDescription.set_text('');
-                    }));
-                    appCategory.actor.connect('leave-event', Lang.bind(this, function() {
-                        this.selectedAppTitle.set_text('');
-                        this.selectedAppDescription.set_text('');
-                    }));
+                    if (settings.get_enum('category-selection-method') == selectMethod.HOVER) {
+                        appCategory.actor.connect('enter-event', Lang.bind(this, function() {
+                            this._selectCategory(appCategory);
+                            this.selectedAppTitle.set_text(appCategory.label.get_text());
+                            this.selectedAppDescription.set_text('');
+                        }));
+                        appCategory.actor.connect('leave-event', Lang.bind(this, function() {
+                            this.selectedAppTitle.set_text('');
+                            this.selectedAppDescription.set_text('');
+                        }));
+                    } else {
+                        appCategory.actor.connect('clicked', Lang.bind(this, function() {
+                            this._selectCategory(appCategory);
+                            this.selectedAppTitle.set_text(appCategory.label.get_text());
+                            this.selectedAppDescription.set_text('');
+                        }));
+                    }
                     this.categoriesBox.add_actor(appCategory.actor);
                 }
             }
@@ -1385,67 +1494,107 @@ const PanelMenuButton = new Lang.Class({
 
         // Load 'all places' category
         let placesCategory = new CategoryListButton(null, _('All Places'));
-        placesCategory.actor.connect('enter-event', Lang.bind(this, function() {
-            this._selectAllPlaces(placesCategory);
-            this.selectedAppTitle.set_text(placesCategory.label.get_text());
-            this.selectedAppDescription.set_text('');
-        }));
-        placesCategory.actor.connect('leave-event', Lang.bind(this, function() {
-            this.selectedAppTitle.set_text('');
-            this.selectedAppDescription.set_text('');
-        }));
+        if (settings.get_enum('category-selection-method') == selectMethod.HOVER ) {
+            placesCategory.actor.connect('enter-event', Lang.bind(this, function() {
+                this._selectAllPlaces(placesCategory);
+                this.selectedAppTitle.set_text(placesCategory.label.get_text());
+                this.selectedAppDescription.set_text('');
+            }));
+            placesCategory.actor.connect('leave-event', Lang.bind(this, function() {
+                this.selectedAppTitle.set_text('');
+                this.selectedAppDescription.set_text('');
+            }));
+        } else {
+            placesCategory.actor.connect('clicked', Lang.bind(this, function() {
+                this._selectAllPlaces(placesCategory);
+                this.selectedAppTitle.set_text(placesCategory.label.get_text());
+                this.selectedAppDescription.set_text('');
+            }));
+        }
         this.placesBox.add_actor(placesCategory.actor);
-
+        
         //// Load computer category
         //let computerCategory = new CategoryListButton(null, _('Computer'));
-        //computerCategory.actor.connect('enter-event', Lang.bind(this, function() {
-            //this._selectComputer(computerCategory);
-            //this.selectedAppTitle.set_text(computerCategory.label.get_text());
-            //this.selectedAppDescription.set_text('');
-        //}));
-        //computerCategory.actor.connect('leave-event', Lang.bind(this, function() {
-            //this.selectedAppTitle.set_text('');
-            //this.selectedAppDescription.set_text('');
-        //}));
+        //if (settings.get_enum('category-selection-method') == selectMethod.HOVER ) {
+            //computerCategory.actor.connect('enter-event', Lang.bind(this, function() {
+                //this._selectComputer(computerCategory);
+                //this.selectedAppTitle.set_text(computerCategory.label.get_text());
+                //this.selectedAppDescription.set_text('');
+            //}));
+            //computerCategory.actor.connect('leave-event', Lang.bind(this, function() {
+                //this.selectedAppTitle.set_text('');
+                //this.selectedAppDescription.set_text('');
+            //}));
+        //} else {
+            //computerCategory.actor.connect('clicked', Lang.bind(this, function() {
+                //this._selectComputer(computerCategory);
+                //this.selectedAppTitle.set_text(computerCategory.label.get_text());
+                //this.selectedAppDescription.set_text('');
+            //}));
+        //}
         //this.placesBox.add_actor(computerCategory.actor);
         
         // Load bookmarks category
         let bookmarksCategory = new CategoryListButton(null, _('Bookmarks'));
-        bookmarksCategory.actor.connect('enter-event', Lang.bind(this, function() {
-            this._selectBookmarks(bookmarksCategory);
-            this.selectedAppTitle.set_text(bookmarksCategory.label.get_text());
-            this.selectedAppDescription.set_text('');
-        }));
-        bookmarksCategory.actor.connect('leave-event', Lang.bind(this, function() {
-            this.selectedAppTitle.set_text('');
-            this.selectedAppDescription.set_text('');
-        }));
+        if (settings.get_enum('category-selection-method') == selectMethod.HOVER ) {
+            bookmarksCategory.actor.connect('enter-event', Lang.bind(this, function() {
+                this._selectBookmarks(bookmarksCategory);
+                this.selectedAppTitle.set_text(bookmarksCategory.label.get_text());
+                this.selectedAppDescription.set_text('');
+            }));
+            bookmarksCategory.actor.connect('leave-event', Lang.bind(this, function() {
+                this.selectedAppTitle.set_text('');
+                this.selectedAppDescription.set_text('');
+            }));
+        } else {
+            bookmarksCategory.actor.connect('clicked', Lang.bind(this, function() {
+                this._selectBookmarks(bookmarksCategory);
+                this.selectedAppTitle.set_text(bookmarksCategory.label.get_text());
+                this.selectedAppDescription.set_text('');
+            }));
+        }
         this.placesBox.add_actor(bookmarksCategory.actor);
 
         // Load devices category
         let devicesCategory = new CategoryListButton(null, _('Devices'));
-        devicesCategory.actor.connect('enter-event', Lang.bind(this, function() {
-            this._selectDevices(devicesCategory);
-            this.selectedAppTitle.set_text(devicesCategory.label.get_text());
-            this.selectedAppDescription.set_text('');
-        }));
-        devicesCategory.actor.connect('leave-event', Lang.bind(this, function() {
-            this.selectedAppTitle.set_text('');
-            this.selectedAppDescription.set_text('');
-        }));
+        if (settings.get_enum('category-selection-method') == selectMethod.HOVER ) {
+            devicesCategory.actor.connect('enter-event', Lang.bind(this, function() {
+                this._selectDevices(devicesCategory);
+                this.selectedAppTitle.set_text(devicesCategory.label.get_text());
+                this.selectedAppDescription.set_text('');
+            }));
+            devicesCategory.actor.connect('leave-event', Lang.bind(this, function() {
+                this.selectedAppTitle.set_text('');
+                this.selectedAppDescription.set_text('');
+            }));
+        } else {
+            devicesCategory.actor.connect('clicked', Lang.bind(this, function() {
+                this._selectDevices(devicesCategory);
+                this.selectedAppTitle.set_text(devicesCategory.label.get_text());
+                this.selectedAppDescription.set_text('');
+            }));
+        }
         this.placesBox.add_actor(devicesCategory.actor);
 
         // Load recent category
         let recentCategory = new CategoryListButton(null, _('Recent'));
-        recentCategory.actor.connect('enter-event', Lang.bind(this, function() {
-            this._selectRecent(recentCategory);
-            this.selectedAppTitle.set_text(recentCategory.label.get_text());
-            this.selectedAppDescription.set_text('');
-        }));
-        recentCategory.actor.connect('leave-event', Lang.bind(this, function() {
-            this.selectedAppTitle.set_text('');
-            this.selectedAppDescription.set_text('');
-        }));
+        if (settings.get_enum('category-selection-method') == selectMethod.HOVER ) {
+            recentCategory.actor.connect('enter-event', Lang.bind(this, function() {
+                this._selectRecent(recentCategory);
+                this.selectedAppTitle.set_text(recentCategory.label.get_text());
+                this.selectedAppDescription.set_text('');
+            }));
+            recentCategory.actor.connect('leave-event', Lang.bind(this, function() {
+                this.selectedAppTitle.set_text('');
+                this.selectedAppDescription.set_text('');
+            }));
+        } else {
+            recentCategory.actor.connect('clicked', Lang.bind(this, function() {
+                this._selectRecent(recentCategory);
+                this.selectedAppTitle.set_text(recentCategory.label.get_text());
+                this.selectedAppDescription.set_text('');
+            }));
+        }
         this.placesBox.add_actor(recentCategory.actor);
 
 
@@ -1453,15 +1602,18 @@ const PanelMenuButton = new Lang.Class({
         this.powerGroupBox = new St.BoxLayout({ style_class: 'gnomenu-power-group-box'});
         let systemRestart = new GroupButton('refresh-symbolic', 24, null, {style_class: 'gnomenu-power-group-button'});
         systemRestart.actor.connect('enter-event', Lang.bind(this, function() {
+            systemRestart.actor.add_style_pseudo_class('active');
             this.selectedAppTitle.set_text(_('Restart Shell'));
             this.selectedAppDescription.set_text('');
         }));
         systemRestart.actor.connect('leave-event', Lang.bind(this, function() {
+            systemRestart.actor.remove_style_pseudo_class('active');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
         }));
         systemRestart.actor.connect('button-release-event', Lang.bind(this, function() {
             // code to refresh shell
+            systemRestart.actor.remove_style_pseudo_class('active');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
             this.menu.close();
@@ -1469,15 +1621,18 @@ const PanelMenuButton = new Lang.Class({
         }));
         let systemSuspend = new GroupButton('suspend-symbolic', 24, null, {style_class: 'gnomenu-power-group-button'});
         systemSuspend.actor.connect('enter-event', Lang.bind(this, function() {
+            systemSuspend.actor.add_style_pseudo_class('active');
             this.selectedAppTitle.set_text(_('Suspend'));
             this.selectedAppDescription.set_text('');
         }));
         systemSuspend.actor.connect('leave-event', Lang.bind(this, function() {
+            systemSuspend.actor.remove_style_pseudo_class('active');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
         }));
         systemSuspend.actor.connect('button-release-event', Lang.bind(this, function() {
             // code to suspend
+            systemSuspend.actor.remove_style_pseudo_class('active');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
             this.menu.close();
@@ -1508,15 +1663,18 @@ const PanelMenuButton = new Lang.Class({
         }));
         let systemShutdown = new GroupButton('shutdown-symbolic', 24, null, {style_class: 'gnomenu-power-group-button'});
         systemShutdown.actor.connect('enter-event', Lang.bind(this, function() {
+            systemShutdown.actor.add_style_pseudo_class('active');
             this.selectedAppTitle.set_text(_('Shutdown'));
             this.selectedAppDescription.set_text('');
         }));
         systemShutdown.actor.connect('leave-event', Lang.bind(this, function() {
+            systemShutdown.actor.remove_style_pseudo_class('active');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
         }));
         systemShutdown.actor.connect('button-release-event', Lang.bind(this, function() {
             // code to shutdown (power off)
+            systemShutdown.actor.remove_style_pseudo_class('active');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
             this.menu.close();
@@ -1623,63 +1781,145 @@ const GnoMenuButton = new Lang.Class({
         // Connect gtk icontheme for when icons change
         this._iconsChangedId = IconTheme.get_default().connect('changed', Lang.bind(this, this._onIconsChanged));
 
-        // Load gnomenu stylesheet (checks for theme support)
-        this._loadGnomenuStylesheet();
-        
-        // Initialize GnoMenuButton actor
-        this.actor = new St.BoxLayout({ style_class: 'gnomenu-panel-box' });
-        this.actor.connect('notify::allocation', Lang.bind(this, this._onGnoMenuPanelButtonAllocate));
-        
-        // Initialize view button
-        this.viewButton = new PanelButton(_('View'));
-        this.viewButton.actor.connect('button-release-event', Lang.bind(this, this._onViewButtonRelease));
-        
-        // Initialize apps button
-        this.appsButton = new PanelButton(_('Apps'));
-        this.appsButton.actor.connect('button-release-event', Lang.bind(this, this._onAppsButtonRelease));
-        
-        // Initialize apps menu button
-        this.appsMenuButton = new PanelMenuButton();
-        this.appsMenuButton.actor.connect('notify::allocation', Lang.bind(this, this._onAppsMenuButtonAllocate));
-
         // Connect to AppSys for when new application installed
         this._installedChangedId = Shell.AppSystem.get_default().connect('installed-changed', Lang.bind(this, this._onAppInstalledChanged));
         
         // Connect to AppFavorites for when favorites change
         this._favoritesChangedId = AppFavorites.getAppFavorites().connect('changed', Lang.bind(this, this._onFavoritesChanged));
-        
-        // Add hotspot area 1px high at top of appsMenuButton
-        this._hotspot = new Clutter.Rectangle({reactive: true, opacity:0});
-        this._hotspot.connect('enter-event', Lang.bind(this, this._onAppsMenuButtonHotSpotEntered));
-        this._hotspotId = this._hotspot.connect('realize', Lang.bind(this, function(){}));
 
-        // Add buttons to GnoMenu actor
+        // Bind Preference Settings
+        this._bindSettingsChanges();
+
+        // Initialize GnoMenuButton actor
+        this.actor = new St.BoxLayout({ name: 'gnomenuPanelBox', style_class: 'gnomenu-panel-box' });
+        this.actor.connect('notify::allocation', Lang.bind(this, this._onGnoMenuPanelButtonAllocate));
+
+        // Set default gnomenu stylesheet
+        this._previousStylesheet = null;
+        this._defaultStylesheet = null;
+        let themeSelected = "default";
+        let filename = 'gnomenu.css';
+        if (gsVersion[1] < 6)
+            filename = 'gnomenu-gs34.css';
+        
+        let defaultStylesheet = GLib.build_filenamev([Me.path, 'themes', themeSelected, filename]);
+        if (GLib.file_test(defaultStylesheet, GLib.FileTest.EXISTS)) {
+            this._defaultStylesheet = defaultStylesheet;
+        }
+
+        this._changeStylesheet();
+        this._display();
+    },
+    
+    refresh: function() {
+        if (_DEBUG_) global.log("GnoMenu: refresh");
+        this._clearAll();
+        this._display();
+    },
+
+    _clearAll: function() {
+        if (_DEBUG_) global.log("GnoMenu: _clearAll");
+        if (this._hotCorner) this.actor.remove_actor(this._hotCorner.actor);
+        if (this._hotCorner) this._hotCorner.destroy();
+        this._hotCorner = null;
+        if (_DEBUG_) global.log("GnoMenu: _clearAll removed and destroyed hotcorner from gnomenu actor");
+        
+        if (this._hotspot) this.actor.remove_actor(this._hotspot);
+        if (this._hotspot) this._hotspot.destroy();
+        this._hotspot = null;
+        this._hotspotId = null;
+        if (_DEBUG_) global.log("GnoMenu: _clearAll removed and destroyed hotspot from gnomenu actor");
+
         if (gsVersion[1] > 4) {
-            this.actor.add(this.viewButton.container);
-            this.actor.add(this.appsButton.container);
-            this.actor.add(this.appsMenuButton.container);
+            if (this.viewButton) this.actor.remove_actor(this.viewButton.container);
+            if (this.appsButton) this.actor.remove_actor(this.appsButton.container);
+            if (this.appsMenuButton) this.actor.remove_actor(this.appsMenuButton.container);
         } else {
-            this.actor.add(this.viewButton.actor);
-            this.actor.add(this.appsButton.actor);
-            this.actor.add(this.appsMenuButton.actor);
+            if (this.viewButton) this.actor.remove_actor(this.viewButton.actor);
+            if (this.appsButton) this.actor.remove_actor(this.appsButton.actor);
+            if (this.appsMenuButton) this.actor.remove_actor(this.appsMenuButton.actor);
+        }
+        if (_DEBUG_) global.log("GnoMenu: _clearAll removed panel buttons from gnomenu actor");
+
+        if (this.viewButton) this.viewButton.actor.destroy();
+        this.viewButton = null;
+        if (_DEBUG_) global.log("GnoMenu: _clearAll destroyed view button");
+        
+        if (this.appsButton) this.appsButton.actor.destroy();
+        this.appsButton = null;
+        if (_DEBUG_) global.log("GnoMenu: _clearAll destroyed apps button");
+        
+        if (this.appsMenuButton) this.appsMenuButton.destroy();
+        this.appsMenuButton = null;
+        if (_DEBUG_) global.log("GnoMenu: _clearAll destroyed menu button");
+    },
+    
+    _display: function() {
+        if (_DEBUG_) global.log("GnoMenu: _display");
+        // Initialize view button
+        if (!settings.get_boolean('hide-panel-view')) {
+            this.viewButton = new PanelButton(_('View'));
+            this.viewButton.actor.connect('button-release-event', Lang.bind(this, this._onViewButtonRelease));
+        }
+        if (_DEBUG_) global.log("GnoMenu: _display initialized view button");
+        
+        // Initialize apps button
+        if (!settings.get_boolean('hide-panel-apps')) {
+            this.appsButton = new PanelButton(_('Apps'));
+            this.appsButton.actor.connect('button-release-event', Lang.bind(this, this._onAppsButtonRelease));
+        }
+        if (_DEBUG_) global.log("GnoMenu: _display initialized apps button");
+        
+        // Initialize apps menu button
+        if (!settings.get_boolean('hide-panel-menu')) {
+            this.appsMenuButton = new PanelMenuButton();
+            this.appsMenuButton.actor.connect('notify::allocation', Lang.bind(this, this._onAppsMenuButtonAllocate));
+            if (_DEBUG_) global.log("GnoMenu: _display initialized menu button");
+
+            // Add hotspot area 1px high at top of appsMenuButton
+            if (!settings.get_boolean('disable-panel-menu-hotspot')) {
+                this._hotspot = new Clutter.Rectangle({reactive: true, opacity:0});
+                this._hotspot.connect('enter-event', Lang.bind(this, this._onAppsMenuButtonHotSpotEntered));
+                this._hotspotId = this._hotspot.connect('realize', Lang.bind(this, function(){}));
+                if (_DEBUG_) global.log("GnoMenu: _display initialized menu hotspot");
+            }
         }
         
+        // Add buttons to GnoMenu actor
+        if (gsVersion[1] > 4) {
+            if (this.viewButton) this.actor.add(this.viewButton.container);
+            if (this.appsButton) this.actor.add(this.appsButton.container);
+            if (this.appsMenuButton) this.actor.add(this.appsMenuButton.container);
+        } else {
+            if (this.viewButton) this.actor.add(this.viewButton.actor);
+            if (this.appsButton) this.actor.add(this.appsButton.actor);
+            if (this.appsMenuButton) this.actor.add(this.appsMenuButton.actor);
+        }
+        if (_DEBUG_) global.log("GnoMenu: _display added buttons to gnomenu actor");
+        
         // Add appsMenuButton hotspot
-        this.actor.add_actor(this._hotspot);
+        if (this._hotspot) this.actor.add_actor(this._hotspot);
 
         // Enable Hot Corner if desired
-        let enableHotCorner = true;
-        if (enableHotCorner) {
+        if (!settings.get_boolean('hide-panel-view') && !settings.get_boolean('disable-panel-view-hotcorner')) {
             this._hotCorner = new Layout.HotCorner;
             this._positionHotCorner();
             this.actor.add_actor(this._hotCorner.actor);
+            if (_DEBUG_) global.log("GnoMenu: _display initialized hot corner");
+        }
+
+        // Add menu to panel menu manager
+        if (gsVersion[1] > 4) {
+            if (this.appsMenuButton) Main.panel.menuManager.addMenu(this.appsMenuButton.menu);
+        } else {
+            if (this.appsMenuButton) Main.panel._menus.addMenu(this.appsMenuButton.menu);
         }
     },
 
     // function called when allocating GnoMenuButton .. to position appsMenuButton hotspot
     // ISSUE: provides a safety net just in case the allocation cycle below isn't ready
     _onGnoMenuPanelButtonAllocate: function() {
-        if (this._hotspotId) {
+        if (this._hotspotId && this.appsMenuButton) {
             let [x, y] = this.appsMenuButton.actor.get_transformed_position();
             let [w, h] = this.appsMenuButton.actor.get_size();
             x = Math.floor(x);
@@ -1693,7 +1933,7 @@ const GnoMenuButton = new Lang.Class({
     // function called when allocating appsMenuButton .. to position appsMenuButton hotspot
     // ISSUE: provides a safety net just in case the allocation cycle above isn't ready
     _onAppsMenuButtonAllocate: function() {
-        if (this._hotspotId) {
+        if (this._hotspotId && this.appsMenuButton) {
             let [x, y] = this.appsMenuButton.actor.get_transformed_position();
             let [w, h] = this.appsMenuButton.actor.get_size();
             x = Math.floor(x);
@@ -1706,6 +1946,7 @@ const GnoMenuButton = new Lang.Class({
     
     // handler for when view panel button clicked
     _onViewButtonRelease: function() {
+        if (_DEBUG_) global.log("_onViewButtonRelease");
         if (Main.overview.visible) {
             if (gsVersion[1] > 4) { // GS 3.6+
                 if (!Main.overview._viewSelector._showAppsButton.checked) {
@@ -1728,6 +1969,7 @@ const GnoMenuButton = new Lang.Class({
 
     // handler for when apps panel button clicked
     _onAppsButtonRelease: function() {
+        if (_DEBUG_) global.log("_onAppsButtonRelease");
         if (Main.overview.visible) {
             if (gsVersion[1] > 4) { // GS 3.6+
                 if (Main.overview._viewSelector._showAppsButton.checked) {
@@ -1756,12 +1998,16 @@ const GnoMenuButton = new Lang.Class({
 
     // handler for when appsMenuButton hotspot entered
     _onAppsMenuButtonHotSpotEntered: function() {
-        if (!this.appsMenuButton.menu.isOpen)
-            this.appsMenuButton.menu.toggle();
+        if (_DEBUG_) global.log("_onAppsMenuButtonHotSpotEntered");
+        if (this.appsMenuButton) {
+            if (!this.appsMenuButton.menu.isOpen)
+                this.appsMenuButton.menu.toggle();
+        }
     },
     
     // function called during init to position hot corner
     _positionHotCorner: function() {
+        if (_DEBUG_) global.log("_positionHotCorner");
         // The hot corner needs to be outside any padding/alignment
         // that has been imposed on us
         let primary = Main.layoutManager.primaryMonitor;
@@ -1787,118 +2033,240 @@ const GnoMenuButton = new Lang.Class({
     // handler for when theme changes
     _onStyleChanged: function() {
         if (_DEBUG_) global.log("_onStyleChanged");
-        this._loadGnomenuStylesheet();
-
-        if (this.appsMenuButton) this.appsMenuButton.actor.grab_key_focus();
-        if (this.viewButton) this.viewButton.actor.grab_key_focus();
-        if (this.appsButton) this.appsButton.actor.grab_key_focus();
-        if (this.actor) this.actor.grab_key_focus();
-        global.stage.set_key_focus(null);
+        let ret = this._changeStylesheet();
+        
+        if (ret) {
+            if (_DEBUG_) global.log("_onStyleChanged ret true - actors grabbing_key_focus");
+            if (this.appsMenuButton) this.appsMenuButton.actor.grab_key_focus();
+            if (this.viewButton) this.viewButton.actor.grab_key_focus();
+            if (this.appsButton) this.appsButton.actor.grab_key_focus();
+            if (this.actor) this.actor.grab_key_focus();
+            global.stage.set_key_focus(null);
+        }
     },
 
-    // function to load gnomenu stylesheet
-    _loadGnomenuStylesheet: function() {
-        if (_DEBUG_) global.log("_loadGnomenuStylesheet");
-        // Get css stylesheet for current theme
-        // Main._defaultCssStylesheet = GLib.get_home_dir() + '/.themes/' + _themeName + '/gnome-shell/gnome-shell.css';
-        let cssStylesheet = Main._defaultCssStylesheet;
+    _changeStylesheet: function() {
+        if (_DEBUG_) global.log("_changeStylesheet");
+        // Get user theme stylesheet for new theme
+        let themeStylesheet = Main._defaultCssStylesheet;
         if (Main._cssStylesheet != null)
-            cssStylesheet = Main._cssStylesheet;
+            themeStylesheet = Main._cssStylesheet;
 
         // Get theme directory
-        let cssDirectory = GLib.path_get_dirname(cssStylesheet);
+        let themeDirectory = GLib.path_get_dirname(themeStylesheet);
+        if (_DEBUG_) global.log("new theme = "+themeDirectory);
         
         // Test for gnomenu stylesheet
-        let gnomenuStylesheet = cssDirectory + '/extensions/gnomenu.css';
-        if (GLib.file_test(gnomenuStylesheet, GLib.FileTest.EXISTS)) {
-            // Theme supports gnomenu .. Unload gnomenu.css if exists in custom stylesheets
-            if (_DEBUG_) global.log("Theme supports gnomenu. Unload gnomenu.css if previously loaded");
-            this._unloadGnomenuStylesheet();
-        } else {
-            // Load gnomenu stylesheet from extension /themes
-            let themeSelected = "default";
-            let gnomenuExtStylesheet = GLib.build_filenamev([Me.path, 'themes', themeSelected, 'gnomenu.css']);
-            if (!GLib.file_test(gnomenuExtStylesheet, GLib.FileTest.EXISTS)) {
-                return;
-            }
-            if (_DEBUG_) global.log("Theme does not support gnomenu. Load extension /themes stylesheet");
-            let themeContext = St.ThemeContext.get_for_stage(global.stage);
-            if (themeContext) {
-                let theme = themeContext.get_theme();
-                let customStylesheets = theme.get_custom_stylesheets();
-                // Check if stylesheet already loaded
-                let found = false;
-                for (let i = 0; i < customStylesheets.length; i++) {
-                    if (customStylesheets[i] == gnomenuExtStylesheet) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    theme.load_stylesheet(gnomenuExtStylesheet);
-                }
-            }
+        let newStylesheet = themeDirectory + '/extensions/gnomenu.css';
+        if (!GLib.file_test(newStylesheet, GLib.FileTest.EXISTS)) {
+            if (_DEBUG_) global.log("Theme doesn't support gnomenu .. use default stylesheet");
+            newStylesheet = this._defaultStylesheet;
         }
-    },
-    
-    // function to unload gnomenu stylesheet
-    _unloadGnomenuStylesheet: function() {
-        if (_DEBUG_) global.log("_unloadGnomenuStylesheet");
-        let themeSelected = "default";
-        let gnomenuExtStylesheet = GLib.build_filenamev([Me.path, 'themes', themeSelected, 'gnomenu.css']);
-        if (!GLib.file_test(gnomenuExtStylesheet, GLib.FileTest.EXISTS)) {
-            return;
+
+        if (this._previousStylesheet && this._previousStylesheet == newStylesheet) {
+            if (_DEBUG_) global.log("No change in stylesheet. Exit");
+            return false;
         }
+
+        // Change gnomenu stylesheet by updating theme
         let themeContext = St.ThemeContext.get_for_stage(global.stage);
-        if (themeContext) {
-            let theme = themeContext.get_theme();
-            let customStylesheets = theme.get_custom_stylesheets();
-            // Check if stylesheet already loaded
-            let found = false;
-            for (let i = 0; i < customStylesheets.length; i++) {
-                if (customStylesheets[i] == gnomenuExtStylesheet) {
-                    found = true;
-                    break;
-                }
-            }
-            if (found) {
-                // theme.unload_stylesheet(gnomenuExtStylesheet);
-                // ISSUE: just trying to unload stylesheet crashes GS36 when returning from lock screen
-                // WORKAROUND:
-                let cssStylesheet = Main._defaultCssStylesheet;
-                if (Main._cssStylesheet != null)
-                    cssStylesheet = Main._cssStylesheet;
+        if (!themeContext)
+            return false;
+            
+        if (_DEBUG_) global.log("themeContext is valid");
+        let theme = themeContext.get_theme();
+        if (!theme)
+            return false;
+        
+        if (_DEBUG_) global.log("theme is valid");
+        let customStylesheets = theme.get_custom_stylesheets();
+        if (!customStylesheets)
+            return false;
 
-                let newTheme = new St.Theme ({ application_stylesheet: cssStylesheet });
-                for (let i = 0; i < customStylesheets.length; i++) {
-                    if (customStylesheets[i] != gnomenuExtStylesheet) {
-                        newTheme.load_stylesheet(customStylesheets[i]);
-                    }
-                }
-
-                themeContext.set_theme (newTheme);
+        let previousStylesheet = this._previousStylesheet;
+        this._previousStylesheet = newStylesheet;
+        let newTheme = new St.Theme ({ application_stylesheet: themeStylesheet });
+        for (let i = 0; i < customStylesheets.length; i++) {
+            if (customStylesheets[i] != previousStylesheet) {
+                newTheme.load_stylesheet(customStylesheets[i]);
             }
         }
+
+        if (_DEBUG_) global.log("Removed previous stylesheet");
+        newTheme.load_stylesheet(newStylesheet);
+        if (_DEBUG_) global.log("Added new stylesheet");
+        themeContext.set_theme (newTheme);
+        return true;
+
     },
     
+    //// function to load gnomenu stylesheet
+    //_loadGnomenuStylesheet: function() {
+        //if (_DEBUG_) global.log("_loadGnomenuStylesheet");
+        //let currentStylesheet = this._getGnomenuStylesheet();
+        //if (this._previousStylesheet && this._previousStylesheet == currentStylesheet) {
+            //// No change from previous stylesheet loaded
+            //if (_DEBUG_) global.log("_loadGnomenuStylesheet no change from previous stylesheet");
+            //return;
+        //} else {
+            //if (_DEBUG_) global.log("_loadGnomenuStylesheet new stylesheet = "+currentStylesheet);
+            //this._loadCurrentStylesheet(currentStylesheet);
+            
+            //// We set the previous stylesheet to the current one now because the
+            //// _unloadPreviousStylesheet function's workaround has one drawback .. it will
+            //// emit a styleChanged signal causing a loop & segfault crash
+            //let previousStylesheet = this._previousStylesheet;
+            //this._previousStylesheet = currentStylesheet;
+            //if (previousStylesheet) {
+                //this._unloadPreviousStylesheet(previousStylesheet);
+            //}
+        //}    
+    //},
+
+	//// function to get the current active stylesheet
+    //_getGnomenuStylesheet: function() {
+        //if (_DEBUG_) global.log("_getGnomenuStylesheet");
+        //// Get css stylesheet for current theme
+        //let cssStylesheet = Main._defaultCssStylesheet;
+        //if (Main._cssStylesheet != null)
+            //cssStylesheet = Main._cssStylesheet;
+
+        //// Get theme directory
+        //let cssDirectory = GLib.path_get_dirname(cssStylesheet);
+        
+        //// Test for gnomenu stylesheet
+        //let gnomenuStylesheet = cssDirectory + '/extensions/gnomenu.css';
+        //if (GLib.file_test(gnomenuStylesheet, GLib.FileTest.EXISTS)) {
+            //if (_DEBUG_) global.log("Theme supports gnomenu");
+            //return gnomenuStylesheet;
+        //} else {
+            //// Load gnomenu stylesheet from extension /themes
+            //let themeSelected = "default";
+            //let gnomenuExtStylesheet = GLib.build_filenamev([Me.path, 'themes', themeSelected, 'gnomenu.css']);
+            //if (GLib.file_test(gnomenuExtStylesheet, GLib.FileTest.EXISTS)) {
+                //if (_DEBUG_) global.log("Theme doesn't support gnomenu .. load default theme");
+                //return gnomenuExtStylesheet;
+            //}
+        //}
+        //return null;
+    //},
+
+	//// function to unload previous stylesheet
+    //_unloadPreviousStylesheet: function(previousStylesheet) {
+        //if (_DEBUG_) global.log("_unloadPreviousStylesheet "+previousStylesheet);
+        //let cssStylesheet = previousStylesheet;
+        //let themeContext = St.ThemeContext.get_for_stage(global.stage);
+        //if (!themeContext)
+            //return;
+            
+        //if (_DEBUG_) global.log("_unloadPreviousStylesheet themeContext is valid");
+        //let theme = themeContext.get_theme();
+        //if (!theme)
+            //return;
+        
+        //if (_DEBUG_) global.log("_unloadPreviousStylesheet theme is valid");
+        //let customStylesheets = theme.get_custom_stylesheets();
+        //if (!customStylesheets)
+            //return;
+
+        //if (_DEBUG_) global.log("_unloadPreviousStylesheet customStylesheets is valid. Count = "+customStylesheets.length);
+        //// Check if stylesheet already loaded
+        //let found = false;
+        //for (let i = 0; i < customStylesheets.length; i++) {
+            //if (customStylesheets[i] == cssStylesheet) {
+                //found = true;
+                //break;
+            //}
+        //}
+        //if (found) {
+            //if (_DEBUG_) global.log("_unloadPreviousStylesheet previous stylesheet found .. removing it");
+            //theme.unload_stylesheet(cssStylesheet);
+            //// ?? DEAD CODE ?? --------------------------------
+            ////// ISSUE: just trying to unload stylesheet crashes GS36 when returning from lock screen
+            ////// WORKAROUND:
+            ////let gnomeStylesheet = Main._defaultCssStylesheet;
+            ////if (Main._cssStylesheet != null)
+                ////gnomeStylesheet = Main._cssStylesheet;
+
+            ////let newTheme = new St.Theme ({ application_stylesheet: gnomeStylesheet });
+            ////for (let i = 0; i < customStylesheets.length; i++) {
+                ////if (customStylesheets[i] != cssStylesheet) {
+                    ////newTheme.load_stylesheet(customStylesheets[i]);
+                ////}
+            ////}
+
+            ////// This workaround has one drawback .. 
+            ////// it emits a styleChanged signal when the new theme is  set
+            ////themeContext.set_theme (newTheme);
+            //// ------------------------------------------------
+        //}
+    //},
+
+	//// function to load current active stylesheet
+    //_loadCurrentStylesheet: function(currentStylesheet) {
+        //if (_DEBUG_) global.log("_loadCurrentStylesheet");
+        //let cssStylesheet = currentStylesheet;
+        //let themeContext = St.ThemeContext.get_for_stage(global.stage);
+        //if (!themeContext)
+            //return;
+            
+        //if (_DEBUG_) global.log("_loadCurrentStylesheet themeContext is valid");
+        //let theme = themeContext.get_theme();
+        //if (!theme)
+            //return;
+        
+        //if (_DEBUG_) global.log("_loadCurrentStylesheet theme is valid");
+        //let customStylesheets = theme.get_custom_stylesheets();
+        //if (!customStylesheets)
+            //return;
+
+        //if (_DEBUG_) global.log("_loadCurrentStylesheet customStylesheets is valid. Count = "+customStylesheets.length);
+        //// Check if stylesheet already loaded
+        //let found = false;
+        //for (let i = 0; i < customStylesheets.length; i++) {
+            //if (customStylesheets[i] == cssStylesheet) {
+                //found = true;
+                //break;
+            //}
+        //}
+        //if (!found) {
+            //if (_DEBUG_) global.log("_loadCurrentStylesheet theme not found .. loading it");
+            //theme.load_stylesheet(cssStylesheet);
+        //}
+    //},
+
     // handler for when new application installed
     _onAppInstalledChanged: function() {
         if (_DEBUG_) global.log("_onAppInstalledChanged");
-        this.appsMenuButton.refresh();
+        if (this.appsMenuButton) this.appsMenuButton.refresh();
     },
     
     // handler for when favorites change
     _onFavoritesChanged: function() {
         if (_DEBUG_) global.log("_onFavoritesChanged");
-        this.appsMenuButton.refresh();
+        if (this.appsMenuButton) this.appsMenuButton.refresh();
     },
     
     // handler for when icons change
     _onIconsChanged: function() {
         if (_DEBUG_) global.log("_onIconsChanged");
-        this.appsMenuButton.refresh();
+        if (this.appsMenuButton) this.appsMenuButton.refresh();
     },
     
+    // function to bind preference setting changes
+    _bindSettingsChanges: function() {
+        if (_DEBUG_) global.log("_bindSettingsChanges");
+        settings.connect('changed::hide-panel-view', Lang.bind(this, this.refresh));
+        settings.connect('changed::hide-panel-apps', Lang.bind(this, this.refresh));
+        settings.connect('changed::hide-panel-menu', Lang.bind(this, this.refresh));
+        settings.connect('changed::disable-panel-view-hotcorner', Lang.bind(this, this.refresh));
+        settings.connect('changed::disable-panel-menu-hotspot', Lang.bind(this, this.refresh));
+        settings.connect('changed::category-selection-method', Lang.bind(this, function() {
+            if (this.appsMenuButton) this.appsMenuButton.refresh();
+        }));
+    },
+
+    // function to destroy GnoMenu
     destroy: function() {
         // Disconnect global signals
         Shell.AppSystem.get_default().disconnect(this._installedChangedId);
@@ -1947,12 +2315,9 @@ function enable() {
     GnoMenu = new GnoMenuButton();
     if (gsVersion[1] > 4) {
         Main.panel._leftBox.insert_child_at_index(GnoMenu.actor, 0);
-        Main.panel.menuManager.addMenu(GnoMenu.appsMenuButton.menu);
     } else {
         Main.panel._leftBox.insert_child_at_index(GnoMenu.actor, 0);
-        Main.panel._menus.addMenu(GnoMenu.appsMenuButton.menu);
     }
-
 
 }
 
@@ -1976,9 +2341,12 @@ function disable() {
 
     // Destroy GnoMenu
     GnoMenu.destroy();
+    GnoMenu = null;
 }
 
 function init() {
+    Convenience.initTranslations();
+    
     // Add extension icons to icon theme directory path
     // TODO: move this to enable/disable?
     // GS patch https://bugzilla.gnome.org/show_bug.cgi?id=675561
