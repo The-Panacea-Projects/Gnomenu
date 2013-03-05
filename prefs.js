@@ -38,7 +38,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         });
 
         let panelSettingsTitle = new Gtk.Label({
-            label: "<b>Top Panel Settings</b>",
+            label: _("<b>Top Panel Settings</b>"),
             use_markup: true,
             xalign: 0,
             margin_top: 5,
@@ -55,7 +55,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             margin_right: 10
         });
         let hidePanelViewLabel = new Gtk.Label({
-            label: "Remove View button from panel",
+            label: _("Remove View button from panel"),
             use_markup: true,
             xalign: 0,
             hexpand: true
@@ -104,7 +104,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             margin_right: 10
         });
         let hidePanelAppsLabel = new Gtk.Label({
-            label: "Remove Apps button from panel",
+            label: _("Remove Apps button from panel"),
             use_markup: true,
             xalign: 0,
             hexpand: true
@@ -131,7 +131,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             margin_right: 10
         });
         let hidePanelMenuLabel = new Gtk.Label({
-            label: "Remove Menu button from panel",
+            label: _("Remove Menu button from panel"),
             use_markup: true,
             xalign: 0,
             hexpand: true
@@ -161,7 +161,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             margin_right: 10
         });
         let disableMenuHotSpot = new Gtk.CheckButton({
-            label: _("Disable Menu button hot area"),
+            label: _("Disable Menu button hot border"),
             margin_left: 20
         });
         disableMenuHotSpot.set_active(this.settings.get_boolean('disable-panel-menu-hotspot'));
@@ -181,7 +181,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             margin_right: 10
         });
         let disableMenuKeyboardAccel = new Gtk.CheckButton({
-            label: _("Disable Menu button keyboard accelerator"),
+            label: _("Disable Menu button keyboard shortcut"),
             margin_left: 20
         });
         disableMenuKeyboardAccel.set_active(this.settings.get_boolean('disable-panel-menu-keyboard'));
@@ -229,7 +229,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         });
 
         let appsSettingsTitle = new Gtk.Label({
-            label: "<b>Menu Settings</b>",
+            label: _("<b>Menu Settings</b>"),
             use_markup: true,
             xalign: 0,
             margin_top: 5,
@@ -316,7 +316,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             margin_bottom: 5,
             margin_right: 10
         });
-        let favoritesIconSizeLabel = new Gtk.Label({label: _("Size of Favorites panel icons"), hexpand:true, xalign:0});
+        let favoritesIconSizeLabel = new Gtk.Label({label: _("Size of Favorites Panel icons"), hexpand:true, xalign:0});
         let favoritesIconSizeCombo = new Gtk.ComboBoxText({halign:Gtk.Align.END});
             favoritesIconSizeCombo.set_size_request(120, -1);
             favoritesIconSizeCombo.append_text('16');

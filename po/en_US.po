@@ -85,3 +85,45 @@ msgstr ""
 
 #: prefs.js
 
+msgid "<b>Top Panel Settings</b>"
+msgstr ""
+
+msgid "Remove View button from panel"
+msgstr ""
+
+msgid "Disable Hot Corner"
+msgstr ""
+
+msgid "Remove Apps button from panel"
+msgstr ""
+
+msgid "Remove Menu button from panel"
+msgstr ""
+
+msgid "Disable Menu button hot border"
+msgstr ""
+
+msgid "Disable Menu button keyboard shortcut"
+msgstr ""
+
+msgid "<b>Menu Settings</b>"
+msgstr ""
+
+msgid "Startup applications to display"
+msgstr ""
+
+msgid "Default view mode for applications"
+msgstr ""
+
+msgid "Category selection method"
+msgstr ""
+
+msgid "Size of Favorites Panel icons"
+msgstr ""
+
+msgid "Size of Application List icons"
+msgstr ""
+
+msgid "Size of Application Grid icons"
+msgstr ""
+
