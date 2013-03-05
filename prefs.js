@@ -48,7 +48,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         let hidePanelViewBox = new Gtk.Box({
             spacing: 20,
             orientation: Gtk.Orientation.HORIZONTAL,
-            homogeneous: true,
+            homogeneous: false,
             margin_left: 20,
             margin_top: 5,
             margin_bottom: 0,
@@ -75,7 +75,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         let disableHotCornerBox = new Gtk.Box({
             spacing: 20,
             orientation: Gtk.Orientation.HORIZONTAL,
-            homogeneous: true,
+            homogeneous: false,
             margin_left: 20,
             margin_top: 0,
             margin_bottom: 5,
@@ -97,7 +97,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         let hidePanelAppsBox = new Gtk.Box({
             spacing: 20,
             orientation: Gtk.Orientation.HORIZONTAL,
-            homogeneous: true,
+            homogeneous: false,
             margin_left: 20,
             margin_top: 5,
             margin_bottom: 5,
@@ -124,7 +124,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         let hidePanelMenuBox = new Gtk.Box({
             spacing: 20,
             orientation: Gtk.Orientation.HORIZONTAL,
-            homogeneous: true,
+            homogeneous: false,
             margin_left: 20,
             margin_top: 5,
             margin_bottom: 0,
@@ -147,11 +147,14 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         hidePanelMenuBox.add(hidePanelMenuLabel);
         hidePanelMenuBox.add(hidePanelMenuSwitch);
 
+        let panelMenuBox = new Gtk.Box({
+            orientation: Gtk.Orientation.VERTICAL
+        });
 
         let disableMenuHotSpotBox = new Gtk.Box({
             spacing: 20,
             orientation: Gtk.Orientation.HORIZONTAL,
-            homogeneous: true,
+            homogeneous: false,
             margin_left: 20,
             margin_top: 0,
             margin_bottom: 5,
@@ -166,20 +169,57 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             this.settings.set_boolean('disable-panel-menu-hotspot', check.get_active());
         }));
 
-        this.settings.bind('hide-panel-menu', disableMenuHotSpotBox, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
         disableMenuHotSpotBox.add(disableMenuHotSpot);
 
+        let disableMenuKeyboardAccelBox = new Gtk.Box({
+            spacing: 20,
+            orientation: Gtk.Orientation.HORIZONTAL,
+            homogeneous: false,
+            margin_left: 20,
+            margin_top: 0,
+            margin_bottom: 5,
+            margin_right: 10
+        });
+        let disableMenuKeyboardAccel = new Gtk.CheckButton({
+            label: _("Disable Menu button keyboard accelerator"),
+            margin_left: 20
+        });
+        disableMenuKeyboardAccel.set_active(this.settings.get_boolean('disable-panel-menu-keyboard'));
+        disableMenuKeyboardAccel.connect('toggled', Lang.bind(this, function(check) {
+            this.settings.set_boolean('disable-panel-menu-keyboard', check.get_active());
+        }));
+
+        let keyboardAccelEntry = new Gtk.Entry();
+        keyboardAccelEntry.set_width_chars(20);
+        keyboardAccelEntry.set_text(this.settings.get_strv('panel-menu-keyboard-accelerator')[0]);
+        keyboardAccelEntry.connect('changed', Lang.bind(this, function(entry) {
+            let [key, mods] = Gtk.accelerator_parse(entry.get_text());
+            if(Gtk.accelerator_valid(key, mods)) {
+                keyboardAccelEntry["secondary-icon-name"] = null;
+                keyboardAccelEntry["secondary-icon-tooltip-text"] = null;
+                let shortcut = Gtk.accelerator_name(key, mods);
+                this.settings.set_strv('panel-menu-keyboard-accelerator', [shortcut]);
+            } else {
+                keyboardAccelEntry["secondary-icon-name"] = "dialog-warning-symbolic";
+                keyboardAccelEntry["secondary-icon-tooltip-text"] = _("Invalid accelerator. Try F12, <Super>space, <Ctrl><Alt><Shift>a, etc.");
+            }
+        }));
+
+        this.settings.bind('hide-panel-menu', panelMenuBox, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
+        this.settings.bind('disable-panel-menu-keyboard', keyboardAccelEntry, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
+        
+        disableMenuKeyboardAccelBox.add(disableMenuKeyboardAccel);
+        disableMenuKeyboardAccelBox.add(keyboardAccelEntry);
+        panelMenuBox.add(disableMenuHotSpotBox);
+        panelMenuBox.add(disableMenuKeyboardAccelBox);
 
         panelSettings.add(panelSettingsTitle);
         panelSettings.add(hidePanelViewBox);
         panelSettings.add(disableHotCornerBox);
         panelSettings.add(hidePanelAppsBox);
         panelSettings.add(hidePanelMenuBox);
-        panelSettings.add(disableMenuHotSpotBox);
+        panelSettings.add(panelMenuBox);
 
-
-        /* FAVORITES SETTINGS */
-        
 
         /* APPS DISPLAY SETTINGS */
 
@@ -199,7 +239,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         let startupAppsDisplayBox = new Gtk.Box({
             spacing: 20,
             orientation: Gtk.Orientation.HORIZONTAL,
-            homogeneous: true,
+            homogeneous: false,
             margin_left: 20,
             margin_top: 5,
             margin_bottom: 5,
@@ -223,13 +263,13 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         let startupViewModeBox = new Gtk.Box({
             spacing: 20,
             orientation: Gtk.Orientation.HORIZONTAL,
-            homogeneous: true,
+            homogeneous: false,
             margin_left: 20,
             margin_top: 5,
             margin_bottom: 5,
             margin_right: 10
         });
-        let startupViewModeLabel = new Gtk.Label({label: _("Default applications view mode"), hexpand:true, xalign:0});
+        let startupViewModeLabel = new Gtk.Label({label: _("Default view mode for applications"), hexpand:true, xalign:0});
         let startupViewModeCombo = new Gtk.ComboBoxText({halign:Gtk.Align.END});
             startupViewModeCombo.set_size_request(120, -1);
             startupViewModeCombo.append_text(_('List'));
@@ -245,7 +285,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         let categorySelectMethodBox = new Gtk.Box({
             spacing: 20,
             orientation: Gtk.Orientation.HORIZONTAL,
-            homogeneous: true,
+            homogeneous: false,
             margin_left: 20,
             margin_top: 5,
             margin_bottom: 5,
@@ -264,12 +304,40 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         categorySelectMethodBox.add(categorySelectMethodLabel);
         categorySelectMethodBox.add(categorySelectMethodCombo);
 
+
         let iconSizes = [16, 20, 24, 28, 32, 48, 64];
+
+        let favoritesIconSizeBox = new Gtk.Box({
+            spacing: 20,
+            orientation: Gtk.Orientation.HORIZONTAL,
+            homogeneous: false,
+            margin_left: 20,
+            margin_top: 5,
+            margin_bottom: 5,
+            margin_right: 10
+        });
+        let favoritesIconSizeLabel = new Gtk.Label({label: _("Size of Favorites panel icons"), hexpand:true, xalign:0});
+        let favoritesIconSizeCombo = new Gtk.ComboBoxText({halign:Gtk.Align.END});
+            favoritesIconSizeCombo.set_size_request(120, -1);
+            favoritesIconSizeCombo.append_text('16');
+            favoritesIconSizeCombo.append_text('20');
+            favoritesIconSizeCombo.append_text('24');
+            favoritesIconSizeCombo.append_text('28');
+            favoritesIconSizeCombo.append_text('32');
+            favoritesIconSizeCombo.append_text('48');
+            favoritesIconSizeCombo.append_text('64');
+            favoritesIconSizeCombo.set_active(iconSizes.indexOf(this.settings.get_int('favorites-icon-size')));
+            favoritesIconSizeCombo.connect('changed', Lang.bind (this, function(widget) {
+                    this.settings.set_int('favorites-icon-size', iconSizes[widget.get_active()]);
+            }));
+
+        favoritesIconSizeBox.add(favoritesIconSizeLabel);
+        favoritesIconSizeBox.add(favoritesIconSizeCombo);
         
         let appsListIconSizeBox = new Gtk.Box({
             spacing: 20,
             orientation: Gtk.Orientation.HORIZONTAL,
-            homogeneous: true,
+            homogeneous: false,
             margin_left: 20,
             margin_top: 5,
             margin_bottom: 5,
@@ -296,7 +364,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         let appsGridIconSizeBox = new Gtk.Box({
             spacing: 20,
             orientation: Gtk.Orientation.HORIZONTAL,
-            homogeneous: true,
+            homogeneous: false,
             margin_left: 20,
             margin_top: 5,
             margin_bottom: 5,
@@ -319,11 +387,13 @@ const GnoMenuPreferencesWidget = new GObject.Class({
 
         appsGridIconSizeBox.add(appsGridIconSizeLabel);
         appsGridIconSizeBox.add(appsGridIconSizeCombo);
+
         
         appsSettings.add(appsSettingsTitle);
         appsSettings.add(startupAppsDisplayBox);
         appsSettings.add(startupViewModeBox);
         appsSettings.add(categorySelectMethodBox);
+        appsSettings.add(favoritesIconSizeBox);
         appsSettings.add(appsListIconSizeBox);
         appsSettings.add(appsGridIconSizeBox);
 

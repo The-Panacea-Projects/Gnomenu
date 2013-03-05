@@ -22,6 +22,7 @@ const Clutter = imports.gi.Clutter;
 const St = imports.gi.St;
 const Shell = imports.gi.Shell;
 const Pango = imports.gi.Pango;
+const Meta = imports.gi.Meta;
 
 const Mainloop = imports.mainloop;
 const Lang = imports.lang;
@@ -122,8 +123,8 @@ const FavoriteButton = new Lang.Class({
         let style = (gsVersion[1] > 4) ? 'popup-menu-item gnomenu-favorite-button' : 'gnomenu-favorite-button';
         this.actor = new St.Button({ reactive: true, style_class: style, x_align: St.Align.MIDDLE, y_align: St.Align.START });
         this.actor._delegate = this;
-        
-        let iconSize = 32;
+        let iconSize = (settings.get_int('favorites-icon-size') > 0) ? settings.get_int('favorites-icon-size') : 32;        
+
         this.icon = this._app.create_icon_texture(iconSize);
         //this.label = new St.Label({ text: app.get_name(), style_class: 'favorite-button-label' });
 
@@ -1849,7 +1850,11 @@ const GnoMenuButton = new Lang.Class({
         this.appsButton = null;
         if (_DEBUG_) global.log("GnoMenu: _clearAll destroyed apps button");
         
-        if (this.appsMenuButton) this.appsMenuButton.destroy();
+        if (this.appsMenuButton) {
+            // Unbind menu accelerator key
+            global.display.remove_keybinding('panel-menu-keyboard-accelerator');
+            this.appsMenuButton.destroy();
+        }
         this.appsMenuButton = null;
         if (_DEBUG_) global.log("GnoMenu: _clearAll destroyed menu button");
     },
@@ -1882,6 +1887,18 @@ const GnoMenuButton = new Lang.Class({
                 this._hotspot.connect('enter-event', Lang.bind(this, this._onAppsMenuButtonHotSpotEntered));
                 this._hotspotId = this._hotspot.connect('realize', Lang.bind(this, function(){}));
                 if (_DEBUG_) global.log("GnoMenu: _display initialized menu hotspot");
+            }
+
+            // Bind menu accelerator key
+            if (!settings.get_boolean('disable-panel-menu-keyboard')) {
+                global.display.add_keybinding('panel-menu-keyboard-accelerator', settings, Meta.KeyBindingFlags.NONE, 
+                    Lang.bind(this, function() {
+                        if (this.appsMenuButton) {
+                            if (!this.appsMenuButton.menu.isOpen)
+                                this.appsMenuButton.menu.toggle();
+                        }
+                    })
+                );
             }
         }
         
@@ -2261,7 +2278,11 @@ const GnoMenuButton = new Lang.Class({
         settings.connect('changed::hide-panel-menu', Lang.bind(this, this.refresh));
         settings.connect('changed::disable-panel-view-hotcorner', Lang.bind(this, this.refresh));
         settings.connect('changed::disable-panel-menu-hotspot', Lang.bind(this, this.refresh));
+        settings.connect('changed::disable-panel-menu-keyboard', Lang.bind(this, this.refresh));        
         settings.connect('changed::category-selection-method', Lang.bind(this, function() {
+            if (this.appsMenuButton) this.appsMenuButton.refresh();
+        }));
+        settings.connect('changed::favorites-icon-size', Lang.bind(this, function() {
             if (this.appsMenuButton) this.appsMenuButton.refresh();
         }));
     },
@@ -2318,7 +2339,6 @@ function enable() {
     } else {
         Main.panel._leftBox.insert_child_at_index(GnoMenu.actor, 0);
     }
-
 }
 
 function disable() {

@@ -40,6 +40,16 @@
       <summary>Disable the menu button hot spot</summary>
       <description>Disable the menu button hot spot</description>
     </key>
+    <key type="b" name="disable-panel-menu-keyboard">
+      <default>false</default>
+      <summary>Disable the menu button keyboard shortcut</summary>
+      <description>Disable the menu button keyboard shortcut</description>
+    </key>
+    <key type="as" name="panel-menu-keyboard-accelerator">
+        <default><![CDATA[['F2']]]></default>
+      <summary>Disable the menu button keyboard shortcut</summary>
+      <description>Disable the menu button keyboard shortcut</description>
+    </key>
     <key enum="org.gnome.shell.extensions.gnomenu.viewMode" name="startup-view-mode">
       <default>'Grid'</default>
       <summary>Startup applications view mode</summary>
@@ -54,6 +64,11 @@
       <default>'Hover'</default>
       <summary>Method of selecting categories</summary>
       <description>Method of selecting categories</description>
+    </key>
+    <key type="i" name="favorites-icon-size">
+      <default>32</default>
+      <summary>Favorites menu panel icon size</summary>
+      <description>Favorites menu panel icon size</description>
     </key>
     <key type="i" name="apps-list-icon-size">
       <default>28</default>
