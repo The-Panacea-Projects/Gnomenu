@@ -432,28 +432,28 @@ const PanelMenuButton = new Lang.Class({
 
     _loadCategories: function(dir, root) {
         var rootDir = root;
-        if (_DEBUG_) global.log("_loadCategories: dir="+dir.get_menu_id()+" root="+rootDir);
+        //if (_DEBUG_) global.log("_loadCategories: dir="+dir.get_menu_id()+" root="+rootDir);
         var iter = dir.iter();
         var nextType;
         while ((nextType = iter.next()) != GMenu.TreeItemType.INVALID) {
             if (nextType == GMenu.TreeItemType.ENTRY) {
-                if (_DEBUG_) global.log("_loadCategories: TreeItemType.ENTRY");
+                //if (_DEBUG_) global.log("_loadCategories: TreeItemType.ENTRY");
                 var entry = iter.get_entry();
                 if (!entry.get_app_info().get_nodisplay()) {
-                    if (_DEBUG_) global.log("_loadCategories: entry valid");
+                    //if (_DEBUG_) global.log("_loadCategories: entry valid");
                     var app = Shell.AppSystem.get_default().lookup_app_by_tree_entry(entry);
                     if (rootDir) {
-                        if (_DEBUG_) global.log("_loadCategories: push root.get_menu_id = "+rootDir.get_menu_id());
+                        //if (_DEBUG_) global.log("_loadCategories: push root.get_menu_id = "+rootDir.get_menu_id());
                         if (rootDir.get_menu_id())
                             this.applicationsByCategory[rootDir.get_menu_id()].push(app);
                     } else {
-                        if (_DEBUG_) global.log("_loadCategories: push dir.get_menu_id = "+dir.get_menu_id());
+                        //if (_DEBUG_) global.log("_loadCategories: push dir.get_menu_id = "+dir.get_menu_id());
                         if (dir.get_menu_id())
                             this.applicationsByCategory[dir.get_menu_id()].push(app);
                     }
                 }
             } else if (nextType == GMenu.TreeItemType.DIRECTORY) {
-                if (_DEBUG_) global.log("_loadCategories: TreeItemType.DIRECTORY");
+                //if (_DEBUG_) global.log("_loadCategories: TreeItemType.DIRECTORY");
                 if (rootDir) {
                     this._loadCategories(iter.get_directory(), rootDir);
                 } else {
@@ -1795,20 +1795,6 @@ const GnoMenuButton = new Lang.Class({
         this.actor = new St.BoxLayout({ name: 'gnomenuPanelBox', style_class: 'gnomenu-panel-box' });
         this.actor.connect('notify::allocation', Lang.bind(this, this._onGnoMenuPanelButtonAllocate));
 
-        // Set default gnomenu stylesheet
-        this._previousStylesheet = null;
-        this._defaultStylesheet = null;
-        let themeSelected = "default";
-        let filename = 'gnomenu.css';
-        if (gsVersion[1] < 6)
-            filename = 'gnomenu-gs34.css';
-        
-        let defaultStylesheet = GLib.build_filenamev([Me.path, 'themes', themeSelected, filename]);
-        if (GLib.file_test(defaultStylesheet, GLib.FileTest.EXISTS)) {
-            this._defaultStylesheet = defaultStylesheet;
-        }
-
-        this._changeStylesheet();
         this._display();
     },
     
@@ -2051,36 +2037,44 @@ const GnoMenuButton = new Lang.Class({
     _onStyleChanged: function() {
         if (_DEBUG_) global.log("_onStyleChanged");
         let ret = this._changeStylesheet();
-        
-        if (ret) {
-            if (_DEBUG_) global.log("_onStyleChanged ret true - actors grabbing_key_focus");
-            if (this.appsMenuButton) this.appsMenuButton.actor.grab_key_focus();
-            if (this.viewButton) this.viewButton.actor.grab_key_focus();
-            if (this.appsButton) this.appsButton.actor.grab_key_focus();
-            if (this.actor) this.actor.grab_key_focus();
-            global.stage.set_key_focus(null);
-        }
+        //if (ret) {
+            //if (_DEBUG_) global.log("_onStyleChanged ret true - actors grabbing_key_focus");
+            //if (this.appsMenuButton) this.appsMenuButton.actor.grab_key_focus();
+            //if (this.viewButton) this.viewButton.actor.grab_key_focus();
+            //if (this.appsButton) this.appsButton.actor.grab_key_focus();
+            //if (this.actor) this.actor.grab_key_focus();
+            //global.stage.set_key_focus(null);
+        //}
     },
 
     _changeStylesheet: function() {
         if (_DEBUG_) global.log("_changeStylesheet");
-        // Get user theme stylesheet for new theme
+        let filename = 'gnomenu.css';
+        if (gsVersion[1] < 6)
+            filename = 'gnomenu-gs34.css';
+
+        // Get new theme stylesheet
         let themeStylesheet = Main._defaultCssStylesheet;
         if (Main._cssStylesheet != null)
             themeStylesheet = Main._cssStylesheet;
 
         // Get theme directory
         let themeDirectory = GLib.path_get_dirname(themeStylesheet);
-        if (_DEBUG_) global.log("new theme = "+themeDirectory);
+        if (_DEBUG_) global.log("new theme = "+themeStylesheet);
         
         // Test for gnomenu stylesheet
-        let newStylesheet = themeDirectory + '/extensions/gnomenu.css';
+        let newStylesheet = themeDirectory + '/extensions/' + filename;
         if (!GLib.file_test(newStylesheet, GLib.FileTest.EXISTS)) {
             if (_DEBUG_) global.log("Theme doesn't support gnomenu .. use default stylesheet");
-            newStylesheet = this._defaultStylesheet;
+            let defaultStylesheet = Gio.File.new_for_path(Me.path + "/themes/default/" + filename);
+            if (defaultStylesheet.query_exists(null)) {
+                newStylesheet = defaultStylesheet.get_path();
+            } else {
+                throw new Error(_("No GnoMenu stylesheet found") + " (extension.js).");
+            }
         }
 
-        if (this._previousStylesheet && this._previousStylesheet == newStylesheet) {
+        if (GnoMenuStylesheet && GnoMenuStylesheet == newStylesheet) {
             if (_DEBUG_) global.log("No change in stylesheet. Exit");
             return false;
         }
@@ -2100,8 +2094,9 @@ const GnoMenuButton = new Lang.Class({
         if (!customStylesheets)
             return false;
 
-        let previousStylesheet = this._previousStylesheet;
-        this._previousStylesheet = newStylesheet;
+        let previousStylesheet = GnoMenuStylesheet;
+        GnoMenuStylesheet = newStylesheet;
+
         let newTheme = new St.Theme ({ application_stylesheet: themeStylesheet });
         for (let i = 0; i < customStylesheets.length; i++) {
             if (customStylesheets[i] != previousStylesheet) {
@@ -2110,148 +2105,13 @@ const GnoMenuButton = new Lang.Class({
         }
 
         if (_DEBUG_) global.log("Removed previous stylesheet");
-        newTheme.load_stylesheet(newStylesheet);
+        newTheme.load_stylesheet(GnoMenuStylesheet);
         if (_DEBUG_) global.log("Added new stylesheet");
         themeContext.set_theme (newTheme);
-        return true;
 
+        return true;
     },
     
-    //// function to load gnomenu stylesheet
-    //_loadGnomenuStylesheet: function() {
-        //if (_DEBUG_) global.log("_loadGnomenuStylesheet");
-        //let currentStylesheet = this._getGnomenuStylesheet();
-        //if (this._previousStylesheet && this._previousStylesheet == currentStylesheet) {
-            //// No change from previous stylesheet loaded
-            //if (_DEBUG_) global.log("_loadGnomenuStylesheet no change from previous stylesheet");
-            //return;
-        //} else {
-            //if (_DEBUG_) global.log("_loadGnomenuStylesheet new stylesheet = "+currentStylesheet);
-            //this._loadCurrentStylesheet(currentStylesheet);
-            
-            //// We set the previous stylesheet to the current one now because the
-            //// _unloadPreviousStylesheet function's workaround has one drawback .. it will
-            //// emit a styleChanged signal causing a loop & segfault crash
-            //let previousStylesheet = this._previousStylesheet;
-            //this._previousStylesheet = currentStylesheet;
-            //if (previousStylesheet) {
-                //this._unloadPreviousStylesheet(previousStylesheet);
-            //}
-        //}    
-    //},
-
-	//// function to get the current active stylesheet
-    //_getGnomenuStylesheet: function() {
-        //if (_DEBUG_) global.log("_getGnomenuStylesheet");
-        //// Get css stylesheet for current theme
-        //let cssStylesheet = Main._defaultCssStylesheet;
-        //if (Main._cssStylesheet != null)
-            //cssStylesheet = Main._cssStylesheet;
-
-        //// Get theme directory
-        //let cssDirectory = GLib.path_get_dirname(cssStylesheet);
-        
-        //// Test for gnomenu stylesheet
-        //let gnomenuStylesheet = cssDirectory + '/extensions/gnomenu.css';
-        //if (GLib.file_test(gnomenuStylesheet, GLib.FileTest.EXISTS)) {
-            //if (_DEBUG_) global.log("Theme supports gnomenu");
-            //return gnomenuStylesheet;
-        //} else {
-            //// Load gnomenu stylesheet from extension /themes
-            //let themeSelected = "default";
-            //let gnomenuExtStylesheet = GLib.build_filenamev([Me.path, 'themes', themeSelected, 'gnomenu.css']);
-            //if (GLib.file_test(gnomenuExtStylesheet, GLib.FileTest.EXISTS)) {
-                //if (_DEBUG_) global.log("Theme doesn't support gnomenu .. load default theme");
-                //return gnomenuExtStylesheet;
-            //}
-        //}
-        //return null;
-    //},
-
-	//// function to unload previous stylesheet
-    //_unloadPreviousStylesheet: function(previousStylesheet) {
-        //if (_DEBUG_) global.log("_unloadPreviousStylesheet "+previousStylesheet);
-        //let cssStylesheet = previousStylesheet;
-        //let themeContext = St.ThemeContext.get_for_stage(global.stage);
-        //if (!themeContext)
-            //return;
-            
-        //if (_DEBUG_) global.log("_unloadPreviousStylesheet themeContext is valid");
-        //let theme = themeContext.get_theme();
-        //if (!theme)
-            //return;
-        
-        //if (_DEBUG_) global.log("_unloadPreviousStylesheet theme is valid");
-        //let customStylesheets = theme.get_custom_stylesheets();
-        //if (!customStylesheets)
-            //return;
-
-        //if (_DEBUG_) global.log("_unloadPreviousStylesheet customStylesheets is valid. Count = "+customStylesheets.length);
-        //// Check if stylesheet already loaded
-        //let found = false;
-        //for (let i = 0; i < customStylesheets.length; i++) {
-            //if (customStylesheets[i] == cssStylesheet) {
-                //found = true;
-                //break;
-            //}
-        //}
-        //if (found) {
-            //if (_DEBUG_) global.log("_unloadPreviousStylesheet previous stylesheet found .. removing it");
-            //theme.unload_stylesheet(cssStylesheet);
-            //// ?? DEAD CODE ?? --------------------------------
-            ////// ISSUE: just trying to unload stylesheet crashes GS36 when returning from lock screen
-            ////// WORKAROUND:
-            ////let gnomeStylesheet = Main._defaultCssStylesheet;
-            ////if (Main._cssStylesheet != null)
-                ////gnomeStylesheet = Main._cssStylesheet;
-
-            ////let newTheme = new St.Theme ({ application_stylesheet: gnomeStylesheet });
-            ////for (let i = 0; i < customStylesheets.length; i++) {
-                ////if (customStylesheets[i] != cssStylesheet) {
-                    ////newTheme.load_stylesheet(customStylesheets[i]);
-                ////}
-            ////}
-
-            ////// This workaround has one drawback .. 
-            ////// it emits a styleChanged signal when the new theme is  set
-            ////themeContext.set_theme (newTheme);
-            //// ------------------------------------------------
-        //}
-    //},
-
-	//// function to load current active stylesheet
-    //_loadCurrentStylesheet: function(currentStylesheet) {
-        //if (_DEBUG_) global.log("_loadCurrentStylesheet");
-        //let cssStylesheet = currentStylesheet;
-        //let themeContext = St.ThemeContext.get_for_stage(global.stage);
-        //if (!themeContext)
-            //return;
-            
-        //if (_DEBUG_) global.log("_loadCurrentStylesheet themeContext is valid");
-        //let theme = themeContext.get_theme();
-        //if (!theme)
-            //return;
-        
-        //if (_DEBUG_) global.log("_loadCurrentStylesheet theme is valid");
-        //let customStylesheets = theme.get_custom_stylesheets();
-        //if (!customStylesheets)
-            //return;
-
-        //if (_DEBUG_) global.log("_loadCurrentStylesheet customStylesheets is valid. Count = "+customStylesheets.length);
-        //// Check if stylesheet already loaded
-        //let found = false;
-        //for (let i = 0; i < customStylesheets.length; i++) {
-            //if (customStylesheets[i] == cssStylesheet) {
-                //found = true;
-                //break;
-            //}
-        //}
-        //if (!found) {
-            //if (_DEBUG_) global.log("_loadCurrentStylesheet theme not found .. loading it");
-            //theme.load_stylesheet(cssStylesheet);
-        //}
-    //},
-
     // handler for when new application installed
     _onAppInstalledChanged: function() {
         if (_DEBUG_) global.log("_onAppInstalledChanged");
@@ -2295,6 +2155,9 @@ const GnoMenuButton = new Lang.Class({
         IconTheme.get_default().disconnect(this._iconsChangedId);
         St.ThemeContext.get_for_stage(global.stage).disconnect(this._themeChangedId);
 
+        // Unbind menu accelerator key
+        global.display.remove_keybinding('panel-menu-keyboard-accelerator');
+
         // Destroy main clutter actor: this should be sufficient
         // From clutter documentation:
         // If the actor is inside a container, the actor will be removed.
@@ -2306,6 +2169,63 @@ const GnoMenuButton = new Lang.Class({
 
 
 
+function loadStylesheet() {
+    if (_DEBUG_) global.log("GnoMenu loadStylesheet");
+    let filename = 'gnomenu.css';
+    if (gsVersion[1] < 6)
+        filename = 'gnomenu-gs34.css';
+
+    // Get current theme stylesheet
+    let themeStylesheet = Main._defaultCssStylesheet;
+    if (Main._cssStylesheet != null)
+        themeStylesheet = Main._cssStylesheet;
+
+    // Get theme directory
+    let themeDirectory = GLib.path_get_dirname(themeStylesheet);
+    
+    // Test for gnomenu stylesheet
+    GnoMenuStylesheet = themeDirectory + '/extensions/' + filename;
+    if (!GLib.file_test(GnoMenuStylesheet, GLib.FileTest.EXISTS)) {
+        if (_DEBUG_) global.log("Theme doesn't support gnomenu .. use default stylesheet");
+        let defaultStylesheet = Gio.File.new_for_path(Me.path + "/themes/default/" + filename);
+        if (defaultStylesheet.query_exists(null)) {
+            GnoMenuStylesheet = defaultStylesheet.get_path();
+        } else {
+            throw new Error(_("No GnoMenu stylesheet found") + " (extension.js).");
+        }
+    }
+
+    let themeContext = St.ThemeContext.get_for_stage(global.stage);
+    if (!themeContext)
+        return false;
+        
+    let theme = themeContext.get_theme();
+    if (!theme)
+        return false;
+
+    // Load gnomenu stylesheet
+    theme.load_stylesheet(GnoMenuStylesheet);
+    return true;
+}
+
+function unloadStylesheet() {
+    if (_DEBUG_) global.log("GnoMenu unloadStylesheet");
+    let themeContext = St.ThemeContext.get_for_stage(global.stage);
+    if (!themeContext)
+        return false;
+        
+    let theme = themeContext.get_theme();
+    if (!theme)
+        return false;
+
+    // Unload gnomenu stylesheet
+    if (GnoMenuStylesheet)
+        theme.unload_stylesheet(GnoMenuStylesheet);
+        
+    GnoMenuStylesheet = null;
+    return true;
+}
+
 
 /* =========================================================================
 /* Extension Enable & Disable
@@ -2313,10 +2233,14 @@ const GnoMenuButton = new Lang.Class({
 
 let GnoMenu;
 let hideDefaultActivitiesButton = true;
+let GnoMenuStylesheet = null;
 
 function enable() {
 
-    if (_DEBUG_) global.log("gnomenu ENABLE");
+    if (_DEBUG_) global.log("GnoMenu ENABLE");
+    // Load stylesheet
+    loadStylesheet();
+
 	// Remove default Activities Button
     if (hideDefaultActivitiesButton) {
         if (gsVersion[1] > 4) {
@@ -2343,7 +2267,10 @@ function enable() {
 
 function disable() {
 
-    if (_DEBUG_) global.log("gnomenu DISABLE");
+    if (_DEBUG_) global.log("GnoMenu DISABLE");
+    // Unload stylesheet
+    unloadStylesheet();
+
 	//Restore default Activities Button
 	if (hideDefaultActivitiesButton) {
         if (gsVersion[1] > 4) {
