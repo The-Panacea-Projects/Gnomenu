@@ -1447,6 +1447,16 @@ const PanelMenuButton = new Lang.Class({
                 this.selectedAppDescription.set_text('');
             }));
         } else {
+            appCategory.actor.connect('enter-event', Lang.bind(this, function() {
+                //appCategory.actor.add_style_pseudo_class('active');
+                this.selectedAppTitle.set_text(appCategory.label.get_text());
+                this.selectedAppDescription.set_text('');
+            }));
+            appCategory.actor.connect('leave-event', Lang.bind(this, function() {
+                //appCategory.actor.remove_style_pseudo_class('active');
+                this.selectedAppTitle.set_text('');
+                this.selectedAppDescription.set_text('');
+            }));
             appCategory.actor.connect('clicked', Lang.bind(this, function() {
                 this._selectCategory(appCategory);
                 this.selectedAppTitle.set_text(appCategory.label.get_text());
@@ -1478,6 +1488,16 @@ const PanelMenuButton = new Lang.Class({
                             this.selectedAppDescription.set_text('');
                         }));
                     } else {
+                        appCategory.actor.connect('enter-event', Lang.bind(this, function() {
+                            //appCategory.actor.add_style_pseudo_class('active');
+                            this.selectedAppTitle.set_text(appCategory.label.get_text());
+                            this.selectedAppDescription.set_text('');
+                        }));
+                        appCategory.actor.connect('leave-event', Lang.bind(this, function() {
+                            //appCategory.actor.remove_style_pseudo_class('active');
+                            this.selectedAppTitle.set_text('');
+                            this.selectedAppDescription.set_text('');
+                        }));
                         appCategory.actor.connect('clicked', Lang.bind(this, function() {
                             this._selectCategory(appCategory);
                             this.selectedAppTitle.set_text(appCategory.label.get_text());
@@ -1506,6 +1526,16 @@ const PanelMenuButton = new Lang.Class({
                 this.selectedAppDescription.set_text('');
             }));
         } else {
+            placesCategory.actor.connect('enter-event', Lang.bind(this, function() {
+                //placesCategory.actor.add_style_pseudo_class('active');
+                this.selectedAppTitle.set_text(placesCategory.label.get_text());
+                this.selectedAppDescription.set_text('');
+            }));
+            placesCategory.actor.connect('leave-event', Lang.bind(this, function() {
+                //placesCategory.actor.remove_style_pseudo_class('active');
+                this.selectedAppTitle.set_text('');
+                this.selectedAppDescription.set_text('');
+            }));
             placesCategory.actor.connect('clicked', Lang.bind(this, function() {
                 this._selectAllPlaces(placesCategory);
                 this.selectedAppTitle.set_text(placesCategory.label.get_text());
@@ -1527,6 +1557,16 @@ const PanelMenuButton = new Lang.Class({
                 this.selectedAppDescription.set_text('');
             }));
         } else {
+            bookmarksCategory.actor.connect('enter-event', Lang.bind(this, function() {
+                //bookmarksCategory.actor.add_style_pseudo_class('active');
+                this.selectedAppTitle.set_text(bookmarksCategory.label.get_text());
+                this.selectedAppDescription.set_text('');
+            }));
+            bookmarksCategory.actor.connect('leave-event', Lang.bind(this, function() {
+                //bookmarksCategory.actor.remove_style_pseudo_class('active');
+                this.selectedAppTitle.set_text('');
+                this.selectedAppDescription.set_text('');
+            }));
             bookmarksCategory.actor.connect('clicked', Lang.bind(this, function() {
                 this._selectBookmarks(bookmarksCategory);
                 this.selectedAppTitle.set_text(bookmarksCategory.label.get_text());
@@ -1548,6 +1588,16 @@ const PanelMenuButton = new Lang.Class({
                 this.selectedAppDescription.set_text('');
             }));
         } else {
+            devicesCategory.actor.connect('enter-event', Lang.bind(this, function() {
+                //devicesCategory.actor.add_style_pseudo_class('active');
+                this.selectedAppTitle.set_text(devicesCategory.label.get_text());
+                this.selectedAppDescription.set_text('');
+            }));
+            devicesCategory.actor.connect('leave-event', Lang.bind(this, function() {
+                //devicesCategory.actor.remove_style_pseudo_class('active');
+                this.selectedAppTitle.set_text('');
+                this.selectedAppDescription.set_text('');
+            }));
             devicesCategory.actor.connect('clicked', Lang.bind(this, function() {
                 this._selectDevices(devicesCategory);
                 this.selectedAppTitle.set_text(devicesCategory.label.get_text());
@@ -1569,6 +1619,16 @@ const PanelMenuButton = new Lang.Class({
                 this.selectedAppDescription.set_text('');
             }));
         } else {
+            recentCategory.actor.connect('enter-event', Lang.bind(this, function() {
+                //recentCategory.actor.add_style_pseudo_class('active');
+                this.selectedAppTitle.set_text(recentCategory.label.get_text());
+                this.selectedAppDescription.set_text('');
+            }));
+            recentCategory.actor.connect('leave-event', Lang.bind(this, function() {
+                //recentCategory.actor.remove_style_pseudo_class('active');
+                this.selectedAppTitle.set_text('');
+                this.selectedAppDescription.set_text('');
+            }));
             recentCategory.actor.connect('clicked', Lang.bind(this, function() {
                 this._selectRecent(recentCategory);
                 this.selectedAppTitle.set_text(recentCategory.label.get_text());
