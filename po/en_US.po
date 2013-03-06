@@ -85,13 +85,13 @@ msgstr ""
 
 #: prefs.js
 
-msgid "<b>Top Panel Settings</b>"
+msgid "<b>Panel Settings</b>"
 msgstr ""
 
 msgid "Remove View button from panel"
 msgstr ""
 
-msgid "Disable Hot Corner"
+msgid "Disable View button hot corner"
 msgstr ""
 
 msgid "Remove Apps button from panel"
@@ -100,7 +100,7 @@ msgstr ""
 msgid "Remove Menu button from panel"
 msgstr ""
 
-msgid "Disable Menu button hot border"
+msgid "Disable Menu button hot spot"
 msgstr ""
 
 msgid "Disable Menu button keyboard shortcut"

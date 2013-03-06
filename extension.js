@@ -1514,27 +1514,6 @@ const PanelMenuButton = new Lang.Class({
         }
         this.placesBox.add_actor(placesCategory.actor);
         
-        //// Load computer category
-        //let computerCategory = new CategoryListButton(null, _('Computer'));
-        //if (settings.get_enum('category-selection-method') == selectMethod.HOVER ) {
-            //computerCategory.actor.connect('enter-event', Lang.bind(this, function() {
-                //this._selectComputer(computerCategory);
-                //this.selectedAppTitle.set_text(computerCategory.label.get_text());
-                //this.selectedAppDescription.set_text('');
-            //}));
-            //computerCategory.actor.connect('leave-event', Lang.bind(this, function() {
-                //this.selectedAppTitle.set_text('');
-                //this.selectedAppDescription.set_text('');
-            //}));
-        //} else {
-            //computerCategory.actor.connect('clicked', Lang.bind(this, function() {
-                //this._selectComputer(computerCategory);
-                //this.selectedAppTitle.set_text(computerCategory.label.get_text());
-                //this.selectedAppDescription.set_text('');
-            //}));
-        //}
-        //this.placesBox.add_actor(computerCategory.actor);
-        
         // Load bookmarks category
         let bookmarksCategory = new CategoryListButton(null, _('Bookmarks'));
         if (settings.get_enum('category-selection-method') == selectMethod.HOVER ) {

@@ -38,7 +38,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         });
 
         let panelSettingsTitle = new Gtk.Label({
-            label: _("<b>Top Panel Settings</b>"),
+            label: _("<b>Panel Settings</b>"),
             use_markup: true,
             xalign: 0,
             margin_top: 5,
@@ -82,7 +82,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             margin_right: 10
         });
         let disableHotCorner = new Gtk.CheckButton({
-            label: _("Disable Hot Corner"),
+            label: _("Disable View button hot corner"),
             margin_left: 20
         });
         disableHotCorner.set_active(this.settings.get_boolean('disable-panel-view-hotcorner'));
@@ -161,7 +161,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             margin_right: 10
         });
         let disableMenuHotSpot = new Gtk.CheckButton({
-            label: _("Disable Menu button hot border"),
+            label: _("Disable Menu button hot spot"),
             margin_left: 20
         });
         disableMenuHotSpot.set_active(this.settings.get_boolean('disable-panel-menu-hotspot'));
