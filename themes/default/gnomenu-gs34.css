@@ -21,7 +21,7 @@
 }
 
 .gnomenu-menu-top-pane {
-         padding: 0px 0px 10px 0px;
+         padding: 0px 0px 20px 0px;
 }
 
 .gnomenu-menu-bottom-pane {
@@ -37,13 +37,14 @@
 }
 
 .gnomenu-user-group-button {
+         border-width: 1px;
          padding: 4px 10px;
 }
 
 .gnomenu-user-group-button:hover {
 	 background-gradient-direction: vertical;
-	 background-gradient-start: rgba(119,119,119,1.0);
-	 background-gradient-end: rgba(119,119,119,0.9);
+	 background-gradient-start: rgba(119,119,119,0.7);
+	 background-gradient-end: rgba(119,119,119,0.8);
          border-radius: 5px 5px 0px 0px;
 }
 
@@ -60,13 +61,14 @@
 }
 
 .gnomenu-view-mode-button {
+         border-width: 1px;
          padding: 4px 10px;
 }
 
 .gnomenu-view-mode-button:hover {
 	 background-gradient-direction: vertical;
-	 background-gradient-start: rgba(119,119,119,1.0);
-	 background-gradient-end: rgba(119,119,119,0.9);
+	 background-gradient-start: rgba(119,119,119,0.7);
+	 background-gradient-end: rgba(119,119,119,0.8);
          border-radius: 15px;
 }
 
@@ -80,7 +82,7 @@
 	 box-shadow: inset 0px 0px 1px 1px rgba(255,255,255,0.06);
          border-radius: 0px 7px 0px 7px;
          border: 2px solid #888a85;
-         padding: 4px;
+         padding: 2px ;
 }
 
 .gnomenu-favorites-box {
@@ -89,14 +91,16 @@
 }
 
 .gnomenu-favorite-button {
+         border-width: 1px;
          border-radius: 4px;
-         padding: 8px;    
+         padding: 8px 10px;    
 }
 
 .gnomenu-favorite-button:hover {
+         border-width: 1px;
 	 background-gradient-direction: vertical;
-	 background-gradient-start: rgba(119,119,119,1.0);
-	 background-gradient-end: rgba(119,119,119,0.9);
+	 background-gradient-start: rgba(119,119,119,0.7);
+	 background-gradient-end: rgba(119,119,119,0.8);
 }
 
 
@@ -105,11 +109,15 @@
 }
 
 .gnomenu-categories-box {
+         font-size: 14px;
+         height: 332px;
          padding:  0px 10px 0px 0px;
-        border-image: url("b-panel-r2.png") 10 10;
+         border-image: url("b-panel-r2.png") 10 10;
+         spacing: 2px;
 }
 
 .gnomenu-category-button {
+         border-width: 1px;
          padding: 7px;
          font-weight: normal;    
 }
@@ -120,13 +128,13 @@
 .gnomenu-category-button:hover,
 .gnomenu-category-button-selected {
 	 background-gradient-direction: vertical;
-	 background-gradient-start: rgba(119,119,119,1.0);
-	 background-gradient-end: rgba(119,119,119,0.9);
+	 background-gradient-start: rgba(119,119,119,0.7);
+	 background-gradient-end: rgba(119,119,119,0.8);
          border-radius: 4px;
 }
 
 .gnomenu-places-box {
-         padding:  0px 10px 10px 0px;
+         padding:  0px 10px 8px 0px;
          border-image: url("b-panel-r2.png") 10 10;
 }
 
@@ -140,18 +148,19 @@
 }
 
 .gnomenu-power-group-button {
+         border-width: 1px;
          padding: 4px 10px;
 }
 
 .gnomenu-power-group-button:hover {
 	 background-gradient-direction: vertical;
-	 background-gradient-start: rgba(119,119,119,1.0);
-	 background-gradient-end: rgba(119,119,119,0.9);
+	 background-gradient-start: rgba(119,119,119,0.7);
+	 background-gradient-end: rgba(119,119,119,0.8);
          border-radius: 5px 0px 5px 0px;
 }
 
 .gnomenu-applications-scrollbox {
-         width: 590px;
+         width: 600px;
          border-image: url("b-panel-r.png") 10 10;
          padding-right: 2px;
 }
@@ -168,8 +177,9 @@
 }
 
 .gnomenu-application-button {
+         border-width: 1px;
          border-radius: 4px;
-         width: 502px;
+         width: 512px;
          padding: 3px 10px;    
 }
 
@@ -180,8 +190,8 @@
 .gnomenu-application-button:hover,
 .gnomenu-application-button-selected {
 	 background-gradient-direction: vertical;
-	 background-gradient-start: rgba(119,119,119,1.0);
-	 background-gradient-end: rgba(119,119,119,0.9);
+	 background-gradient-start: rgba(119,119,119,0.7);
+	 background-gradient-end: rgba(119,119,119,0.8);
 }
 
 .gnomenu-applications-grid-box {
@@ -192,9 +202,10 @@
 }
 
 .gnomenu-application-grid-button {
+         border-width: 1px;
          border-radius: 5px;
          width: 100px;
-         height: 84px;
+         height: 88px;
          padding: 7px;
 }
 
@@ -206,8 +217,8 @@
 .gnomenu-application-grid-button:hover,
 .gnomenu-application-grid-button-selected {
 	 background-gradient-direction: vertical;
-	 background-gradient-start: rgba(119,119,119,1.0);
-	 background-gradient-end: rgba(119,119,119,0.9);
+	 background-gradient-start: rgba(119,119,119,0.7);
+	 background-gradient-end: rgba(119,119,119,0.8);
          padding: 7px;
 }
 
