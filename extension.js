@@ -11,7 +11,7 @@
  * ========================================================================================================
  */
 
-const _DEBUG_ = true;
+const _DEBUG_ = false;
 
 const IconTheme = imports.gi.Gtk.IconTheme;
 const GLib = imports.gi.GLib;
@@ -2077,7 +2077,6 @@ const GnoMenuButton = new Lang.Class({
         if (_DEBUG_) global.log("_onStyleChanged");
         let ret = this._changeStylesheet();
         //if (ret) {
-            //if (_DEBUG_) global.log("_onStyleChanged ret true - actors grabbing_key_focus");
             //if (this.appsMenuButton) this.appsMenuButton.actor.grab_key_focus();
             //if (this.viewButton) this.viewButton.actor.grab_key_focus();
             //if (this.appsButton) this.appsButton.actor.grab_key_focus();
