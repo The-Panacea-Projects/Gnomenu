@@ -226,7 +226,7 @@ const PlacesManager = new Lang.Class({
                 continue;
 
             let kind = 'devices';
-            if (volumes.get_identifier('class').indexOf('network') >= 0)
+            if (volumes[i].get_identifier('class').indexOf('network') >= 0)
                 kind = 'network';
 
             let mount = volumes[i].get_mount();
