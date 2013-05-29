@@ -60,7 +60,7 @@ const ThumbnailState = {
 const myWorkspaceThumbnail = new Lang.Class({
     Name: 'GnoMenu.myWorkspaceThumbnail',
     Extends: WorkspaceThumbnail.WorkspaceThumbnail,
-    
+
     _init : function(metaWorkspace) {
         this.parent(metaWorkspace);
     },
@@ -120,11 +120,12 @@ const myThumbnailsBox = new Lang.Class({
     Name: 'GnoMenu.myThumbnailsBox',
     Extends: WorkspaceThumbnail.ThumbnailsBox,
 
-    _init: function(gsVersion, settings) {
+    _init: function(gsVersion, settings, filler) {
         if (_DEBUG_) global.log("myThumbnailsBox: init");
-        this._actualThumbnailWidth = 0;
         this._gsCurrentVersion = gsVersion;
         this._mySettings = settings;
+        this._thumbnailsBoxFiller = filler;
+        this._actualThumbnailWidth = 0;
         if (this._gsCurrentVersion[1] < 7) {
             this.parent();
         } else {
@@ -428,7 +429,7 @@ const myThumbnailsBox = new Lang.Class({
         if (this._thumbnails.length == 0)
             return;
 
-        global.log("preferredWidth - actualThumbnailWidth = "+this._actualThumbnailWidth);
+        global.log("myThumbnailsBox: _getPreferredWidth - actualThumbnailWidth = "+this._actualThumbnailWidth);
         let scale;
         if (this._actualThumbnailWidth > 0) {
             scale = this._actualThumbnailWidth / this._porthole.width;
@@ -457,7 +458,7 @@ const myThumbnailsBox = new Lang.Class({
         let nWorkspaces = global.screen.n_workspaces;
         let totalSpacing = (nWorkspaces - 1) * spacing;
 
-        global.log("preferredHeight - actualThumbnailWidth = "+this._actualThumbnailWidth);
+        global.log("myThumbnailsBox: _getPreferredHeight - actualThumbnailWidth = "+this._actualThumbnailWidth);
         let scale;
         if (this._actualThumbnailWidth > 0) {
             scale = this._actualThumbnailWidth / this._porthole.width;
@@ -477,7 +478,8 @@ const myThumbnailsBox = new Lang.Class({
         // See comment about this._background in _init()
         let themeNode = this._background.get_theme_node();
         let contentBox = themeNode.get_content_box(box);
-        global.log("contentBox h ="+(contentBox.y2-contentBox.y1)+" w = "+(contentBox.x2-contentBox.x1));
+        global.log("myThumbnailsBox: _allocate - backgroundNode contentBox h ="+(contentBox.y2-contentBox.y1)+" w = "+(contentBox.x2-contentBox.x1));
+        //this._thumbnailsBoxFiller.height = contentBox.y2 - contentBox.y1;
         this._actualThumbnailWidth = contentBox.x2 - contentBox.x1;
         if (this._thumbnails.length == 0) // not visible
             return;
@@ -531,7 +533,7 @@ const myThumbnailsBox = new Lang.Class({
         }
         childBox.y1 = box.y1;
         childBox.y2 = box.y2;
-        global.log("childBox height = "+(childBox.y2 - childBox.y1));
+        global.log("myThumbnailsBox: _allocate - childBox height = "+(childBox.y2 - childBox.y1));
 
         this._background.allocate(childBox, flags);
 
@@ -545,6 +547,8 @@ const myThumbnailsBox = new Lang.Class({
         let indicatorBottomFullBorder = indicatorThemeNode.get_padding(St.Side.BOTTOM) + indicatorThemeNode.get_border_width(St.Side.BOTTOM);
         let indicatorLeftFullBorder = indicatorThemeNode.get_padding(St.Side.LEFT) + indicatorThemeNode.get_border_width(St.Side.LEFT);
         let indicatorRightFullBorder = indicatorThemeNode.get_padding(St.Side.RIGHT) + indicatorThemeNode.get_border_width(St.Side.RIGHT);
+
+        this._thumbnailsBoxFiller.height = (contentBox.y2 - contentBox.y1) + indicatorTopFullBorder + indicatorBottomFullBorder;
 
         let y = contentBox.y1;
 
