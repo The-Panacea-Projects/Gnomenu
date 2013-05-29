@@ -42,6 +42,7 @@ const AppDisplay = imports.ui.appDisplay;
 
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
+const MyThumbnailsBox = Me.imports.myThumbnailsBox;
 const Convenience = Me.imports.convenience;
 let settings = Convenience.getSettings('org.gnome.shell.extensions.gnomenu');
 
@@ -312,6 +313,15 @@ const PanelButton = new Lang.Class({
  * @desc    A top panel button the toggles a popup menu
  * @impl    Used for menu button on top panel
  * ========================================================================= */
+const CategoryWorkspaceMode = {
+    CATEGORY: 0,
+    WORKSPACE: 1
+};
+
+const ApplicationsViewMode = {
+    LIST: 0,
+    GRID: 1
+};
 
 const PanelMenuButton = new Lang.Class({
     Name: 'GnoMenu.PanelMenuButton',
@@ -350,6 +360,7 @@ const PanelMenuButton = new Lang.Class({
         this._selectedItemIndex = null;
         this._previousSelectedItemIndex = null;
         this._activeContainer = null;
+        this._categoryWorkspaceMode = CategoryWorkspaceMode.CATEGORY;
 
         this._session = new GnomeSession.SessionManager();
         this.recentManager = Gtk.RecentManager.get_default();
@@ -360,6 +371,19 @@ const PanelMenuButton = new Lang.Class({
         }
 
         this._display();
+
+        //this._workspaceAddedId = global.screen.connect('workspace-added', Lang.bind(this, this._workspaceAdded));
+        //this._workspaceRemovedId = global.screen.connect('workspace-removed', Lang.bind(this, this._workspaceRemoved));
+
+    },
+
+    destroy: function() {
+        // disconnect global workspace signals
+        //global.screen.disconnect(this._workspaceAddedId);
+        //global.screen.disconnect(this._workspaceRemovedId);
+
+        // run parent's popupmenu destroy function
+        this.parent();
     },
 
     // Override _onStyleChanged function
@@ -415,10 +439,26 @@ const PanelMenuButton = new Lang.Class({
             // Set height (we also set constraints on scrollboxes
             // Why does height need to be set when already set constraints? because of issue noted below
             // ISSUE: If height isn't set, then popup menu height will expand when application buttons are added
-            let height = this.groupCategoryPlacesPower.height;
+            let height = this.groupCategoryPlacesWorkspacePower.height;
             this.applicationsScrollBox.height = height;
             this.favoritesScrollBox.height = height;
-            this.userGroupBox.width = this.favoritesScrollBox.width + this.groupCategoryPlacesPower.width;
+            this.userGroupBox.width = this.favoritesScrollBox.width + this.groupCategoryPlacesWorkspacePower.width;
+
+            this.thumbnailsBox._createThumbnails();
+            this.thumbnailsBox.actor.set_position(1, 0); // position inside wrapper
+            this.thumbnailsBox.actor.width = this.groupCategoryPlacesWorkspacePower.width - 30;
+            //this.thumbnailsBox._background.height = this.groupCategoryPlaces.height;
+
+            if (this._categoryWorkspaceMode == CategoryWorkspaceMode.CATEGORY) {
+                this.thumbnailsBox.actor.hide();
+                this.groupCategoryPlaces.show();
+                this.thumbnailsBoxFiller.height = 0;
+            } else {
+                this.groupCategoryPlaces.hide();
+                this.thumbnailsBox.actor.show();
+                this.thumbnailsBoxFiller.height = this.thumbnailsBox.actor.height;
+            }
+
         } else {
             this.resetSearch();
             this._clearCategorySelections(this.categoriesBox);
@@ -430,6 +470,8 @@ const PanelMenuButton = new Lang.Class({
                 if (this._menuToggleTimeoutId > 0)
                     Mainloop.source_remove(this._menuToggleTimeoutId);
             }
+
+            this.thumbnailsBox._destroyThumbnails();
         }
     },
 
@@ -440,6 +482,24 @@ const PanelMenuButton = new Lang.Class({
 
     _clearAll: function() {
         this.menu.removeAll();
+    },
+
+    _toggleCategoryWorkspaceMode: function() {
+        if (this._categoryWorkspaceMode == CategoryWorkspaceMode.CATEGORY) {
+            this._categoryWorkspaceMode = CategoryWorkspaceMode.WORKSPACE;
+            this.groupCategoryPlaces.hide();
+            this.thumbnailsBox.actor.show();
+            this.thumbnailsBoxFiller.height = this.thumbnailsBox.actor.height;
+            global.log("thumbnailsBox height = "+this.thumbnailsBox.actor.height+" scrollbox height = "+this.groupCategoryPlacesWorkspaceScrollBox.height);
+        } else {
+            this._categoryWorkspaceMode = CategoryWorkspaceMode.CATEGORY;
+            this.thumbnailsBox.actor.hide();
+            this.groupCategoryPlaces.show();
+            this.thumbnailsBoxFiller.height = 0;
+            global.log("categoryPlaces height = "+this.groupCategoryPlaces.height+" scrollbox height = "+this.groupCategoryPlacesWorkspaceScrollBox.height);
+        }
+
+
     },
 
     _loadCategories: function(dir, root) {
@@ -1247,20 +1307,30 @@ const PanelMenuButton = new Lang.Class({
         // groupCategoryPlaces holds categories and places (packed vertically)
         this.groupCategoryPlaces = new St.BoxLayout({ style_class: 'gnomenu-category-places-box', vertical: true });
 
-        // groupCategoryPlaces ScrollBox
-        this.groupCategoryPlacesScrollBox = new St.ScrollView({ x_fill: true, y_fill: false, y_align: St.Align.START, style_class: 'vfade gnomenu-category-places-scrollbox' });
-        let vscroll = this.groupCategoryPlacesScrollBox.get_vscroll_bar();
+        // groupCategoryPlacesWorkspaceWrapper bin wraps groupCategoryPlaces and workspaces thumbnailsBox
+        this.groupCategoryPlacesWorkspaceWrapper = new St.BoxLayout({ style_class: 'gnomenu-category-places-workspace-wrapper', vertical: false});
+
+        // groupCategoryPlacesWorkspaceScrollBox allows category+places or workspaces to scroll vertically
+        this.groupCategoryPlacesWorkspaceScrollBox = new St.ScrollView({ reactive: true, x_fill: true, y_fill: false, y_align: St.Align.START, style_class: 'vfade gnomenu-category-places-scrollbox' });
+        let vscroll = this.groupCategoryPlacesWorkspaceScrollBox.get_vscroll_bar();
         vscroll.connect('scroll-start', Lang.bind(this, function() {
             this.menu.passEvents = true;
         }));
         vscroll.connect('scroll-stop', Lang.bind(this, function() {
             this.menu.passEvents = false;
         }));
-        this.groupCategoryPlacesScrollBox.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER);
-        this.groupCategoryPlacesScrollBox.set_mouse_scrolling(true);
+        this.groupCategoryPlacesWorkspaceScrollBox.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER);
+        this.groupCategoryPlacesWorkspaceScrollBox.set_mouse_scrolling(true);
+        this.groupCategoryPlacesWorkspaceScrollBox.connect('button-release-event', Lang.bind(this, function(actor, event) {
+            global.log("scrollbox button release event");
+            let button = event.get_button();
+            if (button == 3) { //right click
+                this._toggleCategoryWorkspaceMode();
+            }
+        }));
 
-        // groupCategoryPlacesPower holds categories-places-scrollbox, and power group (packed vertically)
-        this.groupCategoryPlacesPower = new St.BoxLayout({ style_class: 'gnomenu-category-places-power-group-box', vertical: true });
+        // groupCategoryPlacesWorkspacePower holds groupCategoryPlacesWorkspaceScrollbox, and powerGroupBox (packed vertically)
+        this.groupCategoryPlacesWorkspacePower = new St.BoxLayout({ style_class: 'gnomenu-category-places-power-group-box', vertical: true });
 
 
         // UserGroupBox
@@ -1464,6 +1534,9 @@ const PanelMenuButton = new Lang.Class({
             }
         }
 
+
+        // Workspaces thumbnails Box
+        this.thumbnailsBox = new MyThumbnailsBox.myThumbnailsBox(gsVersion, settings);
 
         // CategoriesBox
         this.categoriesBox = new St.BoxLayout({ style_class: 'gnomenu-categories-box', vertical: true });
@@ -1804,18 +1877,25 @@ const PanelMenuButton = new Lang.Class({
         topPane.add(topPaneSpacer2, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         topPane.add(this.searchBox, {expand: true, x_align:St.Align.END, y_align:St.Align.MIDDLE});
 
-        // combine categories, places into one container and then into scrollbox (packed vertically)
+        // wrap groupCategoryPlaces and workspaces and then place into scrollbox (packed vertically)
         this.groupCategoryPlaces.add_actor(this.categoriesBox);
         this.groupCategoryPlaces.add_actor(this.placesBox);
-        this.groupCategoryPlacesScrollBox.add_actor(this.groupCategoryPlaces);
 
-        // combine categories, places, and power group into one container (packed vertically)
-        this.groupCategoryPlacesPower.add_actor(this.groupCategoryPlacesScrollBox);
-        this.groupCategoryPlacesPower.add_actor(this.powerGroupBox);
+        this.thumbnailsBoxFiller = new St.BoxLayout();
+        this.groupCategoryPlacesWorkspaceWrapper.add_actor(this.thumbnailsBoxFiller);
+        this.groupCategoryPlacesWorkspaceWrapper.add_actor(this.thumbnailsBox.actor);
+        this.groupCategoryPlacesWorkspaceWrapper.add_actor(this.groupCategoryPlaces);
+        this.groupCategoryPlacesWorkspaceScrollBox.add_actor(this.groupCategoryPlacesWorkspaceWrapper);
+
+
+        // combine groupCategoryPlacesWorkspaces wrapper, and power group into one container (packed vertically)
+        this.groupCategoryPlacesWorkspacePower.add_actor(this.groupCategoryPlacesWorkspaceScrollBox);
+        this.groupCategoryPlacesWorkspacePower.add_actor(this.powerGroupBox);
 
         // bottomPane packs horizontally
         bottomPane.add_actor(this.favoritesScrollBox);
-        bottomPane.add(this.groupCategoryPlacesPower, {x_fill: false, y_fill: false, x_align:St.Align.START, y_align:St.Align.START});
+        //bottomPane.add(this.groupCategoryPlacesWorkspacePower, {x_fill: false, y_fill: false, x_align:St.Align.START, y_align:St.Align.START});
+        bottomPane.add_actor(this.groupCategoryPlacesWorkspacePower);
         bottomPane.add_actor(this.applicationsScrollBox);
         //bottomPane.add_actor(this.workspacesBox);
 
@@ -1834,8 +1914,8 @@ const PanelMenuButton = new Lang.Class({
 
 
         // Set height constraints on scrollboxes (we also set height when menu toggle)
-        this.applicationsScrollBox.add_constraint(new Clutter.BindConstraint({name: 'constraint', source: this.groupCategoryPlacesPower, coordinate: Clutter.BindCoordinate.HEIGHT, offset: 0}));
-        this.favoritesScrollBox.add_constraint(new Clutter.BindConstraint({name: 'constraint', source: this.groupCategoryPlacesPower, coordinate: Clutter.BindCoordinate.HEIGHT, offset: 0}));
+        this.applicationsScrollBox.add_constraint(new Clutter.BindConstraint({name: 'constraint', source: this.groupCategoryPlacesWorkspacePower, coordinate: Clutter.BindCoordinate.HEIGHT, offset: 0}));
+        this.favoritesScrollBox.add_constraint(new Clutter.BindConstraint({name: 'constraint', source: this.groupCategoryPlacesWorkspacePower, coordinate: Clutter.BindCoordinate.HEIGHT, offset: 0}));
     }
 
 });
