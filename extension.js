@@ -513,7 +513,11 @@ const PanelMenuButton = new Lang.Class({
         // Add icon to button
         let icon = new St.Icon({ gicon: null, style_class: 'system-status-icon' });
         this._box.add_actor(icon);
-        icon.icon_name='start-here';
+        if (settings.get_boolean('custom-panel-menu-icon')) {
+            icon.icon_name = settings.get_strv('custom-panel-menu-icon-name')[0];
+        } else {
+            icon.icon_name='start-here-symbolic';
+        }
 
         // Add label to button
         let label = new St.Label({ text: ' '+_('Menu')});
@@ -2010,46 +2014,46 @@ const PanelMenuButton = new Lang.Class({
                 statusMenu._screenSaverProxy.LockRemote();
             }
         }));
-        let tweakTool = new GroupButton( 'tweak-tool-symbolic', 24, null, {style_class: 'gnomenu-power-group-button'});
-        tweakTool.actor.connect('enter-event', Lang.bind(this, function() {
-            tweakTool.actor.add_style_pseudo_class('active');
-            this.selectedAppTitle.set_text(_('Advanced Settings'));
-            this.selectedAppDescription.set_text('');
-        }));
-        tweakTool.actor.connect('leave-event', Lang.bind(this, function() {
-            tweakTool.actor.remove_style_pseudo_class('active');
-            this.selectedAppTitle.set_text('');
-            this.selectedAppDescription.set_text('');
-        }));
-        tweakTool.actor.connect('button-release-event', Lang.bind(this, function() {
-            // code to launch tweak tool
-            tweakTool.actor.remove_style_pseudo_class('active');
-            this.selectedAppTitle.set_text('');
-            this.selectedAppDescription.set_text('');
-            this.menu.close();
-            let app = Shell.AppSystem.get_default().lookup_app('gnome-tweak-tool.desktop');
-            app.activate();
-        }));
-        let controlCenter = new GroupButton( 'control-center-symbolic', 24, null, {style_class: 'gnomenu-power-group-button'});
-        controlCenter.actor.connect('enter-event', Lang.bind(this, function() {
-            controlCenter.actor.add_style_pseudo_class('active');
-            this.selectedAppTitle.set_text(_('System Settings'));
-            this.selectedAppDescription.set_text('');
-        }));
-        controlCenter.actor.connect('leave-event', Lang.bind(this, function() {
-            controlCenter.actor.remove_style_pseudo_class('active');
-            this.selectedAppTitle.set_text('');
-            this.selectedAppDescription.set_text('');
-        }));
-        controlCenter.actor.connect('button-release-event', Lang.bind(this, function() {
-            // code to launch control center
-            controlCenter.actor.remove_style_pseudo_class('active');
-            this.selectedAppTitle.set_text('');
-            this.selectedAppDescription.set_text('');
-            this.menu.close();
-            let app = Shell.AppSystem.get_default().lookup_app('gnome-control-center.desktop');
-            app.activate();
-        }));
+        //let tweakTool = new GroupButton( 'tweak-tool-symbolic', 24, null, {style_class: 'gnomenu-power-group-button'});
+        //tweakTool.actor.connect('enter-event', Lang.bind(this, function() {
+            //tweakTool.actor.add_style_pseudo_class('active');
+            //this.selectedAppTitle.set_text(_('Advanced Settings'));
+            //this.selectedAppDescription.set_text('');
+        //}));
+        //tweakTool.actor.connect('leave-event', Lang.bind(this, function() {
+            //tweakTool.actor.remove_style_pseudo_class('active');
+            //this.selectedAppTitle.set_text('');
+            //this.selectedAppDescription.set_text('');
+        //}));
+        //tweakTool.actor.connect('button-release-event', Lang.bind(this, function() {
+            //// code to launch tweak tool
+            //tweakTool.actor.remove_style_pseudo_class('active');
+            //this.selectedAppTitle.set_text('');
+            //this.selectedAppDescription.set_text('');
+            //this.menu.close();
+            //let app = Shell.AppSystem.get_default().lookup_app('gnome-tweak-tool.desktop');
+            //app.activate();
+        //}));
+        //let controlCenter = new GroupButton( 'control-center-symbolic', 24, null, {style_class: 'gnomenu-power-group-button'});
+        //controlCenter.actor.connect('enter-event', Lang.bind(this, function() {
+            //controlCenter.actor.add_style_pseudo_class('active');
+            //this.selectedAppTitle.set_text(_('System Settings'));
+            //this.selectedAppDescription.set_text('');
+        //}));
+        //controlCenter.actor.connect('leave-event', Lang.bind(this, function() {
+            //controlCenter.actor.remove_style_pseudo_class('active');
+            //this.selectedAppTitle.set_text('');
+            //this.selectedAppDescription.set_text('');
+        //}));
+        //controlCenter.actor.connect('button-release-event', Lang.bind(this, function() {
+            //// code to launch control center
+            //controlCenter.actor.remove_style_pseudo_class('active');
+            //this.selectedAppTitle.set_text('');
+            //this.selectedAppDescription.set_text('');
+            //this.menu.close();
+            //let app = Shell.AppSystem.get_default().lookup_app('gnome-control-center.desktop');
+            //app.activate();
+        //}));
         let powerGroupBoxSpacer1 = new St.Label({text: ''});
         let powerGroupBoxSpacer2 = new St.Label({text: ''});
         let powerGroupBoxSpacer3 = new St.Label({text: ''});
@@ -2131,9 +2135,6 @@ const PanelMenuButton = new Lang.Class({
 
         // add all to section
         section.actor.add_actor(this.mainBox);
-
-        //// place selectedBox directly into section below mainBox
-        //section.actor.add_actor(this.selectedAppBox);
 
         // add section as menu item
         this.menu.addMenuItem(section);
@@ -2554,6 +2555,8 @@ const GnoMenuButton = new Lang.Class({
         settings.connect('changed::disable-panel-view-hotcorner', Lang.bind(this, this.refresh));
         settings.connect('changed::disable-panel-menu-hotspot', Lang.bind(this, this.refresh));
         settings.connect('changed::disable-panel-menu-keyboard', Lang.bind(this, this.refresh));
+        settings.connect('changed::custom-panel-menu-icon', Lang.bind(this, this.refresh));
+        settings.connect('changed::custom-panel-menu-icon-name', Lang.bind(this, this.refresh));
         settings.connect('changed::category-selection-method', Lang.bind(this, function() {
             if (this.appsMenuButton) this.appsMenuButton.refresh();
         }));

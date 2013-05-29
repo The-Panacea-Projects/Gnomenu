@@ -205,13 +205,45 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             }
         }));
 
-        this.settings.bind('hide-panel-menu', panelMenuBox, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
         this.settings.bind('disable-panel-menu-keyboard', keyboardAccelEntry, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
-        
         disableMenuKeyboardAccelBox.add(disableMenuKeyboardAccel);
         disableMenuKeyboardAccelBox.add(keyboardAccelEntry);
+
+
+        let customMenuIconBox = new Gtk.Box({
+            spacing: 20,
+            orientation: Gtk.Orientation.HORIZONTAL,
+            homogeneous: false,
+            margin_left: 20,
+            margin_top: 0,
+            margin_bottom: 5,
+            margin_right: 10
+        });
+        let customMenuIcon = new Gtk.CheckButton({
+            label: _("Use custom icon for Menu button"),
+            margin_left: 20
+        });
+        customMenuIcon.set_active(this.settings.get_boolean('custom-panel-menu-icon'));
+        customMenuIcon.connect('toggled', Lang.bind(this, function(check) {
+            this.settings.set_boolean('custom-panel-menu-icon', check.get_active());
+        }));
+
+        let customMenuIconEntry = new Gtk.Entry();
+        customMenuIconEntry.set_width_chars(20);
+        customMenuIconEntry.set_text(this.settings.get_strv('custom-panel-menu-icon-name')[0]);
+        customMenuIconEntry.connect('changed', Lang.bind(this, function(entry) {
+            let iconName = entry.get_text();
+            this.settings.set_strv('custom-panel-menu-icon-name', [iconName]);
+        }));
+
+        this.settings.bind('custom-panel-menu-icon', customMenuIconEntry, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
+        customMenuIconBox.add(customMenuIcon);
+        customMenuIconBox.add(customMenuIconEntry);
+
+        this.settings.bind('hide-panel-menu', panelMenuBox, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
         panelMenuBox.add(disableMenuHotSpotBox);
         panelMenuBox.add(disableMenuKeyboardAccelBox);
+        panelMenuBox.add(customMenuIconBox);
 
         panelSettings.add(panelSettingsTitle);
         panelSettings.add(hidePanelViewBox);
@@ -333,7 +365,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
 
         favoritesIconSizeBox.add(favoritesIconSizeLabel);
         favoritesIconSizeBox.add(favoritesIconSizeCombo);
-        
+
         let appsListIconSizeBox = new Gtk.Box({
             spacing: 20,
             orientation: Gtk.Orientation.HORIZONTAL,
@@ -388,7 +420,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         appsGridIconSizeBox.add(appsGridIconSizeLabel);
         appsGridIconSizeBox.add(appsGridIconSizeCombo);
 
-        
+
         appsSettings.add(appsSettingsTitle);
         appsSettings.add(startupAppsDisplayBox);
         appsSettings.add(startupViewModeBox);
@@ -397,7 +429,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         appsSettings.add(appsListIconSizeBox);
         appsSettings.add(appsGridIconSizeBox);
 
-        
+
         frame.add(panelSettings);
         frame.add(appsSettings);
 
