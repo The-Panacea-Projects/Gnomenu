@@ -39,6 +39,7 @@ const Panel = imports.ui.panel;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 const AppDisplay = imports.ui.appDisplay;
+const DND = imports.ui.dnd;
 
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
@@ -134,6 +135,47 @@ const FavoriteButton = new Lang.Class({
         //this.buttonbox.add(this.label, {x_fill: false, y_fill: true, x_align: St.Align.START, y_align: St.Align.MIDDLE});
 
         this.actor.set_child(this.buttonbox);
+
+        this._draggable = DND.makeDraggable(this.actor);
+        this._draggable.connect('drag-begin', Lang.bind(this,
+            function () {
+                //this._removeMenuTimeout();
+                Main.overview.beginItemDrag(this);
+                if (GnoMenu.appsMenuButton) {
+                    if (GnoMenu.appsMenuButton._categoryWorkspaceMode == CategoryWorkspaceMode.CATEGORY)
+                        GnoMenu.appsMenuButton.toggleCategoryWorkspaceMode();
+                }
+            }));
+        this._draggable.connect('drag-cancelled', Lang.bind(this,
+            function () {
+                Main.overview.cancelledItemDrag(this);
+            }));
+        this._draggable.connect('drag-end', Lang.bind(this,
+            function () {
+               Main.overview.endItemDrag(this);
+            }));
+    },
+
+    getDragActor: function() {
+        return this._app.create_icon_texture(Main.overview.dashIconSize);
+    },
+
+    // Returns the original actor that should align with the actor
+    // we show as the item is being dragged.
+    getDragActorSource: function() {
+        return this.icon;
+    },
+
+    shellWorkspaceLaunch : function(params) {
+        params = Params.parse(params, { workspace: -1,
+                                        timestamp: 0 });
+
+        this._app.open_new_window(params.workspace);
+
+        if (GnoMenu.appsMenuButton) {
+            if (GnoMenu.appsMenuButton.menu.isOpen)
+                GnoMenu.appsMenuButton.menu.toggle();
+        }
     }
 });
 
@@ -182,6 +224,46 @@ const AppListButton = new Lang.Class({
 
         this.actor.set_child(this.buttonbox);
 
+        this._draggable = DND.makeDraggable(this.actor);
+        this._draggable.connect('drag-begin', Lang.bind(this,
+            function () {
+                //this._removeMenuTimeout();
+                Main.overview.beginItemDrag(this);
+                if (GnoMenu.appsMenuButton) {
+                    if (GnoMenu.appsMenuButton._categoryWorkspaceMode == CategoryWorkspaceMode.CATEGORY)
+                        GnoMenu.appsMenuButton.toggleCategoryWorkspaceMode();
+                }
+            }));
+        this._draggable.connect('drag-cancelled', Lang.bind(this,
+            function () {
+                Main.overview.cancelledItemDrag(this);
+            }));
+        this._draggable.connect('drag-end', Lang.bind(this,
+            function () {
+               Main.overview.endItemDrag(this);
+            }));
+    },
+
+    getDragActor: function() {
+        return this._app.create_icon_texture(Main.overview.dashIconSize);
+    },
+
+    // Returns the original actor that should align with the actor
+    // we show as the item is being dragged.
+    getDragActorSource: function() {
+        return this.icon;
+    },
+
+    shellWorkspaceLaunch : function(params) {
+        params = Params.parse(params, { workspace: -1,
+                                        timestamp: 0 });
+
+        this._app.open_new_window(params.workspace);
+
+        if (GnoMenu.appsMenuButton) {
+            if (GnoMenu.appsMenuButton.menu.isOpen)
+                GnoMenu.appsMenuButton.menu.toggle();
+        }
     }
 });
 Signals.addSignalMethods(AppListButton.prototype);
@@ -235,6 +317,46 @@ const AppGridButton = new Lang.Class({
         }
         this.actor.set_child(this.buttonbox);
 
+        this._draggable = DND.makeDraggable(this.actor);
+        this._draggable.connect('drag-begin', Lang.bind(this,
+            function () {
+                //this._removeMenuTimeout();
+                Main.overview.beginItemDrag(this);
+                if (GnoMenu.appsMenuButton) {
+                    if (GnoMenu.appsMenuButton._categoryWorkspaceMode == CategoryWorkspaceMode.CATEGORY)
+                        GnoMenu.appsMenuButton.toggleCategoryWorkspaceMode();
+                }
+            }));
+        this._draggable.connect('drag-cancelled', Lang.bind(this,
+            function () {
+                Main.overview.cancelledItemDrag(this);
+            }));
+        this._draggable.connect('drag-end', Lang.bind(this,
+            function () {
+               Main.overview.endItemDrag(this);
+            }));
+    },
+
+    getDragActor: function() {
+        return this._app.create_icon_texture(Main.overview.dashIconSize);
+    },
+
+    // Returns the original actor that should align with the actor
+    // we show as the item is being dragged.
+    getDragActorSource: function() {
+        return this.icon;
+    },
+
+    shellWorkspaceLaunch : function(params) {
+        params = Params.parse(params, { workspace: -1,
+                                        timestamp: 0 });
+
+        this._app.open_new_window(params.workspace);
+
+        if (GnoMenu.appsMenuButton) {
+            if (GnoMenu.appsMenuButton.menu.isOpen)
+                GnoMenu.appsMenuButton.menu.toggle();
+        }
     }
 });
 Signals.addSignalMethods(AppGridButton.prototype);
@@ -447,6 +569,7 @@ const PanelMenuButton = new Lang.Class({
             this.thumbnailsBox._createThumbnails();
             this.thumbnailsBox.actor.set_position(1, 0); // position inside wrapper
             this.thumbnailsBox.actor.width = this.groupCategoryPlacesWorkspacePower.width - 30;
+            this.thumbnailsBox._actualThumbnailWidth = this.groupCategoryPlacesWorkspacePower.width - 30;
             //this.thumbnailsBox._background.height = this.groupCategoryPlaces.height;
 
             if (this._categoryWorkspaceMode == CategoryWorkspaceMode.CATEGORY) {
@@ -484,19 +607,19 @@ const PanelMenuButton = new Lang.Class({
         this.menu.removeAll();
     },
 
-    _toggleCategoryWorkspaceMode: function() {
+    toggleCategoryWorkspaceMode: function() {
         if (this._categoryWorkspaceMode == CategoryWorkspaceMode.CATEGORY) {
             this._categoryWorkspaceMode = CategoryWorkspaceMode.WORKSPACE;
             this.groupCategoryPlaces.hide();
             this.thumbnailsBox.actor.show();
             this.thumbnailsBoxFiller.height = this.thumbnailsBox.actor.height;
-            global.log("thumbnailsBox height = "+this.thumbnailsBox.actor.height+" scrollbox height = "+this.groupCategoryPlacesWorkspaceScrollBox.height);
+            if (_DEBUG_) global.log("thumbnailsBox height = "+this.thumbnailsBox.actor.height+" scrollbox height = "+this.groupCategoryPlacesWorkspaceScrollBox.height);
         } else {
             this._categoryWorkspaceMode = CategoryWorkspaceMode.CATEGORY;
             this.thumbnailsBox.actor.hide();
             this.groupCategoryPlaces.show();
             this.thumbnailsBoxFiller.height = 0;
-            global.log("categoryPlaces height = "+this.groupCategoryPlaces.height+" scrollbox height = "+this.groupCategoryPlacesWorkspaceScrollBox.height);
+            if (_DEBUG_) global.log("categoryPlaces height = "+this.groupCategoryPlaces.height+" scrollbox height = "+this.groupCategoryPlacesWorkspaceScrollBox.height);
         }
 
 
@@ -1325,7 +1448,7 @@ const PanelMenuButton = new Lang.Class({
             global.log("scrollbox button release event");
             let button = event.get_button();
             if (button == 3) { //right click
-                this._toggleCategoryWorkspaceMode();
+                this.toggleCategoryWorkspaceMode();
             }
         }));
 
@@ -2434,7 +2557,7 @@ function enable() {
     // Load stylesheet
     loadStylesheet();
 
-	// Remove default Activities Button
+    // Remove default Activities Button
     if (hideDefaultActivitiesButton) {
         if (gsVersion[1] > 4) {
             let button = Main.panel.statusArea['activities'];
@@ -2447,7 +2570,7 @@ function enable() {
                 button.actor.hide();
             }
         }
-	}
+    }
 
     // Add GnoMenu to panel
     GnoMenu = new GnoMenuButton();
@@ -2464,8 +2587,8 @@ function disable() {
     // Unload stylesheet
     unloadStylesheet();
 
-	//Restore default Activities Button
-	if (hideDefaultActivitiesButton) {
+    //Restore default Activities Button
+    if (hideDefaultActivitiesButton) {
         if (gsVersion[1] > 4) {
             let button = Main.panel.statusArea['activities'];
             if (button) {
@@ -2477,7 +2600,7 @@ function disable() {
                 button.actor.show();
             }
         }
-	}
+    }
 
     // Destroy GnoMenu
     GnoMenu.destroy();

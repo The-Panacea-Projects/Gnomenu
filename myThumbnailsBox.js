@@ -24,6 +24,7 @@ const Workspace = imports.ui.workspace;
 const WorkspaceThumbnail = imports.ui.workspaceThumbnail;
 const Overview = imports.ui.overview;
 const Tweener = imports.ui.tweener;
+const DND = imports.ui.dnd;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Gettext = imports.gettext.domain(Me.metadata['gettext-domain']);
@@ -39,9 +40,9 @@ let MAX_THUMBNAIL_WIDTH = 200;
 // When we create workspaces by dragging, we add a "cut" into the top and
 // bottom of each workspace so that the user doesn't have to hit the
 // placeholder exactly.
-//const WORKSPACE_CUT_SIZE = 10;
+const WORKSPACE_CUT_SIZE = 10;
 
-//const WORKSPACE_KEEP_ALIVE_TIME = 100;
+const WORKSPACE_KEEP_ALIVE_TIME = 100;
 
 const OVERRIDE_SCHEMA = 'org.gnome.shell.overrides';
 
@@ -56,12 +57,71 @@ const ThumbnailState = {
     DESTROYED: 7
 };
 
+const myWorkspaceThumbnail = new Lang.Class({
+    Name: 'GnoMenu.myWorkspaceThumbnail',
+    Extends: WorkspaceThumbnail.WorkspaceThumbnail,
+    
+    _init : function(metaWorkspace) {
+        this.parent(metaWorkspace);
+    },
+
+    // Draggable target interface used only by ThumbnailsBox
+    handleDragOverInternal : function(source, time) {
+        if (_DEBUG_) global.log("myWorkspaceThumbnail: handleDragOverInternal");
+        if (source == Main.xdndHandler) {
+            this.metaWorkspace.activate(time);
+            return DND.DragMotionResult.CONTINUE;
+        }
+
+        if (this.state > ThumbnailState.NORMAL)
+            return DND.DragMotionResult.CONTINUE;
+
+        if (source.realWindow && !this._isMyWindow(source.realWindow))
+            return DND.DragMotionResult.MOVE_DROP;
+        if (source.shellWorkspaceLaunch)
+            return DND.DragMotionResult.COPY_DROP;
+
+        return DND.DragMotionResult.CONTINUE;
+    },
+
+    acceptDropInternal : function(source, time) {
+        if (_DEBUG_) global.log("myWorkspaceThumbnail: acceptDropInternal");
+        if (this.state > ThumbnailState.NORMAL)
+            return false;
+
+        if (source.realWindow) {
+            let win = source.realWindow;
+            if (this._isMyWindow(win))
+                return false;
+
+            let metaWindow = win.get_meta_window();
+
+            // We need to move the window before changing the workspace, because
+            // the move itself could cause a workspace change if the window enters
+            // the primary monitor
+            if (metaWindow.get_monitor() != this.monitorIndex)
+                metaWindow.move_to_monitor(this.monitorIndex);
+
+            metaWindow.change_workspace_by_index(this.metaWorkspace.index(),
+                                                 false, // don't create workspace
+                                                 time);
+            return true;
+        } else if (source.shellWorkspaceLaunch) {
+            source.shellWorkspaceLaunch({ workspace: this.metaWorkspace ? this.metaWorkspace.index() : -1,
+                                          timestamp: time });
+            return true;
+        }
+
+        return false;
+    }
+});
+
 const myThumbnailsBox = new Lang.Class({
     Name: 'GnoMenu.myThumbnailsBox',
     Extends: WorkspaceThumbnail.ThumbnailsBox,
 
     _init: function(gsVersion, settings) {
-        if (_DEBUG_) global.log("myThumbnailsBox init");
+        if (_DEBUG_) global.log("myThumbnailsBox: init");
         this._actualThumbnailWidth = 0;
         this._gsCurrentVersion = gsVersion;
         this._mySettings = settings;
@@ -145,6 +205,122 @@ const myThumbnailsBox = new Lang.Class({
         }
     },
 
+    // Override GS38 handleDragOver to include menu grid/list items
+    handleDragOver : function(source, actor, x, y, time) {
+        if(_DEBUG_) global.log("myThumbnailsBox: handleDragOver");
+        if (!source.realWindow && !source.shellWorkspaceLaunch && source != Main.xdndHandler)
+            return DND.DragMotionResult.CONTINUE;
+
+        let canCreateWorkspaces = Meta.prefs_get_dynamic_workspaces();
+        let spacing = this.actor.get_theme_node().get_length('spacing');
+
+        this._dropWorkspace = -1;
+        let placeholderPos = -1;
+        let targetBase;
+        if (this._dropPlaceholderPos == 0)
+            targetBase = this._dropPlaceholder.y;
+        else
+            targetBase = this._thumbnails[0].actor.y;
+        let targetTop = targetBase - spacing - WORKSPACE_CUT_SIZE;
+        let length = this._thumbnails.length;
+        for (let i = 0; i < length; i ++) {
+            // Allow the reorder target to have a 10px "cut" into
+            // each side of the thumbnail, to make dragging onto the
+            // placeholder easier
+            let [w, h] = this._thumbnails[i].actor.get_transformed_size();
+            let targetBottom = targetBase + WORKSPACE_CUT_SIZE;
+            let nextTargetBase = targetBase + h + spacing;
+            let nextTargetTop =  nextTargetBase - spacing - ((i == length - 1) ? 0: WORKSPACE_CUT_SIZE);
+
+            // Expand the target to include the placeholder, if it exists.
+            if (i == this._dropPlaceholderPos)
+                targetBottom += this._dropPlaceholder.get_height();
+
+            if (y > targetTop && y <= targetBottom && source != Main.xdndHandler && canCreateWorkspaces) {
+                placeholderPos = i;
+                break;
+            } else if (y > targetBottom && y <= nextTargetTop) {
+                this._dropWorkspace = i;
+                break
+            }
+
+            targetBase = nextTargetBase;
+            targetTop = nextTargetTop;
+        }
+
+        if (this._dropPlaceholderPos != placeholderPos) {
+            this._dropPlaceholderPos = placeholderPos;
+            this.actor.queue_relayout();
+        }
+
+        if (this._dropWorkspace != -1)
+            return this._thumbnails[this._dropWorkspace].handleDragOverInternal(source, time);
+        else if (this._dropPlaceholderPos != -1)
+            return source.realWindow ? DND.DragMotionResult.MOVE_DROP : DND.DragMotionResult.COPY_DROP;
+        else
+            return DND.DragMotionResult.CONTINUE;
+    },
+
+    acceptDrop: function(source, actor, x, y, time) {
+        if(_DEBUG_) global.log("myThumbnailsBox: acceptDrop");
+        if (this._dropWorkspace != -1) {
+            return this._thumbnails[this._dropWorkspace].acceptDropInternal(source, time);
+        } else if (this._dropPlaceholderPos != -1) {
+            if (!source.realWindow && !source.shellWorkspaceLaunch)
+                return false;
+
+            let isWindow = !!source.realWindow;
+
+            // To create a new workspace, we first slide all the windows on workspaces
+            // below us to the next workspace, leaving a blank workspace for us to recycle.
+            let newWorkspaceIndex;
+            [newWorkspaceIndex, this._dropPlaceholderPos] = [this._dropPlaceholderPos, -1];
+
+            // Nab all the windows below us.
+            let windows = global.get_window_actors().filter(function(win) {
+                if (isWindow)
+                    return win.get_workspace() >= newWorkspaceIndex && win != source;
+                else
+                    return win.get_workspace() >= newWorkspaceIndex;
+            });
+
+            this._spliceIndex = newWorkspaceIndex;
+
+            // ... move them down one.
+            windows.forEach(function(win) {
+                win.meta_window.change_workspace_by_index(win.get_workspace() + 1,
+                                                          true, time);
+            });
+
+            if (isWindow)
+                // ... and bam, a workspace, good as new.
+                source.metaWindow.change_workspace_by_index(newWorkspaceIndex,
+                                                            true, time);
+            else if (source.shellWorkspaceLaunch) {
+                source.shellWorkspaceLaunch({ workspace: newWorkspaceIndex,
+                                              timestamp: time });
+                // This new workspace will be automatically removed if the application fails
+                // to open its first window within some time, as tracked by Shell.WindowTracker.
+                // Here, we only add a very brief timeout to avoid the _immediate_ removal of the
+                // workspace while we wait for the startup sequence to load.
+                Main.keepWorkspaceAlive(global.screen.get_workspace_by_index(newWorkspaceIndex),
+                                        WORKSPACE_KEEP_ALIVE_TIME);
+            }
+
+            // Start the animation on the workspace (which is actually
+            // an old one which just became empty)
+            let thumbnail = this._thumbnails[newWorkspaceIndex];
+            this._setThumbnailState(thumbnail, ThumbnailState.NEW);
+            thumbnail.slidePosition = 1;
+
+            this._queueUpdateStates();
+
+            return true;
+        } else {
+            return false;
+        }
+    },
+
     // override GS38 _createThumbnails to remove global n-workspaces notification
     _createThumbnails: function() {
         if (_DEBUG_) global.log("mythumbnailsBox: _createThumbnails");
@@ -175,7 +351,38 @@ const myThumbnailsBox = new Lang.Class({
         this._updateSwitcherVisibility();
     },
 
-	// override _onButtonRelease to provide customized click actions (i.e. overview on right click)
+    addThumbnails: function(start, count) {
+        for (let k = start; k < start + count; k++) {
+            let metaWorkspace = global.screen.get_workspace_by_index(k);
+            //let thumbnail = new WorkspaceThumbnail.WorkspaceThumbnail(metaWorkspace);
+            let thumbnail = new myWorkspaceThumbnail(metaWorkspace);
+            thumbnail.setPorthole(this._porthole.x, this._porthole.y,
+                                  this._porthole.width, this._porthole.height);
+            this._thumbnails.push(thumbnail);
+            this.actor.add_actor(thumbnail.actor);
+
+            if (start > 0 && this._spliceIndex == -1) {
+                // not the initial fill, and not splicing via DND
+                thumbnail.state = ThumbnailState.NEW;
+                thumbnail.slidePosition = 1; // start slid out
+                this._haveNewThumbnails = true;
+            } else {
+                thumbnail.state = ThumbnailState.NORMAL;
+            }
+
+            this._stateCounts[thumbnail.state]++;
+        }
+
+        this._queueUpdateStates();
+
+        // The thumbnails indicator actually needs to be on top of the thumbnails
+        this._indicator.raise_top();
+
+        // Clear the splice index, we got the message
+        this._spliceIndex = -1;
+    },
+
+    // override _onButtonRelease to provide customized click actions (i.e. overview on right click)
     _onButtonRelease: function(actor, event) {
         if (_DEBUG_) global.log("mythumbnailsBox: _onButtonRelease");
 //        if (this._mySettings.get_boolean('toggle-overview')) {
