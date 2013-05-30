@@ -108,11 +108,11 @@
 
 .gnomenu-category-places-scrollbox {
     border-image: url("b-panel-r2.png") 10 10;
-    height: 500px;
+    height: 480px;
 }
 
 .gnomenu-category-places-box {
-
+    /* no longer exists */
 }
 
 .gnomenu-categories-box {
