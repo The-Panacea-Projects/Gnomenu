@@ -675,15 +675,15 @@ const PanelMenuButton = new Lang.Class({
         this.menu.removeAll();
     },
 
-    toggleCategoryWorkspaceMode: function() {
-        if (this._categoryWorkspaceMode == CategoryWorkspaceMode.CATEGORY) {
+    toggleCategoryWorkspaceMode: function(mode) {
+        if (this._categoryWorkspaceMode == CategoryWorkspaceMode.CATEGORY || mode == CategoryWorkspaceMode.WORKSPACE) {
             this._categoryWorkspaceMode = CategoryWorkspaceMode.WORKSPACE;
             this.groupCategoryPlaces.hide();
             //this.groupCategoryPlaces.opacity = 0;
             this.thumbnailsBox.actor.show();
             this.thumbnailsBoxFiller.height = this.thumbnailsBox.actor.height;
             if (_DEBUG_) global.log("toggleCategoryWorkspaceMode - thumbnailsBox height = "+this.thumbnailsBox.actor.height+" scrollbox height = "+this.groupCategoryPlacesWorkspaceScrollBox.height);
-        } else {
+        } else if (this._categoryWorkspaceMode == CategoryWorkspaceMode.WORKSPACE || mode == CategoryWorkspaceMode.CATEGORY){
             this._categoryWorkspaceMode = CategoryWorkspaceMode.CATEGORY;
             this.thumbnailsBox.actor.hide();
             this.groupCategoryPlaces.show();
@@ -691,7 +691,6 @@ const PanelMenuButton = new Lang.Class({
             this.thumbnailsBoxFiller.height = 0;
             if (_DEBUG_) global.log("toggleCategoryWorkspaceMode - categoryPlaces height = "+this.groupCategoryPlaces.height+" scrollbox height = "+this.groupCategoryPlacesWorkspaceScrollBox.height);
         }
-
 
     },
 
@@ -748,6 +747,8 @@ const PanelMenuButton = new Lang.Class({
 
         let allPlaces = places.concat(bookmarks.concat(devices));
         this._displayApplications(null, allPlaces);
+
+        this.toggleCategoryWorkspaceMode(CategoryWorkspaceMode.WORKSPACE);
     },
 
     //_selectComputer : function(button) {
@@ -781,6 +782,8 @@ const PanelMenuButton = new Lang.Class({
 
         let recent = this._listRecent();
         this._displayApplications(null, null, recent);
+
+        this.toggleCategoryWorkspaceMode(CategoryWorkspaceMode.WORKSPACE);
     },
 
     _switchApplicationsView: function(mode) {
@@ -1677,7 +1680,7 @@ const PanelMenuButton = new Lang.Class({
 
 
         // Workspaces thumbnails Box
-        this.thumbnailsBoxFiller = new St.BoxLayout();
+        this.thumbnailsBoxFiller = new St.BoxLayout({ style_class: 'gnomenu-thumbnailbox-filler', vertical: true });
         this.thumbnailsBox = new MyThumbnailsBox.myThumbnailsBox(gsVersion, settings, this.thumbnailsBoxFiller);
 
         // CategoriesBox
@@ -2112,19 +2115,19 @@ const PanelMenuButton = new Lang.Class({
         this.groupCategoryPlaces.add_actor(this.categoriesBox);
         //this.groupCategoryPlaces.add_actor(this.placesBox);
 
-        this.groupCategoryPlacesWorkspaceWrapper.add_actor(this.thumbnailsBoxFiller);
-        this.groupCategoryPlacesWorkspaceWrapper.add_actor(this.thumbnailsBox.actor);
-        this.groupCategoryPlacesWorkspaceWrapper.add_actor(this.groupCategoryPlaces);
+        this.groupCategoryPlacesWorkspaceWrapper.add(this.thumbnailsBoxFiller, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
+        this.groupCategoryPlacesWorkspaceWrapper.add(this.thumbnailsBox.actor, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
+        this.groupCategoryPlacesWorkspaceWrapper.add(this.groupCategoryPlaces, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
         this.groupCategoryPlacesWorkspaceScrollBox.add_actor(this.groupCategoryPlacesWorkspaceWrapper);
 
         // middlePane packs horizontally
-        middlePane.add_actor(this.favoritesScrollBox);
-        middlePane.add_actor(this.groupCategoryPlacesWorkspaceScrollBox);
-        middlePane.add_actor(this.applicationsScrollBox);
+        middlePane.add(this.favoritesScrollBox, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
+        middlePane.add(this.groupCategoryPlacesWorkspaceScrollBox, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
+        middlePane.add(this.applicationsScrollBox, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
 
         // bottomPane packs horizontally
         let bottomPaneSpacer1 = new St.Label({text: ''});
-        bottomPane.add(this.powerGroupBox);
+        bottomPane.add(this.powerGroupBox, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
         bottomPane.add(topPaneSpacer1, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         bottomPane.add(this.selectedAppBox, {expand: true, x_align:St.Align.END, y_align:St.Align.MIDDLE});
 

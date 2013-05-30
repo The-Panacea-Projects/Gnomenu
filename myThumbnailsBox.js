@@ -548,7 +548,7 @@ const myThumbnailsBox = new Lang.Class({
         let indicatorLeftFullBorder = indicatorThemeNode.get_padding(St.Side.LEFT) + indicatorThemeNode.get_border_width(St.Side.LEFT);
         let indicatorRightFullBorder = indicatorThemeNode.get_padding(St.Side.RIGHT) + indicatorThemeNode.get_border_width(St.Side.RIGHT);
 
-        this._thumbnailsBoxFiller.height = (contentBox.y2 - contentBox.y1) + indicatorTopFullBorder + indicatorBottomFullBorder;
+        //this._thumbnailsBoxFiller.height = (contentBox.y2 - contentBox.y1) + indicatorTopFullBorder + indicatorBottomFullBorder;
 
         let y = contentBox.y1;
 
