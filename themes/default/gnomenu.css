@@ -1,3 +1,24 @@
+/* ---------------------------------------------------------------------*/
+/* New classes still playing with */
+/* ---------------------------------------------------------------------*/
+.gnomenu-thumbnails-background {
+    /*border: 1px solid rgba(128, 128, 128, 0.4);
+    border-right: 0px;
+    border-bottom: 0px;
+    border-top: 0px;*/
+    /*border-radius: 9px 0px 0px 9px;*/
+    /*background-color: rgba(0, 0, 0, 0.5);*/
+    padding: 5px 14px 5px 10px;
+}
+
+/* not implemented yet */
+.gnomenu-thumbnail-indicator {
+    border: 4px solid rgba(255,255,255,0.7);
+    border-radius: 4px;
+    padding: 1px;
+}
+/* ---------------------------------------------------------------------*/
+
 .gnomenu-panel-box {
 }
 
@@ -24,7 +45,12 @@
     padding: 0px 0px 20px 0px;
 }
 
+.gnomenu-menu-middle-pane {
+    padding: 0px 0px 0px 0px;
+}
+
 .gnomenu-menu-bottom-pane {
+    padding: 20px 0px 0px 0px;
 }
 
 .gnomenu-user-group-box {
@@ -40,6 +66,10 @@
     border-radius: 5px 5px 0px 0px;
     border-width: 1px;
     padding: 4px 10px;
+}
+
+.gnomenu-user-group-button-label {
+    /*font-size: 18px;*/
 }
 
 .gnomenu-user-group-button:hover {
@@ -94,7 +124,13 @@
 }
 
 .gnomenu-category-places-power-group-box {
+    /*border: 1px solid red;*/
     padding-left: 20px;
+}
+
+.gnomenu-category-places-workspace-wrapper {
+    /*border: 1px solid yellow;*/
+    padding: 0px 0px 0px 0px;
 }
 
 .gnomenu-category-places-scrollbox {
@@ -103,12 +139,12 @@
 }
 
 .gnomenu-category-places-box {
-
+    /* no longer exists */
 }
 
 .gnomenu-categories-box {
     font-size: 14px;
-    padding:  0px 10px 0px 0px;
+    padding:  0px 7px 0px 7px;
 }
 
 .gnomenu-category-button {
@@ -154,7 +190,7 @@
 }
 
 .gnomenu-applications-box-wrapper {
-
+    /*border: 1px solid red;*/
 }
 
 .gnomenu-applications-list-box {
