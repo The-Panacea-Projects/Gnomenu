@@ -41,11 +41,15 @@ const PopupMenu = imports.ui.popupMenu;
 const AppDisplay = imports.ui.appDisplay;
 const DND = imports.ui.dnd;
 
-
+const ExtensionSystem = imports.ui.extensionSystem;
+const ExtensionUtils = imports.misc.extensionUtils;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const MyThumbnailsBox = Me.imports.myThumbnailsBox;
 const Convenience = Me.imports.convenience;
 let settings = Convenience.getSettings('org.gnome.shell.extensions.gnomenu');
+
+const SearchWebBookmarks_UUID = "searchbookmarks@bmh1980de.gmail.com";
+let SearchWebBookmarks = null;
 
 const Gettext = imports.gettext.domain(Me.metadata['gettext-domain']);
 const _ = Gettext.gettext;
@@ -786,6 +790,16 @@ const PanelMenuButton = new Lang.Class({
         this.toggleCategoryWorkspaceMode(CategoryWorkspaceMode.WORKSPACE);
     },
 
+    _selectWebBookmarks: function(button) {
+        this.resetSearch();
+        this._clearApplicationsBox(button);
+
+        let webBookmarks = this._listWebBookmarks();
+        this._displayApplications(null, webBookmarks);
+
+        this.toggleCategoryWorkspaceMode(CategoryWorkspaceMode.WORKSPACE);
+    },
+
     _switchApplicationsView: function(mode) {
         this._applicationsViewMode = mode;
         let refresh = true;
@@ -924,6 +938,51 @@ const PanelMenuButton = new Lang.Class({
         for (let id = 0; id < bookmarks.length; id++) {
             if (!pattern || bookmarks[id].name.toLowerCase().indexOf(pattern)!=-1)
                 res.push(bookmarks[id]);
+        }
+        return res;
+    },
+
+    _listWebBookmarks: function(pattern) {
+        if (_DEBUG_) global.log("_listWebBookmarks");
+        let res = new Array();
+
+        let extension = ExtensionUtils.extensions[SearchWebBookmarks_UUID];
+        if (extension && extension.state == ExtensionSystem.ExtensionState.ENABLED) {
+            if (_DEBUG_) global.log("_listWebBookmarks: extension state is ENABLED");
+            SearchWebBookmarks = extension.imports.extension;
+            if (SearchWebBookmarks) {
+                if (_DEBUG_) global.log("_listWebBookmarks: SearchWebBookmarks extension imported");
+                //if (!SearchWebBookmarks._searchBookmarksInstance) {
+                    //SearchWebBookmarks.Chromium.init();
+                    //SearchWebBookmarks.Epiphany.init();
+                    //SearchWebBookmarks.Firefox.init();
+                    //SearchWebBookmarks.GoogleChrome.init();
+                    //SearchWebBookmarks.Midori.init();
+                    //SearchWebBookmarks.Opera.init();
+                //}
+
+                let searchResults = [];
+                let bookmarks = [];
+
+                bookmarks = bookmarks.concat(SearchWebBookmarks.Chromium.bookmarks);
+                bookmarks = bookmarks.concat(SearchWebBookmarks.Epiphany.bookmarks);
+                bookmarks = bookmarks.concat(SearchWebBookmarks.Firefox.bookmarks);
+                bookmarks = bookmarks.concat(SearchWebBookmarks.GoogleChrome.bookmarks);
+                bookmarks = bookmarks.concat(SearchWebBookmarks.Midori.bookmarks);
+                bookmarks = bookmarks.concat(SearchWebBookmarks.Opera.bookmarks);
+
+                for (let id = 0; id < bookmarks.length; id++) {
+                    if (!pattern || bookmarks[id].name.toLowerCase().indexOf(pattern)!=-1) {
+                        res.push({
+                            app:   bookmarks[id].appInfo,
+                            name:   bookmarks[id].name,
+                            icon:   bookmarks[id].appInfo.get_icon(),
+                            mime:   null,
+                            uri:    bookmarks[id].uri
+                        });
+                    }
+                }
+            }
         }
         return res;
     },
@@ -1122,7 +1181,12 @@ const PanelMenuButton = new Lang.Class({
                            appGridButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
-                           appGridButton._app.launch();
+                           if (app.uri) {
+                               appGridButton._app.app.launch_uris([app.uri], null);
+                               //Gio.app_info_launch_default_for_uri(app.uri, global.create_app_launch_context());
+                           } else {
+                               appGridButton._app.launch();
+                           }
                            this.menu.close();
                         }));
                         this.applicationsGridBox.add(appGridButton.actor, {row:rownum, col:column, x_fill:false, y_fill:false, x_expand:false, y_expand: false, x_align:St.Align.START, y_align:St.Align.START});
@@ -1443,6 +1507,10 @@ const PanelMenuButton = new Lang.Class({
         //let bookmarks = this._listBookmarks(pattern);
         //for (var i in bookmarks) placesResults.push(bookmarks[i]);
 
+        let webBookmarks = this._listWebBookmarks(pattern);
+        for (var i in webBookmarks) placesResults.push(webBookmarks[i]);
+
+
         //let devices = this._listDevices(pattern);
         //for (var i in devices) placesResults.push(devices[i]);
 
@@ -1468,11 +1536,13 @@ const PanelMenuButton = new Lang.Class({
                else this.selectedAppDescription.set_text("");
             } else if (itemActor._delegate._type == 1) {
                this.selectedAppTitle.set_text(itemActor._delegate._app.name);
-               if (itemActor._delegate._app.get_description()) this.selectedAppDescription.set_text(itemActor._delegate._app.description);
+               //if (itemActor._delegate._app.get_description()) this.selectedAppDescription.set_text(itemActor._delegate._app.description);
+               if (itemActor._delegate._app.name) this.selectedAppDescription.set_text(itemActor._delegate._app.name);
                else this.selectedAppDescription.set_text("");
             } else if (itemActor._delegate._type == 2) {
                this.selectedAppTitle.set_text(itemActor._delegate._app.name);
-               if (itemActor._delegate._app.get_description()) this.selectedAppDescription.set_text(itemActor._delegate._app.description);
+               //if (itemActor._delegate._app.get_description()) this.selectedAppDescription.set_text(itemActor._delegate._app.description);
+               if (itemActor._delegate._app.name) this.selectedAppDescription.set_text(itemActor._delegate._app.name);
                else this.selectedAppDescription.set_text("");
             }
             // Clear out container and select item actor
@@ -1551,6 +1621,26 @@ const PanelMenuButton = new Lang.Class({
             this.selectedAppDescription.set_text('');
         }));
 
+
+        let weblinksCategory = new GroupButton( null, null, _('Weblinks'), {style_class: 'gnomenu-user-group-button'});
+        weblinksCategory.actor.connect('enter-event', Lang.bind(this, function() {
+            weblinksCategory.actor.add_style_pseudo_class('active');
+            this.selectedAppTitle.set_text(weblinksCategory.label.get_text());
+            this.selectedAppDescription.set_text('');
+        }));
+        weblinksCategory.actor.connect('leave-event', Lang.bind(this, function() {
+            weblinksCategory.actor.remove_style_pseudo_class('active');
+            this.selectedAppTitle.set_text('');
+            this.selectedAppDescription.set_text('');
+        }));
+        weblinksCategory.actor.connect('button-release-event', Lang.bind(this, function() {
+            weblinksCategory.actor.remove_style_pseudo_class('active');
+            this._selectWebBookmarks(weblinksCategory);
+            this.selectedAppTitle.set_text(weblinksCategory.label.get_text());
+            this.selectedAppDescription.set_text('');
+        }));
+
+
         // Load 'all places' category
         let placesCategory = new GroupButton( null, null, _('Places'), {style_class: 'gnomenu-user-group-button'});
         placesCategory.actor.connect('enter-event', Lang.bind(this, function() {
@@ -1570,9 +1660,14 @@ const PanelMenuButton = new Lang.Class({
             this.selectedAppDescription.set_text('');
         }));
 
+
+
         let userGroupBoxSpacer1 = new St.Label({text: ''});
+        let userGroupBoxSpacer2 = new St.Label({text: ''});
         this.userGroupBox.add(recentCategory.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         this.userGroupBox.add(userGroupBoxSpacer1, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
+        this.userGroupBox.add(weblinksCategory.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
+        this.userGroupBox.add(userGroupBoxSpacer2, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         this.userGroupBox.add(placesCategory.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
 
 
