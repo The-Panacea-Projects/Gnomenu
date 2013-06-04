@@ -671,7 +671,7 @@ const PanelMenuButton = new Lang.Class({
                         this.selectedAppDescription.set_text('');
                     }));
                     webLinksCategory.actor.connect('button-release-event', Lang.bind(this, function() {
-                        weblinksCategory.actor.remove_style_pseudo_class('active');
+                        webLinksCategory.actor.remove_style_pseudo_class('active');
                         this._selectWebBookmarks(webLinksCategory);
                         this.selectedAppTitle.set_text(webLinksCategory.label.get_text());
                         this.selectedAppDescription.set_text('');
