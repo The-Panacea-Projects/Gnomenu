@@ -231,6 +231,7 @@
     padding-bottom: 0px;
     padding-right: 30px;
     text-align: right;
+    max-width: 100px;
 }
 
 .gnomenu-selected-app-title {
@@ -241,6 +242,6 @@
 
 .gnomenu-selected-app-description {
     height: 17px;
-    max-width: 150px;
+    /*max-width: 150px;*/
     font-size: 14px;
 }
