@@ -654,6 +654,36 @@ const PanelMenuButton = new Lang.Class({
                 this.thumbnailsBoxFiller.height = this.thumbnailsBox.actor.height;
             }
 
+            // Disable webLinksCategory if SearchWebBookmarks extension missing
+            let extension = ExtensionUtils.extensions[SearchWebBookmarks_UUID];
+            let userGroupButtons = this.userGroupBox.get_children();
+            let webLinksCategory = userGroupButtons[2]._delegate;
+            if (extension) {
+                if (extension.state == ExtensionSystem.ExtensionState.ENABLED) {
+                    webLinksCategory.actor.connect('enter-event', Lang.bind(this, function() {
+                        webLinksCategory.actor.add_style_pseudo_class('active');
+                        this.selectedAppTitle.set_text(webLinksCategory.label.get_text());
+                        this.selectedAppDescription.set_text('');
+                    }));
+                    webLinksCategory.actor.connect('leave-event', Lang.bind(this, function() {
+                        webLinksCategory.actor.remove_style_pseudo_class('active');
+                        this.selectedAppTitle.set_text('');
+                        this.selectedAppDescription.set_text('');
+                    }));
+                    webLinksCategory.actor.connect('button-release-event', Lang.bind(this, function() {
+                        weblinksCategory.actor.remove_style_pseudo_class('active');
+                        this._selectWebBookmarks(webLinksCategory);
+                        this.selectedAppTitle.set_text(webLinksCategory.label.get_text());
+                        this.selectedAppDescription.set_text('');
+                    }));
+                } else {
+                    webLinksCategory.actor.add_style_pseudo_class('insensitive');
+                }
+            } else {
+                webLinksCategory.actor.add_style_pseudo_class('insensitive');
+            }
+
+
         } else {
             this.resetSearch();
             this._clearCategorySelections(this.categoriesBox);
@@ -952,15 +982,6 @@ const PanelMenuButton = new Lang.Class({
             SearchWebBookmarks = extension.imports.extension;
             if (SearchWebBookmarks) {
                 if (_DEBUG_) global.log("_listWebBookmarks: SearchWebBookmarks extension imported");
-                //if (!SearchWebBookmarks._searchBookmarksInstance) {
-                    //SearchWebBookmarks.Chromium.init();
-                    //SearchWebBookmarks.Epiphany.init();
-                    //SearchWebBookmarks.Firefox.init();
-                    //SearchWebBookmarks.GoogleChrome.init();
-                    //SearchWebBookmarks.Midori.init();
-                    //SearchWebBookmarks.Opera.init();
-                //}
-
                 let searchResults = [];
                 let bookmarks = [];
 
@@ -981,7 +1002,36 @@ const PanelMenuButton = new Lang.Class({
                             uri:    bookmarks[id].uri
                         });
                     }
+
+                    //let bookmark = bookmarks[id];
+                    //if (!pattern)
+                        //pattern = "";
+                    //for (let j = 0; j < pattern.length; j++) {
+                        //// Terms are treated as logical AND
+                        //if (j == 0 || bookmark.score > 0) {
+                            //let term = pattern[j].toLocaleLowerCase();
+                            //let score = SearchWebBookmarks._rateMatch(bookmark, term);
+
+                            //if (score > 0) {
+                                //bookmark.score += score;
+                            //} else {
+                                //bookmark.score = 0;
+                            //}
+                        //}
+                    //}
+                    //if (bookmark.score > 0) {
+                        //res.push({
+                            //app:   bookmark.appInfo,
+                            //name:   bookmarks.name,
+                            //icon:   bookmarks.appInfo.get_icon(),
+                            //mime:   null,
+                            //uri:    bookmarks.uri,
+                            //score:    bookmark.score
+                        //});
+                    //}
                 }
+
+                res.sort(SearchWebBookmarks._bookmarksSort);
             }
         }
         return res;
@@ -1621,25 +1671,8 @@ const PanelMenuButton = new Lang.Class({
             this.selectedAppDescription.set_text('');
         }));
 
-
+        // Load 'webBookmarks' category
         let weblinksCategory = new GroupButton( null, null, _('Weblinks'), {style_class: 'gnomenu-user-group-button'});
-        weblinksCategory.actor.connect('enter-event', Lang.bind(this, function() {
-            weblinksCategory.actor.add_style_pseudo_class('active');
-            this.selectedAppTitle.set_text(weblinksCategory.label.get_text());
-            this.selectedAppDescription.set_text('');
-        }));
-        weblinksCategory.actor.connect('leave-event', Lang.bind(this, function() {
-            weblinksCategory.actor.remove_style_pseudo_class('active');
-            this.selectedAppTitle.set_text('');
-            this.selectedAppDescription.set_text('');
-        }));
-        weblinksCategory.actor.connect('button-release-event', Lang.bind(this, function() {
-            weblinksCategory.actor.remove_style_pseudo_class('active');
-            this._selectWebBookmarks(weblinksCategory);
-            this.selectedAppTitle.set_text(weblinksCategory.label.get_text());
-            this.selectedAppDescription.set_text('');
-        }));
-
 
         // Load 'all places' category
         let placesCategory = new GroupButton( null, null, _('Places'), {style_class: 'gnomenu-user-group-button'});

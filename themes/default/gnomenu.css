@@ -66,6 +66,10 @@
     padding: 5px 16px;
 }
 
+.gnomenu-user-group-button:insensitive {
+    color: #9f9f9f;
+}
+
 .gnomenu-user-group-button-label {
     /*font-size: 18px;*/
 }
