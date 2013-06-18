@@ -65,55 +65,55 @@ const myWorkspaceThumbnail = new Lang.Class({
         this.parent(metaWorkspace);
     },
 
-    // Draggable target interface used only by ThumbnailsBox
-    handleDragOverInternal : function(source, time) {
-        if (_DEBUG_) global.log("myWorkspaceThumbnail: handleDragOverInternal");
-        if (source == Main.xdndHandler) {
-            this.metaWorkspace.activate(time);
-            return DND.DragMotionResult.CONTINUE;
-        }
+    //// Draggable target interface used only by ThumbnailsBox
+    //handleDragOverInternal : function(source, time) {
+        //if (_DEBUG_) global.log("myWorkspaceThumbnail: handleDragOverInternal");
+        //if (source == Main.xdndHandler) {
+            //this.metaWorkspace.activate(time);
+            //return DND.DragMotionResult.CONTINUE;
+        //}
 
-        if (this.state > ThumbnailState.NORMAL)
-            return DND.DragMotionResult.CONTINUE;
+        //if (this.state > ThumbnailState.NORMAL)
+            //return DND.DragMotionResult.CONTINUE;
 
-        if (source.realWindow && !this._isMyWindow(source.realWindow))
-            return DND.DragMotionResult.MOVE_DROP;
-        if (source.shellWorkspaceLaunch)
-            return DND.DragMotionResult.COPY_DROP;
+        //if (source.realWindow && !this._isMyWindow(source.realWindow))
+            //return DND.DragMotionResult.MOVE_DROP;
+        //if (source.shellWorkspaceLaunch)
+            //return DND.DragMotionResult.COPY_DROP;
 
-        return DND.DragMotionResult.CONTINUE;
-    },
+        //return DND.DragMotionResult.CONTINUE;
+    //},
 
-    acceptDropInternal : function(source, time) {
-        if (_DEBUG_) global.log("myWorkspaceThumbnail: acceptDropInternal");
-        if (this.state > ThumbnailState.NORMAL)
-            return false;
+    //acceptDropInternal : function(source, time) {
+        //if (_DEBUG_) global.log("myWorkspaceThumbnail: acceptDropInternal");
+        //if (this.state > ThumbnailState.NORMAL)
+            //return false;
 
-        if (source.realWindow) {
-            let win = source.realWindow;
-            if (this._isMyWindow(win))
-                return false;
+        //if (source.realWindow) {
+            //let win = source.realWindow;
+            //if (this._isMyWindow(win))
+                //return false;
 
-            let metaWindow = win.get_meta_window();
+            //let metaWindow = win.get_meta_window();
 
-            // We need to move the window before changing the workspace, because
-            // the move itself could cause a workspace change if the window enters
-            // the primary monitor
-            if (metaWindow.get_monitor() != this.monitorIndex)
-                metaWindow.move_to_monitor(this.monitorIndex);
+            //// We need to move the window before changing the workspace, because
+            //// the move itself could cause a workspace change if the window enters
+            //// the primary monitor
+            //if (metaWindow.get_monitor() != this.monitorIndex)
+                //metaWindow.move_to_monitor(this.monitorIndex);
 
-            metaWindow.change_workspace_by_index(this.metaWorkspace.index(),
-                                                 false, // don't create workspace
-                                                 time);
-            return true;
-        } else if (source.shellWorkspaceLaunch) {
-            source.shellWorkspaceLaunch({ workspace: this.metaWorkspace ? this.metaWorkspace.index() : -1,
-                                          timestamp: time });
-            return true;
-        }
+            //metaWindow.change_workspace_by_index(this.metaWorkspace.index(),
+                                                 //false, // don't create workspace
+                                                 //time);
+            //return true;
+        //} else if (source.shellWorkspaceLaunch) {
+            //source.shellWorkspaceLaunch({ workspace: this.metaWorkspace ? this.metaWorkspace.index() : -1,
+                                          //timestamp: time });
+            //return true;
+        //}
 
-        return false;
-    }
+        //return false;
+    //}
 });
 
 const myThumbnailsBox = new Lang.Class({
@@ -128,6 +128,8 @@ const myThumbnailsBox = new Lang.Class({
         this._actualThumbnailWidth = 0;
         if (this._gsCurrentVersion[1] < 7) {
             this.parent();
+            this._background.remove_style_class_name('workspace-thumbnails-background');
+            this._background.add_style_class_name('gnomenu-thumbnails-background');
         } else {
             // override GS38 _init to remove create/destroy thumbnails when showing/hiding overview
             this.actor = new Shell.GenericContainer({ reactive: true,
@@ -206,123 +208,125 @@ const myThumbnailsBox = new Lang.Class({
         }
     },
 
-    // Override GS38 handleDragOver to include menu grid/list items
-    handleDragOver : function(source, actor, x, y, time) {
-        if(_DEBUG_) global.log("myThumbnailsBox: handleDragOver");
-        if (!source.realWindow && !source.shellWorkspaceLaunch && source != Main.xdndHandler)
-            return DND.DragMotionResult.CONTINUE;
+    //// Copy of GS38 handleDragOver to replace GS34 & GS36 handleDragOver
+    //handleDragOver : function(source, actor, x, y, time) {
+        //if(_DEBUG_) global.log("myThumbnailsBox: handleDragOver");
+        //if (!source.realWindow && !source.shellWorkspaceLaunch && source != Main.xdndHandler)
+            //return DND.DragMotionResult.CONTINUE;
 
-        let canCreateWorkspaces = Meta.prefs_get_dynamic_workspaces();
-        let spacing = this.actor.get_theme_node().get_length('spacing');
+        //let canCreateWorkspaces = Meta.prefs_get_dynamic_workspaces();
+        //let spacing = this.actor.get_theme_node().get_length('spacing');
 
-        this._dropWorkspace = -1;
-        let placeholderPos = -1;
-        let targetBase;
-        if (this._dropPlaceholderPos == 0)
-            targetBase = this._dropPlaceholder.y;
-        else
-            targetBase = this._thumbnails[0].actor.y;
-        let targetTop = targetBase - spacing - WORKSPACE_CUT_SIZE;
-        let length = this._thumbnails.length;
-        for (let i = 0; i < length; i ++) {
-            // Allow the reorder target to have a 10px "cut" into
-            // each side of the thumbnail, to make dragging onto the
-            // placeholder easier
-            let [w, h] = this._thumbnails[i].actor.get_transformed_size();
-            let targetBottom = targetBase + WORKSPACE_CUT_SIZE;
-            let nextTargetBase = targetBase + h + spacing;
-            let nextTargetTop =  nextTargetBase - spacing - ((i == length - 1) ? 0: WORKSPACE_CUT_SIZE);
+        //this._dropWorkspace = -1;
+        //let placeholderPos = -1;
+        //let targetBase;
+        //if (this._dropPlaceholderPos == 0)
+            //targetBase = this._dropPlaceholder.y;
+        //else
+            //targetBase = this._thumbnails[0].actor.y;
+        //let targetTop = targetBase - spacing - WORKSPACE_CUT_SIZE;
+        //let length = this._thumbnails.length;
+        //for (let i = 0; i < length; i ++) {
+            //// Allow the reorder target to have a 10px "cut" into
+            //// each side of the thumbnail, to make dragging onto the
+            //// placeholder easier
+            //let [w, h] = this._thumbnails[i].actor.get_transformed_size();
+            //let targetBottom = targetBase + WORKSPACE_CUT_SIZE;
+            //let nextTargetBase = targetBase + h + spacing;
+            //let nextTargetTop =  nextTargetBase - spacing - ((i == length - 1) ? 0: WORKSPACE_CUT_SIZE);
 
-            // Expand the target to include the placeholder, if it exists.
-            if (i == this._dropPlaceholderPos)
-                targetBottom += this._dropPlaceholder.get_height();
+            //// Expand the target to include the placeholder, if it exists.
+            //if (i == this._dropPlaceholderPos)
+                //targetBottom += this._dropPlaceholder.get_height();
 
-            if (y > targetTop && y <= targetBottom && source != Main.xdndHandler && canCreateWorkspaces) {
-                placeholderPos = i;
-                break;
-            } else if (y > targetBottom && y <= nextTargetTop) {
-                this._dropWorkspace = i;
-                break
-            }
+            //if (y > targetTop && y <= targetBottom && source != Main.xdndHandler && canCreateWorkspaces) {
+                //placeholderPos = i;
+                //break;
+            //} else if (y > targetBottom && y <= nextTargetTop) {
+                //this._dropWorkspace = i;
+                //break
+            //}
 
-            targetBase = nextTargetBase;
-            targetTop = nextTargetTop;
-        }
+            //targetBase = nextTargetBase;
+            //targetTop = nextTargetTop;
+        //}
 
-        if (this._dropPlaceholderPos != placeholderPos) {
-            this._dropPlaceholderPos = placeholderPos;
-            this.actor.queue_relayout();
-        }
+        //if (this._dropPlaceholderPos != placeholderPos) {
+            //this._dropPlaceholderPos = placeholderPos;
+            //this.actor.queue_relayout();
+        //}
 
-        if (this._dropWorkspace != -1)
-            return this._thumbnails[this._dropWorkspace].handleDragOverInternal(source, time);
-        else if (this._dropPlaceholderPos != -1)
-            return source.realWindow ? DND.DragMotionResult.MOVE_DROP : DND.DragMotionResult.COPY_DROP;
-        else
-            return DND.DragMotionResult.CONTINUE;
-    },
+        //if (this._dropWorkspace != -1)
+            //return this._thumbnails[this._dropWorkspace].handleDragOverInternal(source, time);
+        //else if (this._dropPlaceholderPos != -1)
+            //return source.realWindow ? DND.DragMotionResult.MOVE_DROP : DND.DragMotionResult.COPY_DROP;
+        //else
+            //return DND.DragMotionResult.CONTINUE;
+    //},
 
-    acceptDrop: function(source, actor, x, y, time) {
-        if(_DEBUG_) global.log("myThumbnailsBox: acceptDrop");
-        if (this._dropWorkspace != -1) {
-            return this._thumbnails[this._dropWorkspace].acceptDropInternal(source, time);
-        } else if (this._dropPlaceholderPos != -1) {
-            if (!source.realWindow && !source.shellWorkspaceLaunch)
-                return false;
+    //// Copy of GS38 acceptDrop to replace GS34 & GS36 acceptDrop
+    //acceptDrop: function(source, actor, x, y, time) {
+        //if(_DEBUG_) global.log("myThumbnailsBox: acceptDrop");
+        //if (this._dropWorkspace != -1) {
+            //return this._thumbnails[this._dropWorkspace].acceptDropInternal(source, time);
+        //} else if (this._dropPlaceholderPos != -1) {
+            //if (!source.realWindow && !source.shellWorkspaceLaunch)
+                //return false;
 
-            let isWindow = !!source.realWindow;
+            //let isWindow = !!source.realWindow;
 
-            // To create a new workspace, we first slide all the windows on workspaces
-            // below us to the next workspace, leaving a blank workspace for us to recycle.
-            let newWorkspaceIndex;
-            [newWorkspaceIndex, this._dropPlaceholderPos] = [this._dropPlaceholderPos, -1];
+            //// To create a new workspace, we first slide all the windows on workspaces
+            //// below us to the next workspace, leaving a blank workspace for us to recycle.
+            //let newWorkspaceIndex;
+            //[newWorkspaceIndex, this._dropPlaceholderPos] = [this._dropPlaceholderPos, -1];
 
-            // Nab all the windows below us.
-            let windows = global.get_window_actors().filter(function(win) {
-                if (isWindow)
-                    return win.get_workspace() >= newWorkspaceIndex && win != source;
-                else
-                    return win.get_workspace() >= newWorkspaceIndex;
-            });
+            //// Nab all the windows below us.
+            //let windows = global.get_window_actors().filter(function(win) {
+                //if (isWindow)
+                    //return win.get_workspace() >= newWorkspaceIndex && win != source;
+                //else
+                    //return win.get_workspace() >= newWorkspaceIndex;
+            //});
 
-            this._spliceIndex = newWorkspaceIndex;
+            //this._spliceIndex = newWorkspaceIndex;
 
-            // ... move them down one.
-            windows.forEach(function(win) {
-                win.meta_window.change_workspace_by_index(win.get_workspace() + 1,
-                                                          true, time);
-            });
+            //// ... move them down one.
+            //windows.forEach(function(win) {
+                //win.meta_window.change_workspace_by_index(win.get_workspace() + 1,
+                                                          //true, time);
+            //});
 
-            if (isWindow)
-                // ... and bam, a workspace, good as new.
-                source.metaWindow.change_workspace_by_index(newWorkspaceIndex,
-                                                            true, time);
-            else if (source.shellWorkspaceLaunch) {
-                source.shellWorkspaceLaunch({ workspace: newWorkspaceIndex,
-                                              timestamp: time });
-                // This new workspace will be automatically removed if the application fails
-                // to open its first window within some time, as tracked by Shell.WindowTracker.
-                // Here, we only add a very brief timeout to avoid the _immediate_ removal of the
-                // workspace while we wait for the startup sequence to load.
-                Main.keepWorkspaceAlive(global.screen.get_workspace_by_index(newWorkspaceIndex),
-                                        WORKSPACE_KEEP_ALIVE_TIME);
-            }
+            //if (isWindow)
+                //// ... and bam, a workspace, good as new.
+                //source.metaWindow.change_workspace_by_index(newWorkspaceIndex,
+                                                            //true, time);
+            //else if (source.shellWorkspaceLaunch) {
+                //source.shellWorkspaceLaunch({ workspace: newWorkspaceIndex,
+                                              //timestamp: time });
+                //// This new workspace will be automatically removed if the application fails
+                //// to open its first window within some time, as tracked by Shell.WindowTracker.
+                //// Here, we only add a very brief timeout to avoid the _immediate_ removal of the
+                //// workspace while we wait for the startup sequence to load.
+                //Main.keepWorkspaceAlive(global.screen.get_workspace_by_index(newWorkspaceIndex),
+                                        //WORKSPACE_KEEP_ALIVE_TIME);
+            //}
 
-            // Start the animation on the workspace (which is actually
-            // an old one which just became empty)
-            let thumbnail = this._thumbnails[newWorkspaceIndex];
-            this._setThumbnailState(thumbnail, ThumbnailState.NEW);
-            thumbnail.slidePosition = 1;
+            //// Start the animation on the workspace (which is actually
+            //// an old one which just became empty)
+            //let thumbnail = this._thumbnails[newWorkspaceIndex];
+            //this._setThumbnailState(thumbnail, ThumbnailState.NEW);
+            //thumbnail.slidePosition = 1;
 
-            this._queueUpdateStates();
+            //this._queueUpdateStates();
 
-            return true;
-        } else {
-            return false;
-        }
-    },
+            //return true;
+        //} else {
+            //return false;
+        //}
+    //},
 
     // override GS38 _createThumbnails to remove global n-workspaces notification
+    // Also used for GS34 & GS36 thumbnail show/hide functions handled by workspacesView.js
     _createThumbnails: function() {
         if (_DEBUG_) global.log("mythumbnailsBox: _createThumbnails");
         this._switchWorkspaceNotifyId =
@@ -345,18 +349,52 @@ const myThumbnailsBox = new Lang.Class({
             this._stateCounts[ThumbnailState[key]] = 0;
 
         // The "porthole" is the portion of the screen that we show in the workspaces
-        this._porthole = Main.layoutManager.getWorkAreaForMonitor(Main.layoutManager.primaryIndex);
+        if (this._gsCurrentVersion[1] < 7) {
+            let panelHeight = Main.panel.actor.height;
+            let monitor = Main.layoutManager.primaryMonitor;
+            this._porthole = {
+                x: monitor.x,
+                y: monitor.y + panelHeight,
+                width: monitor.width,
+                height: monitor.height - panelHeight
+            };
+        } else {
+            this._porthole = Main.layoutManager.getWorkAreaForMonitor(Main.layoutManager.primaryIndex);
+        }
 
         this.addThumbnails(0, global.screen.n_workspaces);
 
-        this._updateSwitcherVisibility();
+        if (this._gsCurrentVersion[1] > 7) {
+            this._updateSwitcherVisibility();
+        }
     },
+
+    _destroyThumbnails: function() {
+        if (this._switchWorkspaceNotifyId > 0) {
+            global.window_manager.disconnect(this._switchWorkspaceNotifyId);
+            this._switchWorkspaceNotifyId = 0;
+        }
+        if (this._nWorkspacesNotifyId > 0) {
+            global.screen.disconnect(this._nWorkspacesNotifyId);
+            this._nWorkspacesNotifyId = 0;
+        }
+
+        if (this._syncStackingId > 0) {
+            Main.overview.disconnect(this._syncStackingId);
+            this._syncStackingId = 0;
+        }
+
+        for (let w = 0; w < this._thumbnails.length; w++)
+            this._thumbnails[w].destroy();
+        this._thumbnails = [];
+    },
+
 
     addThumbnails: function(start, count) {
         for (let k = start; k < start + count; k++) {
             let metaWorkspace = global.screen.get_workspace_by_index(k);
-            //let thumbnail = new WorkspaceThumbnail.WorkspaceThumbnail(metaWorkspace);
-            let thumbnail = new myWorkspaceThumbnail(metaWorkspace);
+            let thumbnail = new WorkspaceThumbnail.WorkspaceThumbnail(metaWorkspace);
+            //let thumbnail = new myWorkspaceThumbnail(metaWorkspace);
             thumbnail.setPorthole(this._porthole.x, this._porthole.y,
                                   this._porthole.width, this._porthole.height);
             this._thumbnails.push(thumbnail);
@@ -472,15 +510,31 @@ const myThumbnailsBox = new Lang.Class({
                                               totalSpacing + nWorkspaces * this._porthole.height * scale);
     },
 
+    // Copy of GS38 _syncStacking to replace GS34 & GS36 syncStacking function handled by workspacesView.js
+    _syncStacking: function(overview, stackIndices) {
+        for (let i = 0; i < this._thumbnails.length; i++)
+            this._thumbnails[i].syncStacking(stackIndices);
+    },
+
+    //// GS 36 workspacesView.js syncStacking
+    //syncStacking: function(stackIndices) {
+        //for (let i = 0; i < this._workspaces.length; i++)
+            //this._workspaces[i].syncStacking(stackIndices);
+        //for (let i = 0; i < this._extraWorkspaces.length; i++)
+            //this._extraWorkspaces[i].syncStacking(stackIndices);
+    //},
+
     _allocate: function(actor, box, flags) {
         let rtl = (Clutter.get_default_text_direction () == Clutter.TextDirection.RTL);
 
         // See comment about this._background in _init()
         let themeNode = this._background.get_theme_node();
         let contentBox = themeNode.get_content_box(box);
+
         global.log("myThumbnailsBox: _allocate - backgroundNode contentBox h ="+(contentBox.y2-contentBox.y1)+" w = "+(contentBox.x2-contentBox.x1));
         //this._thumbnailsBoxFiller.height = contentBox.y2 - contentBox.y1;
         this._actualThumbnailWidth = contentBox.x2 - contentBox.x1;
+
         if (this._thumbnails.length == 0) // not visible
             return;
 
@@ -534,99 +588,191 @@ const myThumbnailsBox = new Lang.Class({
         childBox.y1 = box.y1;
         childBox.y2 = box.y2;
         global.log("myThumbnailsBox: _allocate - childBox height = "+(childBox.y2 - childBox.y1));
-
         this._background.allocate(childBox, flags);
 
-        let indicatorY1 = this._indicatorY;
-        let indicatorY2;
+        // passingthru67 - moved here from below
         // when not animating, the workspace position overrides this._indicatorY
         let indicatorWorkspace = !this._animatingIndicator ? global.screen.get_active_workspace() : null;
-        let indicatorThemeNode = this._indicator.get_theme_node();
 
-        let indicatorTopFullBorder = indicatorThemeNode.get_padding(St.Side.TOP) + indicatorThemeNode.get_border_width(St.Side.TOP);
-        let indicatorBottomFullBorder = indicatorThemeNode.get_padding(St.Side.BOTTOM) + indicatorThemeNode.get_border_width(St.Side.BOTTOM);
-        let indicatorLeftFullBorder = indicatorThemeNode.get_padding(St.Side.LEFT) + indicatorThemeNode.get_border_width(St.Side.LEFT);
-        let indicatorRightFullBorder = indicatorThemeNode.get_padding(St.Side.RIGHT) + indicatorThemeNode.get_border_width(St.Side.RIGHT);
-
-        //this._thumbnailsBoxFiller.height = (contentBox.y2 - contentBox.y1) + indicatorTopFullBorder + indicatorBottomFullBorder;
-
+        // passingthru67 - move here from below
         let y = contentBox.y1;
 
-        if (this._dropPlaceholderPos == -1) {
-            Meta.later_add(Meta.LaterType.BEFORE_REDRAW, Lang.bind(this, function() {
-                this._dropPlaceholder.hide();
-            }));
-        }
+        // passingthru67 - conditional for gnome shell 3.4/3.6/# differences
+        if (this._gsCurrentVersion[1] < 6) {
+            let indicatorY = this._indicatorY;
+            // when not animating, the workspace position overrides this._indicatorY
+            // passingthru67 - moved above
+            //let indicatorWorkspace = !this._animatingIndicator ? global.screen.get_active_workspace() : null;
 
-        for (let i = 0; i < this._thumbnails.length; i++) {
-            let thumbnail = this._thumbnails[i];
+            // passingthru67 - moved above
+            //let y = contentBox.y1;
 
-            if (i > 0)
-                y += spacing - Math.round(thumbnail.collapseFraction * spacing);
-
-            let x1, x2;
-            if (rtl) {
-                x1 = contentBox.x1 + slideOffset * thumbnail.slidePosition;
-                x2 = x1 + thumbnailWidth;
-            } else {
-                x1 = contentBox.x2 - thumbnailWidth + slideOffset * thumbnail.slidePosition;
-                x2 = x1 + thumbnailWidth;
-            }
-
-            if (i == this._dropPlaceholderPos) {
-                let [minHeight, placeholderHeight] = this._dropPlaceholder.get_preferred_height(-1);
-                childBox.x1 = x1;
-                childBox.x2 = x1 + thumbnailWidth;
-                childBox.y1 = Math.round(y);
-                childBox.y2 = Math.round(y + placeholderHeight);
-                this._dropPlaceholder.allocate(childBox, flags);
+            if (this._dropPlaceholderPos == -1) {
                 Meta.later_add(Meta.LaterType.BEFORE_REDRAW, Lang.bind(this, function() {
-                    this._dropPlaceholder.show();
+                    this._dropPlaceholder.hide();
                 }));
-                y += placeholderHeight + spacing;
             }
 
-            // We might end up with thumbnailHeight being something like 99.33
-            // pixels. To make this work and not end up with a gap at the bottom,
-            // we need some thumbnails to be 99 pixels and some 100 pixels height;
-            // we compute an actual scale separately for each thumbnail.
-            let y1 = Math.round(y);
-            let y2 = Math.round(y + thumbnailHeight);
-            let roundedVScale = (y2 - y1) / portholeHeight;
+            for (let i = 0; i < this._thumbnails.length; i++) {
+                let thumbnail = this._thumbnails[i];
 
-            if (thumbnail.metaWorkspace == indicatorWorkspace) {
-                indicatorY1 = y1;
-                indicatorY2 = y2;
+                if (i > 0)
+                    y += spacing - Math.round(thumbnail.collapseFraction * spacing);
+
+                let x1, x2;
+                if (rtl) {
+                    x1 = contentBox.x1 + slideOffset * thumbnail.slidePosition;
+                    x2 = x1 + thumbnailWidth;
+                } else {
+                    x1 = contentBox.x2 - thumbnailWidth + slideOffset * thumbnail.slidePosition;
+                    x2 = x1 + thumbnailWidth;
+                }
+
+                if (i == this._dropPlaceholderPos) {
+                    let [minHeight, placeholderHeight] = this._dropPlaceholder.get_preferred_height(-1);
+                    childBox.x1 = x1;
+                    childBox.x2 = x1 + thumbnailWidth;
+                    childBox.y1 = Math.round(y);
+                    childBox.y2 = Math.round(y + placeholderHeight);
+                    this._dropPlaceholder.allocate(childBox, flags);
+                    Meta.later_add(Meta.LaterType.BEFORE_REDRAW, Lang.bind(this, function() {
+                        this._dropPlaceholder.show();
+                    }));
+                    y += placeholderHeight + spacing;
+                }
+
+                // We might end up with thumbnailHeight being something like 99.33
+                // pixels. To make this work and not end up with a gap at the bottom,
+                // we need some thumbnails to be 99 pixels and some 100 pixels height;
+                // we compute an actual scale separately for each thumbnail.
+                let y1 = Math.round(y);
+                let y2 = Math.round(y + thumbnailHeight);
+                let roundedVScale = (y2 - y1) / portholeHeight;
+
+                if (thumbnail.metaWorkspace == indicatorWorkspace)
+                    indicatorY = y1;
+
+
+                // Allocating a scaled actor is funny - x1/y1 correspond to the origin
+                // of the actor, but x2/y2 are increased by the *unscaled* size.
+                childBox.x1 = x1;
+                childBox.x2 = x1 + portholeWidth;
+                childBox.y1 = y1;
+                childBox.y2 = y1 + portholeHeight;
+
+                thumbnail.actor.set_scale(roundedHScale, roundedVScale);
+                thumbnail.actor.allocate(childBox, flags);
+
+                // We round the collapsing portion so that we don't get thumbnails resizing
+                // during an animation due to differences in rounded, but leave the uncollapsed
+                // portion unrounded so that non-animating we end up with the right total
+                y += thumbnailHeight - Math.round(thumbnailHeight * thumbnail.collapseFraction);
             }
 
-            // Allocating a scaled actor is funny - x1/y1 correspond to the origin
-            // of the actor, but x2/y2 are increased by the *unscaled* size.
-            childBox.x1 = x1;
-            childBox.x2 = x1 + portholeWidth;
-            childBox.y1 = y1;
-            childBox.y2 = y1 + portholeHeight;
+            if (rtl) {
+                childBox.x1 = contentBox.x1;
+                childBox.x2 = contentBox.x1 + thumbnailWidth;
+            } else {
+                childBox.x1 = contentBox.x2 - thumbnailWidth;
+                childBox.x2 = contentBox.x2;
+            }
+            childBox.y1 = indicatorY;
+            childBox.y2 = childBox.y1 + thumbnailHeight;
+            this._indicator.allocate(childBox, flags);
 
-            thumbnail.actor.set_scale(roundedHScale, roundedVScale);
-            thumbnail.actor.allocate(childBox, flags);
-
-            // We round the collapsing portion so that we don't get thumbnails resizing
-            // during an animation due to differences in rounded, but leave the uncollapsed
-            // portion unrounded so that non-animating we end up with the right total
-            y += thumbnailHeight - Math.round(thumbnailHeight * thumbnail.collapseFraction);
-        }
-
-        if (rtl) {
-            childBox.x1 = contentBox.x1;
-            childBox.x2 = contentBox.x1 + thumbnailWidth;
         } else {
-            childBox.x1 = contentBox.x2 - thumbnailWidth;
-            childBox.x2 = contentBox.x2;
+            let indicatorY1 = this._indicatorY;
+            let indicatorY2;
+            // when not animating, the workspace position overrides this._indicatorY
+            // passingthru67 - moved above
+            //let indicatorWorkspace = !this._animatingIndicator ? global.screen.get_active_workspace() : null;
+            let indicatorThemeNode = this._indicator.get_theme_node();
+
+            let indicatorTopFullBorder = indicatorThemeNode.get_padding(St.Side.TOP) + indicatorThemeNode.get_border_width(St.Side.TOP);
+            let indicatorBottomFullBorder = indicatorThemeNode.get_padding(St.Side.BOTTOM) + indicatorThemeNode.get_border_width(St.Side.BOTTOM);
+            let indicatorLeftFullBorder = indicatorThemeNode.get_padding(St.Side.LEFT) + indicatorThemeNode.get_border_width(St.Side.LEFT);
+            let indicatorRightFullBorder = indicatorThemeNode.get_padding(St.Side.RIGHT) + indicatorThemeNode.get_border_width(St.Side.RIGHT);
+
+            // passingthru67 - moved above
+            //let y = contentBox.y1;
+
+            if (this._dropPlaceholderPos == -1) {
+                Meta.later_add(Meta.LaterType.BEFORE_REDRAW, Lang.bind(this, function() {
+                    this._dropPlaceholder.hide();
+                }));
+            }
+
+            for (let i = 0; i < this._thumbnails.length; i++) {
+                let thumbnail = this._thumbnails[i];
+
+                if (i > 0)
+                    y += spacing - Math.round(thumbnail.collapseFraction * spacing);
+
+                let x1, x2;
+                if (rtl) {
+                    x1 = contentBox.x1 + slideOffset * thumbnail.slidePosition;
+                    x2 = x1 + thumbnailWidth;
+                } else {
+                    x1 = contentBox.x2 - thumbnailWidth + slideOffset * thumbnail.slidePosition;
+                    x2 = x1 + thumbnailWidth;
+                }
+
+                if (i == this._dropPlaceholderPos) {
+                    let [minHeight, placeholderHeight] = this._dropPlaceholder.get_preferred_height(-1);
+                    childBox.x1 = x1;
+                    childBox.x2 = x1 + thumbnailWidth;
+                    childBox.y1 = Math.round(y);
+                    childBox.y2 = Math.round(y + placeholderHeight);
+                    this._dropPlaceholder.allocate(childBox, flags);
+                    Meta.later_add(Meta.LaterType.BEFORE_REDRAW, Lang.bind(this, function() {
+                        this._dropPlaceholder.show();
+                    }));
+                    y += placeholderHeight + spacing;
+                }
+
+                // We might end up with thumbnailHeight being something like 99.33
+                // pixels. To make this work and not end up with a gap at the bottom,
+                // we need some thumbnails to be 99 pixels and some 100 pixels height;
+                // we compute an actual scale separately for each thumbnail.
+                let y1 = Math.round(y);
+                let y2 = Math.round(y + thumbnailHeight);
+                let roundedVScale = (y2 - y1) / portholeHeight;
+
+                if (thumbnail.metaWorkspace == indicatorWorkspace) {
+                    indicatorY1 = y1;
+                    indicatorY2 = y2;
+                }
+
+                // Allocating a scaled actor is funny - x1/y1 correspond to the origin
+                // of the actor, but x2/y2 are increased by the *unscaled* size.
+                childBox.x1 = x1;
+                childBox.x2 = x1 + portholeWidth;
+                childBox.y1 = y1;
+                childBox.y2 = y1 + portholeHeight;
+
+                thumbnail.actor.set_scale(roundedHScale, roundedVScale);
+                thumbnail.actor.allocate(childBox, flags);
+
+                // We round the collapsing portion so that we don't get thumbnails resizing
+                // during an animation due to differences in rounded, but leave the uncollapsed
+                // portion unrounded so that non-animating we end up with the right total
+                y += thumbnailHeight - Math.round(thumbnailHeight * thumbnail.collapseFraction);
+            }
+
+            if (rtl) {
+                childBox.x1 = contentBox.x1;
+                childBox.x2 = contentBox.x1 + thumbnailWidth;
+            } else {
+                childBox.x1 = contentBox.x2 - thumbnailWidth;
+                childBox.x2 = contentBox.x2;
+            }
+            childBox.x1 -= indicatorLeftFullBorder;
+            childBox.x2 += indicatorRightFullBorder;
+            childBox.y1 = indicatorY1 - indicatorTopFullBorder;
+            childBox.y2 = (indicatorY2 ? indicatorY2 : (indicatorY1 + thumbnailHeight)) + indicatorBottomFullBorder;
+
+            this._indicator.allocate(childBox, flags);
         }
-        childBox.x1 -= indicatorLeftFullBorder;
-        childBox.x2 += indicatorRightFullBorder;
-        childBox.y1 = indicatorY1 - indicatorTopFullBorder;
-        childBox.y2 = (indicatorY2 ? indicatorY2 : (indicatorY1 + thumbnailHeight)) + indicatorBottomFullBorder;
-        this._indicator.allocate(childBox, flags);
     },
 
     // override _activeWorkspaceChanged to eliminate errors thrown
