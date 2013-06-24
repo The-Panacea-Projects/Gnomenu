@@ -23,13 +23,13 @@
 }
 
 .gnomenu-panel-button {
-    margin: 0px;
-    padding: 0px 12px;
+         margin: 0px;
+         padding: 0px 10px;
 }
 
 .gnomenu-panel-menu-button {
     margin: 0px;
-    padding: 0px 12px;
+    padding: 0px 10px;
 }
 
 .gnomenu-panel-menu-button:hover {
@@ -40,7 +40,7 @@
 }
 
 .gnomenu-menu-top-pane {
-    padding: 0px 0px 15px 0px;
+    padding: 0px 0px 20px 0px;
 }
 
 .gnomenu-menu-middle-pane {
@@ -63,7 +63,7 @@
 .gnomenu-user-group-button {
     border-radius: 15px;
     border-width: 1px;
-    padding: 5px 12px;
+    padding: 3px 10px;
 }
 
 .gnomenu-user-group-button:insensitive {
@@ -92,13 +92,18 @@
 .gnomenu-view-mode-button {
     border-radius: 15px;
     border-width: 1px;
-    padding: 4px 10px;
+    padding: 3px 10px;
 }
 
 .gnomenu-view-mode-button:hover {
 }
 
 .gnomenu-search-box {
+}
+
+#gnomenuMenuMainbox #searchEntry {
+    height: 10px;
+    width: 220px;
 }
 
 .gnomenu-favorites-scrollbox {
@@ -117,7 +122,7 @@
 .gnomenu-favorite-button {
     border-radius: 10px 4px 4px 10px;
     border-width: 1px;
-    padding: 6px;
+    padding: 4px;
 }
 
 .gnomenu-favorite-button:hover {
@@ -134,27 +139,23 @@
 
 .gnomenu-category-places-scrollbox {
     border-image: url("sepa-right.png") 12 12 12 12;
-    height: 480px;
+    height: 400px;
     padding: 8px 0px;
 }
 
-.gnomenu-category-places-box {
-    /* no longer exists */
-}
-
 .gnomenu-categories-box {
-    width: 158px;
     padding-left: 6px;
 }
 
 .gnomenu-category-button {
     border-radius: 4px;
     border-width: 2px;
-    width: 106px;
+    padding: 0px;
+    width: 153px;
 }
 
 .gnomenu-category-button-label {
-    padding-left: 5px
+    padding: 3px 10px 5px 10px;
 }
 .gnomenu-category-button:hover,
 .gnomenu-category-button-selected {
@@ -165,7 +166,6 @@
 }
 
 .gnomenu-power-group-box {
-    /*border-image: url("b-panel-b.png") 10 10;*/
     border: 2px;
     padding: 5px 0px 0px 0px;
 }
@@ -173,17 +173,16 @@
 .gnomenu-power-group-button {
     border-radius: 4px;
     border: 2px;
-    padding: 5px 9px;
+    padding: 2px 8px;
 }
 
 .gnomenu-power-group-button:hover {
 }
 
 .gnomenu-applications-scrollbox {
-    border-image: url("b-panel-r.png") 10 10;
-    padding-right: 2px;
-    padding-bottom: 4px;
-    width: 600px;
+    border-image: url("b-panel-r.png") 12 12 12 12;
+    padding: 0px 2px 4px 2px;
+    width: 492px;
 }
 
 .gnomenu-applications-box-wrapper {
@@ -192,20 +191,20 @@
 
 .gnomenu-applications-list-box {
     padding-bottom: 0px;
-    padding-left: 52px;
+    padding-left: 48px;
     padding-right: 0px;
-    padding-top: 0px;
+    padding-top: 8px;
 }
 
 .gnomenu-application-button {
-    padding: 3px 10px;
+    padding: 0px 10px;
     border-width: 1px;
-    border-radius: 17px 4px 4px 17px;
-    width: 512px;
+    border-radius: 4px;
+    width: 440px;
 }
 
 .gnomenu-application-button-label {
-    padding: 4px 24px
+    padding: 4px 24px 6px 24px
 }
 
 .gnomenu-application-button:hover,
@@ -222,9 +221,9 @@
 .gnomenu-application-grid-button {
     border-width: 1px;
     border-radius: 5px;
-    padding: 7px;
-    width: 100px;
-    height: 82px;
+    padding: 5px;
+    width: 82px;
+    height: 72px;
 }
 
 .gnomenu-application-grid-button-label {
@@ -239,7 +238,7 @@
 .gnomenu-selected-app-box {
     /*border-image: url("sepa.png") 12 12 12 12;*/
     padding-top: 5px;
-    padding-bottom: 0px;
+    padding-bottom: 5px;
     padding-right: 0px;
     text-align: right;
     max-width: 100px;

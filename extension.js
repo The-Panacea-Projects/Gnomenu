@@ -76,6 +76,13 @@ const selectMethod = {
     CLICK: 1
 };
 
+const menuLayout = {
+    LARGE: 0,
+    MEDIUM: 1,
+    SMALL: 2
+};
+
+
 /* =========================================================================
 /* name:    CategoryListButton
  * @desc    A button with an icon that holds category info
@@ -2596,9 +2603,17 @@ const GnoMenuButton = new Lang.Class({
 
     _changeStylesheet: function() {
         if (_DEBUG_) global.log("_changeStylesheet");
-        let filename = 'gnomenu.css';
+        // Get menu layout
+        let ml = "";
+        if (settings.get_enum('menu-layout') == menuLayout.SMALL) {
+            ml = "-s";
+        } else if (settings.get_enum('menu-layout') == menuLayout.MEDIUM) {
+            ml = "-m";
+        }
+
+        let filename = "gnomenu" + ml + ".css";
         if (gsVersion[1] < 6)
-            filename = 'gnomenu-gs34.css';
+            filename = "gnomenu-gs34" + ml + ".css";
 
         // Get new theme stylesheet
         let themeStylesheet = Main._defaultCssStylesheet;
@@ -2610,7 +2625,7 @@ const GnoMenuButton = new Lang.Class({
         if (_DEBUG_) global.log("new theme = "+themeStylesheet);
 
         // Test for gnomenu stylesheet
-        let newStylesheet = themeDirectory + '/extensions/' + filename;
+        let newStylesheet = themeDirectory + '/extensions/gno-menu/' + filename;
         if (!GLib.file_test(newStylesheet, GLib.FileTest.EXISTS)) {
             if (_DEBUG_) global.log("Theme doesn't support gnomenu .. use default stylesheet");
             let defaultStylesheet = Gio.File.new_for_path(Me.path + "/themes/default/" + filename);
@@ -2694,6 +2709,9 @@ const GnoMenuButton = new Lang.Class({
         settings.connect('changed::favorites-icon-size', Lang.bind(this, function() {
             if (this.appsMenuButton) this.appsMenuButton.refresh();
         }));
+        settings.connect('changed::menu-layout', Lang.bind(this, function() {
+            let ret = this._changeStylesheet();
+        }));
     },
 
     // function to destroy GnoMenu
@@ -2724,9 +2742,17 @@ const GnoMenuButton = new Lang.Class({
 
 function loadStylesheet() {
     if (_DEBUG_) global.log("GnoMenu loadStylesheet");
-    let filename = 'gnomenu.css';
+    // Get menu layout
+    let ml = "";
+    if (settings.get_enum('menu-layout') == menuLayout.SMALL) {
+        ml = "-s";
+    } else if (settings.get_enum('menu-layout') == menuLayout.MEDIUM) {
+        ml = "-m";
+    }
+
+    let filename = "gnomenu" + ml + ".css";
     if (gsVersion[1] < 6)
-        filename = 'gnomenu-gs34.css';
+        filename = "gnomenu-gs34" + ml + ".css";
 
     // Get current theme stylesheet
     let themeStylesheet = Main._defaultCssStylesheet;
@@ -2737,7 +2763,7 @@ function loadStylesheet() {
     let themeDirectory = GLib.path_get_dirname(themeStylesheet);
 
     // Test for gnomenu stylesheet
-    GnoMenuStylesheet = themeDirectory + '/extensions/' + filename;
+    GnoMenuStylesheet = themeDirectory + '/extensions/gno-menu/' + filename;
     if (!GLib.file_test(GnoMenuStylesheet, GLib.FileTest.EXISTS)) {
         if (_DEBUG_) global.log("Theme doesn't support gnomenu .. use default stylesheet");
         let defaultStylesheet = Gio.File.new_for_path(Me.path + "/themes/default/" + filename);

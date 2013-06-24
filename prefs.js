@@ -268,6 +268,29 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             margin_bottom: 5
         });
 
+        let menuLayoutBox = new Gtk.Box({
+            spacing: 20,
+            orientation: Gtk.Orientation.HORIZONTAL,
+            homogeneous: false,
+            margin_left: 20,
+            margin_top: 5,
+            margin_bottom: 5,
+            margin_right: 10
+        });
+        let menuLayoutLabel = new Gtk.Label({label: _("Menu layout style"), hexpand:true, xalign:0});
+        let menuLayoutCombo = new Gtk.ComboBoxText({halign:Gtk.Align.END});
+            menuLayoutCombo.set_size_request(180, -1);
+            menuLayoutCombo.append_text(_('Large'));
+            menuLayoutCombo.append_text(_('Medium'));
+            menuLayoutCombo.append_text(_('Small'));
+            menuLayoutCombo.set_active(this.settings.get_enum('menu-layout'));
+            menuLayoutCombo.connect('changed', Lang.bind (this, function(widget) {
+                    this.settings.set_enum('menu-layout', widget.get_active());
+            }));
+
+        menuLayoutBox.add(menuLayoutLabel);
+        menuLayoutBox.add(menuLayoutCombo);
+
         let startupAppsDisplayBox = new Gtk.Box({
             spacing: 20,
             orientation: Gtk.Orientation.HORIZONTAL,
@@ -422,6 +445,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
 
 
         appsSettings.add(appsSettingsTitle);
+        appsSettings.add(menuLayoutBox);
         appsSettings.add(startupAppsDisplayBox);
         appsSettings.add(startupViewModeBox);
         appsSettings.add(categorySelectMethodBox);

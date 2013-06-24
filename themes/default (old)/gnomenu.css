@@ -36,8 +36,6 @@
 }
 
 .gnomenu-main-menu-box {
-    font-size: 14px;
-    font-weight: bold;
     padding: 10px 25px 10px 25px;
 }
 
@@ -77,9 +75,6 @@
 }
 
 .gnomenu-user-group-button:hover {
-    background-gradient-direction: vertical;
-    background-gradient-start: rgba(119,119,119,0.5);
-    background-gradient-end: rgba(119,119,119,0.7);
 }
 
 .gnomenu-view-mode-box-wrapper {
@@ -101,9 +96,6 @@
 }
 
 .gnomenu-view-mode-button:hover {
-    background-gradient-direction: vertical;
-    background-gradient-start: rgba(119,119,119,0.5);
-    background-gradient-end: rgba(119,119,119,0.7);
 }
 
 .gnomenu-search-box {
@@ -124,9 +116,6 @@
 }
 
 .gnomenu-favorite-button:hover {
-    background-gradient-direction: vertical;
-    background-gradient-start: rgba(119,119,119,0.5);
-    background-gradient-end: rgba(119,119,119,0.7);
 }
 
 .gnomenu-category-places-power-group-box {
@@ -149,13 +138,11 @@
 }
 
 .gnomenu-categories-box {
-    font-size: 14px;
     width: 158px;
     padding-left: 6px;
 }
 
 .gnomenu-category-button {
-    font-weight: normal;
     border-radius: 4px;
     border-width: 1px;
 }
@@ -165,9 +152,6 @@
 }
 .gnomenu-category-button:hover,
 .gnomenu-category-button-selected {
-    background-gradient-direction: vertical;
-    background-gradient-start: rgba(119,119,119,0.5);
-    background-gradient-end: rgba(119,119,119,0.7);
 }
 
 .gnomenu-places-box {
@@ -187,9 +171,6 @@
 }
 
 .gnomenu-power-group-button:hover {
-    background-gradient-direction: vertical;
-    background-gradient-start: rgba(119,119,119,0.5);
-    background-gradient-end: rgba(119,119,119,0.7);
 }
 
 .gnomenu-applications-scrollbox {
@@ -222,9 +203,6 @@
 
 .gnomenu-application-button:hover,
 .gnomenu-application-button-selected {
-    background-gradient-direction: vertical;
-    background-gradient-start: rgba(119,119,119,0.5);
-    background-gradient-end: rgba(119,119,119,0.7);
 }
 
 .gnomenu-applications-grid-box {
@@ -249,9 +227,6 @@
 
 .gnomenu-application-grid-button:hover,
 .gnomenu-application-grid-button-selected {
-    background-gradient-direction: vertical;
-    background-gradient-start: rgba(119,119,119,0.5);
-    background-gradient-end: rgba(119,119,119,0.7);
 }
 
 .gnomenu-selected-app-box {
@@ -271,6 +246,6 @@
 
 .gnomenu-selected-app-description {
     height: 17px;
-    max-width: 150px;
+    /*max-width: 150px;*/
     font-size: 14px;
 }

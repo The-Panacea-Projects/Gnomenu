@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="gnome-shell-extensions-gnomenu">
+  <enum id='org.gnome.shell.extensions.gnomenu.menuLayout'>
+    <value value='0' nick='Large'/>
+    <value value='1' nick='Medium'/>
+    <value value='2' nick='Small'/>
+  </enum>
   <enum id='org.gnome.shell.extensions.gnomenu.viewMode'>
     <value value='0' nick='List'/>
     <value value='1' nick='Grid'/>
@@ -59,6 +64,11 @@
         <default><![CDATA[['start-here-symbolic']]]></default>
       <summary>Set the custom menu button icon name</summary>
       <description>Set the custom menu button icon name</description>
+    </key>
+    <key enum="org.gnome.shell.extensions.gnomenu.menuLayout" name="menu-layout">
+      <default>'Large'</default>
+      <summary>Size and layout of the applications menu</summary>
+      <description>Size and layout of the applications menu</description>
     </key>
     <key enum="org.gnome.shell.extensions.gnomenu.viewMode" name="startup-view-mode">
       <default>'Grid'</default>
