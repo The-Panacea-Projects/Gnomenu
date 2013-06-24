@@ -57,6 +57,25 @@ const ThumbnailState = {
     DESTROYED: 7
 };
 
+const myWindowClone = new Lang.Class({
+    Name: 'GnoMenu.myWindowClone',
+    Extends: WorkspaceThumbnail.WindowClone,
+
+    _init : function(realWindow) {
+        this.parent(realWindow);
+    },
+
+    _onButtonRelease : function (actor, event) {
+        let button = event.get_button();
+        if (button == 3) { //right click
+            return false;
+        }
+
+        this.emit('selected', event.get_time());
+        return true;
+    }
+});
+
 const myWorkspaceThumbnail = new Lang.Class({
     Name: 'GnoMenu.myWorkspaceThumbnail',
     Extends: WorkspaceThumbnail.WorkspaceThumbnail,
@@ -64,6 +83,38 @@ const myWorkspaceThumbnail = new Lang.Class({
     _init : function(metaWorkspace) {
         this.parent(metaWorkspace);
     },
+
+    // Create a clone of a (non-desktop) window and add it to the window list
+    _addWindowClone : function(win) {
+        let clone = new myWindowClone(win);
+
+        clone.connect('selected',
+                      Lang.bind(this, function(clone, time) {
+                          this.activate(time);
+                      }));
+        clone.connect('drag-begin',
+                      Lang.bind(this, function(clone) {
+                          Main.overview.beginWindowDrag();
+                      }));
+        clone.connect('drag-cancelled',
+                      Lang.bind(this, function(clone) {
+                          Main.overview.cancelledWindowDrag();
+                      }));
+        clone.connect('drag-end',
+                      Lang.bind(this, function(clone) {
+                          Main.overview.endWindowDrag();
+                      }));
+        this._contents.add_actor(clone.actor);
+
+        if (this._windows.length == 0)
+            clone.setStackAbove(this._bgManager.background.actor);
+        else
+            clone.setStackAbove(this._windows[this._windows.length - 1].actor);
+
+        this._windows.push(clone);
+
+        return clone;
+    }
 
     //// Draggable target interface used only by ThumbnailsBox
     //handleDragOverInternal : function(source, time) {
@@ -332,9 +383,9 @@ const myThumbnailsBox = new Lang.Class({
         this._switchWorkspaceNotifyId =
             global.window_manager.connect('switch-workspace',
                                           Lang.bind(this, this._activeWorkspaceChanged));
-        //this._nWorkspacesNotifyId =
-            //global.screen.connect('notify::n-workspaces',
-                                  //Lang.bind(this, this._workspacesChanged));
+        this._nWorkspacesNotifyId =
+            global.screen.connect('notify::n-workspaces',
+                                  Lang.bind(this, this._workspacesChanged));
         this._syncStackingId =
             Main.overview.connect('windows-restacked',
                                   Lang.bind(this, this._syncStacking));
@@ -393,8 +444,8 @@ const myThumbnailsBox = new Lang.Class({
     addThumbnails: function(start, count) {
         for (let k = start; k < start + count; k++) {
             let metaWorkspace = global.screen.get_workspace_by_index(k);
-            let thumbnail = new WorkspaceThumbnail.WorkspaceThumbnail(metaWorkspace);
-            //let thumbnail = new myWorkspaceThumbnail(metaWorkspace);
+            //let thumbnail = new WorkspaceThumbnail.WorkspaceThumbnail(metaWorkspace);
+            let thumbnail = new myWorkspaceThumbnail(metaWorkspace);
             thumbnail.setPorthole(this._porthole.x, this._porthole.y,
                                   this._porthole.width, this._porthole.height);
             this._thumbnails.push(thumbnail);
