@@ -568,19 +568,6 @@ const PanelMenuButton = new Lang.Class({
         }
 
         this._display();
-
-        //this._workspaceAddedId = global.screen.connect('workspace-added', Lang.bind(this, this._workspaceAdded));
-        //this._workspaceRemovedId = global.screen.connect('workspace-removed', Lang.bind(this, this._workspaceRemoved));
-
-    },
-
-    destroy: function() {
-        // disconnect global workspace signals
-        //global.screen.disconnect(this._workspaceAddedId);
-        //global.screen.disconnect(this._workspaceRemovedId);
-
-        // run parent's popupmenu destroy function
-        this.parent();
     },
 
     // Override _onStyleChanged function
@@ -636,25 +623,25 @@ const PanelMenuButton = new Lang.Class({
             // Set height (we also set constraints on scrollboxes
             // Why does height need to be set when already set constraints? because of issue noted below
             // ISSUE: If height isn't set, then popup menu height will expand when application buttons are added
-            let height = this.groupCategoryPlacesWorkspaceScrollBox.height;
+            let height = this.groupCategoriesWorkspacesScrollBox.height;
             this.applicationsScrollBox.height = height;
             this.favoritesScrollBox.height = height;
             this.thumbnailsBox._createThumbnails();
             this.thumbnailsBox.actor.set_position(1, 0); // position inside wrapper
 
-            if (_DEBUG_) global.log("powerGroup width = "+this.powerGroupBox.width+" scrollBox width = "+this.groupCategoryPlacesWorkspaceScrollBox.width);
-            if (this.powerGroupBox.width > (this.groupCategoryPlacesWorkspaceScrollBox.width + this.favoritesScrollBox.width)) {
+            if (_DEBUG_) global.log("powerGroup width = "+this.powerGroupBox.width+" scrollBox width = "+this.groupCategoriesWorkspacesScrollBox.width);
+            if (this.powerGroupBox.width > (this.groupCategoriesWorkspacesScrollBox.width + this.favoritesScrollBox.width)) {
                 this.userGroupBox.width = this.powerGroupBox.width;
                 let categoryWidth = this.powerGroupBox.width - this.favoritesScrollBox.width;
-                this.groupCategoryPlacesWorkspaceScrollBox.width = categoryWidth;
+                this.groupCategoriesWorkspacesScrollBox.width = categoryWidth;
                 this.thumbnailsBox.actor.width = categoryWidth - 0;
                 this.thumbnailsBox._actualThumbnailWidth = categoryWidth - 0;
             } else {
-                let groupWidth = this.groupCategoryPlacesWorkspaceScrollBox.width + this.favoritesScrollBox.width;
+                let groupWidth = this.groupCategoriesWorkspacesScrollBox.width + this.favoritesScrollBox.width;
                 this.powerGroupBox.width = groupWidth;
                 this.userGroupBox.width = groupWidth;
-                this.thumbnailsBox.actor.width = this.groupCategoryPlacesWorkspaceScrollBox.width - 0;
-                this.thumbnailsBox._actualThumbnailWidth = this.groupCategoryPlacesWorkspaceScrollBox.width - 0;
+                this.thumbnailsBox.actor.width = this.groupCategoriesWorkspacesScrollBox.width - 0;
+                this.thumbnailsBox._actualThumbnailWidth = this.groupCategoriesWorkspacesScrollBox.width - 0;
             }
 
             // Set Category or Workspace Mode
@@ -662,12 +649,10 @@ const PanelMenuButton = new Lang.Class({
             this._categoryWorkspaceMode = CategoryWorkspaceMode.CATEGORY;
             if (this._categoryWorkspaceMode == CategoryWorkspaceMode.CATEGORY) {
                 this.thumbnailsBox.actor.hide();
-                this.groupCategoryPlaces.show();
-                //this.groupCategoryPlaces.opacity = 255;
+                this.categoriesBox.show();
                 this.thumbnailsBoxFiller.height = 0;
             } else {
-                this.groupCategoryPlaces.hide();
-                //this.groupCategoryPlaces.opacity = 0;
+                this.categoriesBox.hide();
                 this.thumbnailsBox.actor.show();
                 this.thumbnailsBoxFiller.height = this.thumbnailsBox.actor.height;
             }
@@ -705,7 +690,6 @@ const PanelMenuButton = new Lang.Class({
         } else {
             this.resetSearch();
             this._clearCategorySelections(this.categoriesBox);
-            //this._clearCategorySelections(this.placesBox);
             this._clearApplicationSelections();
             this._clearApplicationsBox();
             global.stage.set_key_focus(null);
@@ -730,18 +714,16 @@ const PanelMenuButton = new Lang.Class({
     toggleCategoryWorkspaceMode: function(mode) {
         if (this._categoryWorkspaceMode == CategoryWorkspaceMode.CATEGORY || mode == CategoryWorkspaceMode.WORKSPACE) {
             this._categoryWorkspaceMode = CategoryWorkspaceMode.WORKSPACE;
-            this.groupCategoryPlaces.hide();
-            //this.groupCategoryPlaces.opacity = 0;
+            this.categoriesBox.hide();
             this.thumbnailsBox.actor.show();
             this.thumbnailsBoxFiller.height = this.thumbnailsBox.actor.height;
-            if (_DEBUG_) global.log("toggleCategoryWorkspaceMode - thumbnailsBox height = "+this.thumbnailsBox.actor.height+" scrollbox height = "+this.groupCategoryPlacesWorkspaceScrollBox.height);
+            if (_DEBUG_) global.log("toggleCategoryWorkspaceMode - thumbnailsBox height = "+this.thumbnailsBox.actor.height+" scrollbox height = "+this.groupCategoriesWorkspacesScrollBox.height);
         } else if (this._categoryWorkspaceMode == CategoryWorkspaceMode.WORKSPACE || mode == CategoryWorkspaceMode.CATEGORY){
             this._categoryWorkspaceMode = CategoryWorkspaceMode.CATEGORY;
             this.thumbnailsBox.actor.hide();
-            this.groupCategoryPlaces.show();
-            //this.groupCategoryPlaces.opacity = 255;
+            this.categoriesBox.show();
             this.thumbnailsBoxFiller.height = 0;
-            if (_DEBUG_) global.log("toggleCategoryWorkspaceMode - categoryPlaces height = "+this.groupCategoryPlaces.height+" scrollbox height = "+this.groupCategoryPlacesWorkspaceScrollBox.height);
+            if (_DEBUG_) global.log("toggleCategoryWorkspaceMode - categoryPlaces height = "+this.categoriesBox.height+" scrollbox height = "+this.groupCategoriesWorkspacesScrollBox.height);
         }
 
     },
@@ -802,14 +784,6 @@ const PanelMenuButton = new Lang.Class({
 
         this.toggleCategoryWorkspaceMode(CategoryWorkspaceMode.WORKSPACE);
     },
-
-    //_selectComputer : function(button) {
-        //this.resetSearch();
-        //this._clearApplicationsBox(button);
-
-        //let places = this._listPlaces();
-        //this._displayApplications(null, places);
-    //},
 
     _selectBookmarks: function(button) {
         this.resetSearch();
@@ -948,22 +922,6 @@ const PanelMenuButton = new Lang.Class({
                 }
             }
         }
-
-        //let placesActors = this.placesBox.get_children();
-        //if (placesActors) {
-            //for (let i = 0; i < placesActors.length; i++) {
-                //let actor = placesActors[i];
-                //if (selectedCategory && (actor == selectedCategory.actor)) {
-                    //actor.add_style_pseudo_class('active');
-                    //actor.add_style_class_name("gnomenu-category-button-selected");
-                //} else {
-                    //actor.remove_style_pseudo_class('active');
-                    //actor.remove_style_class_name("gnomenu-category-button-selected");
-                //}
-            //}
-        //}
-
-
     },
 
     _listPlaces: function(pattern) {
@@ -1020,33 +978,6 @@ const PanelMenuButton = new Lang.Class({
                             uri:    bookmarks[id].uri
                         });
                     }
-
-                    //let bookmark = bookmarks[id];
-                    //if (!pattern)
-                        //pattern = "";
-                    //for (let j = 0; j < pattern.length; j++) {
-                        //// Terms are treated as logical AND
-                        //if (j == 0 || bookmark.score > 0) {
-                            //let term = pattern[j].toLocaleLowerCase();
-                            //let score = SearchWebBookmarks._rateMatch(bookmark, term);
-
-                            //if (score > 0) {
-                                //bookmark.score += score;
-                            //} else {
-                                //bookmark.score = 0;
-                            //}
-                        //}
-                    //}
-                    //if (bookmark.score > 0) {
-                        //res.push({
-                            //app:   bookmark.appInfo,
-                            //name:   bookmarks.name,
-                            //icon:   bookmarks.appInfo.get_icon(),
-                            //mime:   null,
-                            //uri:    bookmarks.uri,
-                            //score:    bookmark.score
-                        //});
-                    //}
                 }
 
                 res.sort(SearchWebBookmarks._bookmarksSort);
@@ -1230,7 +1161,6 @@ const PanelMenuButton = new Lang.Class({
                            this.selectedAppDescription.set_text("");
                            if (app.uri) {
                                appListButton._app.app.launch_uris([app.uri], null);
-                               //Gio.app_info_launch_default_for_uri(app.uri, global.create_app_launch_context());
                            } else {
                                appListButton._app.launch();
                            }
@@ -1256,7 +1186,6 @@ const PanelMenuButton = new Lang.Class({
                            this.selectedAppDescription.set_text("");
                            if (app.uri) {
                                appGridButton._app.app.launch_uris([app.uri], null);
-                               //Gio.app_info_launch_default_for_uri(app.uri, global.create_app_launch_context());
                            } else {
                                appGridButton._app.launch();
                            }
@@ -1509,7 +1438,6 @@ const PanelMenuButton = new Lang.Class({
                 this._clearCategorySelections(this.categoriesBox);
             }
         }
-        //this._clearCategorySelections(this.placesBox);
         this._clearApplicationSelections();
         this._selectedItemIndex = -1;
         this.selectedAppTitle.set_text("");
@@ -1646,24 +1574,21 @@ const PanelMenuButton = new Lang.Class({
         // Bottom pane holds power group and selected app description (packed horizontally)
         let bottomPane = new St.BoxLayout({ style_class: 'gnomenu-menu-bottom-pane' });
 
-        // groupCategoryPlaces holds categories and places (packed vertically)
-        this.groupCategoryPlaces = new St.BoxLayout({ style_class: 'gnomenu-category-places-box', vertical: true });
+        // groupCategoriesWorkspacesWrapper bin wraps categories and workspaces
+        this.groupCategoriesWorkspacesWrapper = new St.BoxLayout({ style_class: 'gnomenu-categories-workspaces-wrapper', vertical: false});
 
-        // groupCategoryPlacesWorkspaceWrapper bin wraps groupCategoryPlaces and workspaces thumbnailsBox
-        this.groupCategoryPlacesWorkspaceWrapper = new St.BoxLayout({ style_class: 'gnomenu-category-places-workspace-wrapper', vertical: false});
-
-        // groupCategoryPlacesWorkspaceScrollBox allows category+places or workspaces to scroll vertically
-        this.groupCategoryPlacesWorkspaceScrollBox = new St.ScrollView({ reactive: true, x_fill: true, y_fill: false, y_align: St.Align.START, style_class: 'vfade gnomenu-category-places-scrollbox' });
-        let vscroll = this.groupCategoryPlacesWorkspaceScrollBox.get_vscroll_bar();
+        // groupCategoriesWorkspacesScrollBox allows categories or workspaces to scroll vertically
+        this.groupCategoriesWorkspacesScrollBox = new St.ScrollView({ reactive: true, x_fill: true, y_fill: false, y_align: St.Align.START, style_class: 'vfade gnomenu-categories-workspaces-scrollbox' });
+        let vscroll = this.groupCategoriesWorkspacesScrollBox.get_vscroll_bar();
         vscroll.connect('scroll-start', Lang.bind(this, function() {
             this.menu.passEvents = true;
         }));
         vscroll.connect('scroll-stop', Lang.bind(this, function() {
             this.menu.passEvents = false;
         }));
-        this.groupCategoryPlacesWorkspaceScrollBox.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER);
-        this.groupCategoryPlacesWorkspaceScrollBox.set_mouse_scrolling(true);
-        this.groupCategoryPlacesWorkspaceScrollBox.connect('button-release-event', Lang.bind(this, function(actor, event) {
+        this.groupCategoriesWorkspacesScrollBox.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER);
+        this.groupCategoriesWorkspacesScrollBox.set_mouse_scrolling(true);
+        this.groupCategoriesWorkspacesScrollBox.connect('button-release-event', Lang.bind(this, function(actor, event) {
             if (_DEBUG_) global.log("scrollbox button release event");
             let button = event.get_button();
             if (button == 3) { //right click
@@ -1831,7 +1756,7 @@ const PanelMenuButton = new Lang.Class({
 
 
         // Workspaces thumbnails Box
-        this.thumbnailsBoxFiller = new St.BoxLayout({ style_class: 'gnomenu-thumbnailbox-filler', vertical: true });
+        this.thumbnailsBoxFiller = new St.BoxLayout({ style_class: 'gnomenu-workspaces-filler', vertical: true });
         this.thumbnailsBox = new MyThumbnailsBox.myThumbnailsBox(gsVersion, settings, this.thumbnailsBoxFiller);
 
         // CategoriesBox
@@ -1912,134 +1837,6 @@ const PanelMenuButton = new Lang.Class({
                 }
             }
         }
-
-
-        //// PlacesBox
-        //this.placesBox = new St.BoxLayout({ style_class: 'gnomenu-places-box', vertical: true });
-
-        //// Load 'all places' category
-        //let placesCategory = new CategoryListButton(null, _('All Places'));
-        //if (settings.get_enum('category-selection-method') == selectMethod.HOVER ) {
-            //placesCategory.actor.connect('enter-event', Lang.bind(this, function() {
-                //this._selectAllPlaces(placesCategory);
-                //this.selectedAppTitle.set_text(placesCategory.label.get_text());
-                //this.selectedAppDescription.set_text('');
-            //}));
-            //placesCategory.actor.connect('leave-event', Lang.bind(this, function() {
-                //this.selectedAppTitle.set_text('');
-                //this.selectedAppDescription.set_text('');
-            //}));
-        //} else {
-            //placesCategory.actor.connect('enter-event', Lang.bind(this, function() {
-                ////placesCategory.actor.add_style_pseudo_class('active');
-                //this.selectedAppTitle.set_text(placesCategory.label.get_text());
-                //this.selectedAppDescription.set_text('');
-            //}));
-            //placesCategory.actor.connect('leave-event', Lang.bind(this, function() {
-                ////placesCategory.actor.remove_style_pseudo_class('active');
-                //this.selectedAppTitle.set_text('');
-                //this.selectedAppDescription.set_text('');
-            //}));
-            //placesCategory.actor.connect('clicked', Lang.bind(this, function() {
-                //this._selectAllPlaces(placesCategory);
-                //this.selectedAppTitle.set_text(placesCategory.label.get_text());
-                //this.selectedAppDescription.set_text('');
-            //}));
-        //}
-        //this.placesBox.add_actor(placesCategory.actor);
-
-        //// Load bookmarks category
-        //let bookmarksCategory = new CategoryListButton(null, _('Bookmarks'));
-        //if (settings.get_enum('category-selection-method') == selectMethod.HOVER ) {
-            //bookmarksCategory.actor.connect('enter-event', Lang.bind(this, function() {
-                //this._selectBookmarks(bookmarksCategory);
-                //this.selectedAppTitle.set_text(bookmarksCategory.label.get_text());
-                //this.selectedAppDescription.set_text('');
-            //}));
-            //bookmarksCategory.actor.connect('leave-event', Lang.bind(this, function() {
-                //this.selectedAppTitle.set_text('');
-                //this.selectedAppDescription.set_text('');
-            //}));
-        //} else {
-            //bookmarksCategory.actor.connect('enter-event', Lang.bind(this, function() {
-                ////bookmarksCategory.actor.add_style_pseudo_class('active');
-                //this.selectedAppTitle.set_text(bookmarksCategory.label.get_text());
-                //this.selectedAppDescription.set_text('');
-            //}));
-            //bookmarksCategory.actor.connect('leave-event', Lang.bind(this, function() {
-                ////bookmarksCategory.actor.remove_style_pseudo_class('active');
-                //this.selectedAppTitle.set_text('');
-                //this.selectedAppDescription.set_text('');
-            //}));
-            //bookmarksCategory.actor.connect('clicked', Lang.bind(this, function() {
-                //this._selectBookmarks(bookmarksCategory);
-                //this.selectedAppTitle.set_text(bookmarksCategory.label.get_text());
-                //this.selectedAppDescription.set_text('');
-            //}));
-        //}
-        //this.placesBox.add_actor(bookmarksCategory.actor);
-
-        //// Load devices category
-        //let devicesCategory = new CategoryListButton(null, _('Devices'));
-        //if (settings.get_enum('category-selection-method') == selectMethod.HOVER ) {
-            //devicesCategory.actor.connect('enter-event', Lang.bind(this, function() {
-                //this._selectDevices(devicesCategory);
-                //this.selectedAppTitle.set_text(devicesCategory.label.get_text());
-                //this.selectedAppDescription.set_text('');
-            //}));
-            //devicesCategory.actor.connect('leave-event', Lang.bind(this, function() {
-                //this.selectedAppTitle.set_text('');
-                //this.selectedAppDescription.set_text('');
-            //}));
-        //} else {
-            //devicesCategory.actor.connect('enter-event', Lang.bind(this, function() {
-                ////devicesCategory.actor.add_style_pseudo_class('active');
-                //this.selectedAppTitle.set_text(devicesCategory.label.get_text());
-                //this.selectedAppDescription.set_text('');
-            //}));
-            //devicesCategory.actor.connect('leave-event', Lang.bind(this, function() {
-                ////devicesCategory.actor.remove_style_pseudo_class('active');
-                //this.selectedAppTitle.set_text('');
-                //this.selectedAppDescription.set_text('');
-            //}));
-            //devicesCategory.actor.connect('clicked', Lang.bind(this, function() {
-                //this._selectDevices(devicesCategory);
-                //this.selectedAppTitle.set_text(devicesCategory.label.get_text());
-                //this.selectedAppDescription.set_text('');
-            //}));
-        //}
-        //this.placesBox.add_actor(devicesCategory.actor);
-
-        //// Load recent category
-        //let recentCategory = new CategoryListButton(null, _('Recent'));
-        //if (settings.get_enum('category-selection-method') == selectMethod.HOVER ) {
-            //recentCategory.actor.connect('enter-event', Lang.bind(this, function() {
-                //this._selectRecent(recentCategory);
-                //this.selectedAppTitle.set_text(recentCategory.label.get_text());
-                //this.selectedAppDescription.set_text('');
-            //}));
-            //recentCategory.actor.connect('leave-event', Lang.bind(this, function() {
-                //this.selectedAppTitle.set_text('');
-                //this.selectedAppDescription.set_text('');
-            //}));
-        //} else {
-            //recentCategory.actor.connect('enter-event', Lang.bind(this, function() {
-                ////recentCategory.actor.add_style_pseudo_class('active');
-                //this.selectedAppTitle.set_text(recentCategory.label.get_text());
-                //this.selectedAppDescription.set_text('');
-            //}));
-            //recentCategory.actor.connect('leave-event', Lang.bind(this, function() {
-                ////recentCategory.actor.remove_style_pseudo_class('active');
-                //this.selectedAppTitle.set_text('');
-                //this.selectedAppDescription.set_text('');
-            //}));
-            //recentCategory.actor.connect('clicked', Lang.bind(this, function() {
-                //this._selectRecent(recentCategory);
-                //this.selectedAppTitle.set_text(recentCategory.label.get_text());
-                //this.selectedAppDescription.set_text('');
-            //}));
-        //}
-        //this.placesBox.add_actor(recentCategory.actor);
 
         // PowerGroupBox
         this.powerGroupBox = new St.BoxLayout({ style_class: 'gnomenu-power-group-box'});
@@ -2168,46 +1965,7 @@ const PanelMenuButton = new Lang.Class({
                 statusMenu._screenSaverProxy.LockRemote();
             }
         }));
-        //let tweakTool = new GroupButton( 'tweak-tool-symbolic', 24, null, {style_class: 'gnomenu-power-group-button'});
-        //tweakTool.actor.connect('enter-event', Lang.bind(this, function() {
-            //tweakTool.actor.add_style_pseudo_class('active');
-            //this.selectedAppTitle.set_text(_('Advanced Settings'));
-            //this.selectedAppDescription.set_text('');
-        //}));
-        //tweakTool.actor.connect('leave-event', Lang.bind(this, function() {
-            //tweakTool.actor.remove_style_pseudo_class('active');
-            //this.selectedAppTitle.set_text('');
-            //this.selectedAppDescription.set_text('');
-        //}));
-        //tweakTool.actor.connect('button-release-event', Lang.bind(this, function() {
-            //// code to launch tweak tool
-            //tweakTool.actor.remove_style_pseudo_class('active');
-            //this.selectedAppTitle.set_text('');
-            //this.selectedAppDescription.set_text('');
-            //this.menu.close();
-            //let app = Shell.AppSystem.get_default().lookup_app('gnome-tweak-tool.desktop');
-            //app.activate();
-        //}));
-        //let controlCenter = new GroupButton( 'control-center-symbolic', 24, null, {style_class: 'gnomenu-power-group-button'});
-        //controlCenter.actor.connect('enter-event', Lang.bind(this, function() {
-            //controlCenter.actor.add_style_pseudo_class('active');
-            //this.selectedAppTitle.set_text(_('System Settings'));
-            //this.selectedAppDescription.set_text('');
-        //}));
-        //controlCenter.actor.connect('leave-event', Lang.bind(this, function() {
-            //controlCenter.actor.remove_style_pseudo_class('active');
-            //this.selectedAppTitle.set_text('');
-            //this.selectedAppDescription.set_text('');
-        //}));
-        //controlCenter.actor.connect('button-release-event', Lang.bind(this, function() {
-            //// code to launch control center
-            //controlCenter.actor.remove_style_pseudo_class('active');
-            //this.selectedAppTitle.set_text('');
-            //this.selectedAppDescription.set_text('');
-            //this.menu.close();
-            //let app = Shell.AppSystem.get_default().lookup_app('gnome-control-center.desktop');
-            //app.activate();
-        //}));
+
         let powerGroupBoxSpacer1 = new St.Label({text: ''});
         let powerGroupBoxSpacer2 = new St.Label({text: ''});
         let powerGroupBoxSpacer3 = new St.Label({text: ''});
@@ -2262,18 +2020,14 @@ const PanelMenuButton = new Lang.Class({
         topPane.add(topPaneSpacer2, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         topPane.add(this.searchBox, {expand: true, x_align:St.Align.END, y_align:St.Align.MIDDLE});
 
-        // wrap groupCategoryPlaces and workspaces and then place into scrollbox (packed vertically)
-        this.groupCategoryPlaces.add_actor(this.categoriesBox);
-        //this.groupCategoryPlaces.add_actor(this.placesBox);
-
-        this.groupCategoryPlacesWorkspaceWrapper.add(this.thumbnailsBoxFiller, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
-        this.groupCategoryPlacesWorkspaceWrapper.add(this.thumbnailsBox.actor, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
-        this.groupCategoryPlacesWorkspaceWrapper.add(this.groupCategoryPlaces, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
-        this.groupCategoryPlacesWorkspaceScrollBox.add_actor(this.groupCategoryPlacesWorkspaceWrapper);
+        this.groupCategoriesWorkspacesWrapper.add(this.thumbnailsBoxFiller, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
+        this.groupCategoriesWorkspacesWrapper.add(this.thumbnailsBox.actor, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
+        this.groupCategoriesWorkspacesWrapper.add(this.categoriesBox, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
+        this.groupCategoriesWorkspacesScrollBox.add_actor(this.groupCategoriesWorkspacesWrapper);
 
         // middlePane packs horizontally
         middlePane.add(this.favoritesScrollBox, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
-        middlePane.add(this.groupCategoryPlacesWorkspaceScrollBox, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
+        middlePane.add(this.groupCategoriesWorkspacesScrollBox, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
         middlePane.add(this.applicationsScrollBox, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
 
         // bottomPane packs horizontally
@@ -2295,8 +2049,8 @@ const PanelMenuButton = new Lang.Class({
 
 
         // Set height constraints on scrollboxes (we also set height when menu toggle)
-        this.applicationsScrollBox.add_constraint(new Clutter.BindConstraint({name: 'constraint', source: this.groupCategoryPlacesWorkspaceScrollBox, coordinate: Clutter.BindCoordinate.HEIGHT, offset: 0}));
-        this.favoritesScrollBox.add_constraint(new Clutter.BindConstraint({name: 'constraint', source: this.groupCategoryPlacesWorkspaceScrollBox, coordinate: Clutter.BindCoordinate.HEIGHT, offset: 0}));
+        this.applicationsScrollBox.add_constraint(new Clutter.BindConstraint({name: 'constraint', source: this.groupCategoriesWorkspacesScrollBox, coordinate: Clutter.BindCoordinate.HEIGHT, offset: 0}));
+        this.favoritesScrollBox.add_constraint(new Clutter.BindConstraint({name: 'constraint', source: this.groupCategoriesWorkspacesScrollBox, coordinate: Clutter.BindCoordinate.HEIGHT, offset: 0}));
     }
 
 });
@@ -2627,6 +2381,7 @@ const GnoMenuButton = new Lang.Class({
             ml = "-m";
         }
 
+        // Get css filename
         let filename = "gnomenu" + ml + ".css";
         if (gsVersion[1] < 6)
             filename = "gnomenu-gs34" + ml + ".css";
@@ -2766,6 +2521,7 @@ function loadStylesheet() {
         ml = "-m";
     }
 
+    // Get css filename
     let filename = "gnomenu" + ml + ".css";
     if (gsVersion[1] < 6)
         filename = "gnomenu-gs34" + ml + ".css";
