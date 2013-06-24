@@ -1,30 +1,9 @@
-/* ---------------------------------------------------------------------*/
-/* New classes still playing with */
-/* ---------------------------------------------------------------------*/
-.gnomenu-thumbnails-background {
-    /*border: 1px solid rgba(128, 128, 128, 0.4);
-    border-right: 0px;
-    border-bottom: 0px;
-    border-top: 0px;*/
-    /*border-radius: 9px 0px 0px 9px;*/
-    /*background-color: rgba(0, 0, 0, 0.5);*/
-    padding: 5px 14px 5px 10px;
-}
-
-/* not implemented yet */
-.gnomenu-thumbnail-indicator {
-    border: 4px solid rgba(255,255,255,0.7);
-    border-radius: 4px;
-    padding: 1px;
-}
-/* ---------------------------------------------------------------------*/
-
 .gnomenu-panel-box {
 }
 
 .gnomenu-panel-button {
-         margin: 0px;
-         padding: 0px 10px;
+	margin: 0px;
+	padding: 0px 10px;
 }
 
 .gnomenu-panel-menu-button {
@@ -128,19 +107,18 @@
 .gnomenu-favorite-button:hover {
 }
 
-.gnomenu-category-places-power-group-box {
-    /*border: 1px solid red;*/
-}
-
-.gnomenu-category-places-workspace-wrapper {
-    /*border: 1px solid yellow;*/
+.gnomenu-categories-workspaces-wrapper {
     padding: 0px 0px 0px 0px;
 }
 
-.gnomenu-category-places-scrollbox {
+.gnomenu-categories-workspaces-scrollbox {
     border-image: url("sepa-right.png") 12 12 12 12;
     height: 400px;
     padding: 8px 0px;
+}
+
+.gnomenu-workspaces-background {
+    padding: 5px 14px 5px 10px;
 }
 
 .gnomenu-categories-box {
@@ -159,10 +137,6 @@
 }
 .gnomenu-category-button:hover,
 .gnomenu-category-button-selected {
-}
-
-.gnomenu-places-box {
-    padding:  0px 10px 10px 0px;
 }
 
 .gnomenu-power-group-box {
@@ -186,7 +160,6 @@
 }
 
 .gnomenu-applications-box-wrapper {
-    /*border: 1px solid red;*/
 }
 
 .gnomenu-applications-list-box {
