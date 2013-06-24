@@ -657,6 +657,9 @@ const PanelMenuButton = new Lang.Class({
                 this.thumbnailsBox._actualThumbnailWidth = this.groupCategoryPlacesWorkspaceScrollBox.width - 0;
             }
 
+            // Set Category or Workspace Mode
+            // Currently we force category mode when menu is toggled
+            this._categoryWorkspaceMode = CategoryWorkspaceMode.CATEGORY;
             if (this._categoryWorkspaceMode == CategoryWorkspaceMode.CATEGORY) {
                 this.thumbnailsBox.actor.hide();
                 this.groupCategoryPlaces.show();
