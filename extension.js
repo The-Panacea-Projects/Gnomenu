@@ -291,7 +291,11 @@ const AppListButton = new Lang.Class({
         if (this._type == 0) {
             this._app.open_new_window(params.workspace);
         } else if (this._type == 1) {
-            this._app.launch();
+           if (this._app.uri) {
+               this._app.app.launch_uris([this._app.uri], null);
+           } else {
+               this._app.launch();
+           }
         } else if (this._type == 2) {
             Gio.app_info_launch_default_for_uri(this._app.uri, global.create_app_launch_context());
         }
@@ -409,7 +413,11 @@ const AppGridButton = new Lang.Class({
         if (this._type == 0) {
             this._app.open_new_window(params.workspace);
         } else if (this._type == 1) {
-            this._app.launch();
+           if (this._app.uri) {
+               this._app.app.launch_uris([this._app.uri], null);
+           } else {
+               this._app.launch();
+           }
         } else if (this._type == 2) {
             Gio.app_info_launch_default_for_uri(this._app.uri, global.create_app_launch_context());
         }
@@ -1217,7 +1225,12 @@ const PanelMenuButton = new Lang.Class({
                            appListButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
-                           appListButton._app.launch();
+                           if (app.uri) {
+                               appListButton._app.app.launch_uris([app.uri], null);
+                               //Gio.app_info_launch_default_for_uri(app.uri, global.create_app_launch_context());
+                           } else {
+                               appListButton._app.launch();
+                           }
                            this.menu.close();
                         }));
                         this.applicationsListBox.add_actor(appListButton.actor);
