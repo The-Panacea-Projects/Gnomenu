@@ -2482,6 +2482,7 @@ const GnoMenuButton = new Lang.Class({
         }));
         settings.connect('changed::menu-layout', Lang.bind(this, function() {
             let ret = this._changeStylesheet();
+            if (this.appsMenuButton) this.appsMenuButton.refresh();
         }));
     },
 

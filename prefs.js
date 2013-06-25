@@ -286,6 +286,20 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             menuLayoutCombo.set_active(this.settings.get_enum('menu-layout'));
             menuLayoutCombo.connect('changed', Lang.bind (this, function(widget) {
                     this.settings.set_enum('menu-layout', widget.get_active());
+                    let selected = widget.get_active();
+                    if (selected == 2) {
+                        favoritesIconSizeCombo.set_active(iconSizes.indexOf(24));
+                        appsListIconSizeCombo.set_active(iconSizes.indexOf(20));
+                        appsGridIconSizeCombo.set_active(iconSizes.indexOf(32));
+                    } else if (selected == 1) {
+                        favoritesIconSizeCombo.set_active(iconSizes.indexOf(32));
+                        appsListIconSizeCombo.set_active(iconSizes.indexOf(28));
+                        appsGridIconSizeCombo.set_active(iconSizes.indexOf(48));
+                    } else {
+                        favoritesIconSizeCombo.set_active(iconSizes.indexOf(32));
+                        appsListIconSizeCombo.set_active(iconSizes.indexOf(28));
+                        appsGridIconSizeCombo.set_active(iconSizes.indexOf(64));
+                    }
             }));
 
         menuLayoutBox.add(menuLayoutLabel);
