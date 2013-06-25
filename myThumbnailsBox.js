@@ -77,7 +77,9 @@ const myWorkspaceThumbnail = new Lang.Class({
     Name: 'GnoMenu.myWorkspaceThumbnail',
     Extends: WorkspaceThumbnail.WorkspaceThumbnail,
 
-    _init : function(metaWorkspace) {
+    _init : function(metaWorkspace, gsVersion) {
+        if (_DEBUG_) global.log("myWorkspaceThumbnail: init");
+        this._gsCurrentVersion = gsVersion;
         this.parent(metaWorkspace);
     },
 
@@ -103,10 +105,19 @@ const myWorkspaceThumbnail = new Lang.Class({
                       }));
         this._contents.add_actor(clone.actor);
 
-        if (this._windows.length == 0)
-            clone.setStackAbove(this._bgManager.background.actor);
-        else
-            clone.setStackAbove(this._windows[this._windows.length - 1].actor);
+        if (this._windows.length == 0) {
+            if (this._gsCurrentVersion[1] < 7) {
+                clone.setStackAbove(this._background);
+            } else {
+                clone.setStackAbove(this._bgManager.background.actor);
+            }
+        } else {
+            if (this._gsCurrentVersion[1] < 7) {
+                clone.setStackAbove(this._windows[this._windows.length - 1].actor);
+            } else {
+                clone.setStackAbove(this._windows[this._windows.length - 1].actor);
+            }
+        }
 
         this._windows.push(clone);
 
@@ -270,12 +281,38 @@ const myThumbnailsBox = new Lang.Class({
         this._thumbnails = [];
     },
 
+    // Copy of GS38 _workspacesChanged to replace GS34 & GS36 workspacesChanged function handled by workspacesView.js
+    _workspacesChanged: function() {
+        let oldNumWorkspaces = this._thumbnails.length;
+        let newNumWorkspaces = global.screen.n_workspaces;
+        let active = global.screen.get_active_workspace_index();
+
+        if (newNumWorkspaces > oldNumWorkspaces) {
+            this.addThumbnails(oldNumWorkspaces, newNumWorkspaces - oldNumWorkspaces);
+        } else {
+            let removedIndex;
+            let removedNum = oldNumWorkspaces - newNumWorkspaces;
+            for (let w = 0; w < oldNumWorkspaces; w++) {
+                let metaWorkspace = global.screen.get_workspace_by_index(w);
+                if (this._thumbnails[w].metaWorkspace != metaWorkspace) {
+                    removedIndex = w;
+                    break;
+                }
+            }
+
+            this.removeThumbnails(removedIndex, removedNum);
+        }
+
+        if (this._gsCurrentVersion[1] > 7) {
+            this._updateSwitcherVisibility();
+        }
+    },
 
     addThumbnails: function(start, count) {
         for (let k = start; k < start + count; k++) {
             let metaWorkspace = global.screen.get_workspace_by_index(k);
             //let thumbnail = new WorkspaceThumbnail.WorkspaceThumbnail(metaWorkspace);
-            let thumbnail = new myWorkspaceThumbnail(metaWorkspace);
+            let thumbnail = new myWorkspaceThumbnail(metaWorkspace, this._gsCurrentVersion);
             thumbnail.setPorthole(this._porthole.x, this._porthole.y,
                                   this._porthole.width, this._porthole.height);
             this._thumbnails.push(thumbnail);
