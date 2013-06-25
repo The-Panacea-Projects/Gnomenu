@@ -42,7 +42,7 @@
 .gnomenu-user-group-button {
     border-radius: 15px;
     border-width: 1px;
-    padding: 3px 10px;
+    padding: 0px 8px;
 }
 
 .gnomenu-user-group-button:insensitive {
@@ -50,7 +50,8 @@
 }
 
 .gnomenu-user-group-button-label {
-    /*font-size: 18px;*/
+    font-weight: bold;
+    font-size: 14px;
 }
 
 .gnomenu-user-group-button:active {
@@ -71,7 +72,7 @@
 .gnomenu-view-mode-button {
     border-radius: 15px;
     border-width: 1px;
-    padding: 3px 10px;
+    padding: 0px 8px;
 }
 
 .gnomenu-view-mode-button:active {
@@ -81,8 +82,8 @@
 }
 
 #gnomenuMenuMainbox #searchEntry {
-    height: 10px;
-    width: 220px;
+    height: 0px;
+    width: 180px;
 }
 
 .gnomenu-favorites-scrollbox {
@@ -92,7 +93,7 @@
     box-shadow: inset 0px 0px 1px 1px rgba(255,255,255,0.06);
     border-radius: 17px 0px 0px 17px;
     border: 2px solid #888a85;
-    padding: 6px;
+    padding: 4px;
 }
 
 .gnomenu-favorites-box {
@@ -101,7 +102,7 @@
 .gnomenu-favorite-button {
     border-radius: 10px 4px 4px 10px;
     border-width: 1px;
-    padding: 4px;
+    padding: 2px;
 }
 
 .gnomenu-favorite-button:active {
@@ -113,27 +114,29 @@
 
 .gnomenu-categories-workspaces-scrollbox {
     border-image: url("sepa-right.png") 12 12 12 12;
-    height: 400px;
-    padding: 8px 0px;
+    height: 316px;
+    padding: 6px 0px;
 }
 
 .gnomenu-workspaces-background {
-    padding: 5px 14px 5px 10px;
+    padding: 5px 12px 5px 14px;
 }
 
 .gnomenu-categories-box {
-    padding-left: 6px;
+    spacing: 2px;
+    padding-left: 10px;
 }
 
 .gnomenu-category-button {
     border-radius: 4px;
     border-width: 2px;
     padding: 0px;
-    width: 153px;
+    width: 132px;
 }
 
 .gnomenu-category-button-label {
-    padding: 3px 10px 5px 10px;
+    font-size: 14px;
+    padding: 0px 10px 1px 10px;
 }
 .gnomenu-category-button:active,
 .gnomenu-category-button-selected {
@@ -147,7 +150,7 @@
 .gnomenu-power-group-button {
     border-radius: 4px;
     border: 2px;
-    padding: 2px 8px;
+    padding: 1px 5px;
 }
 
 .gnomenu-power-group-button:active {
@@ -156,7 +159,7 @@
 .gnomenu-applications-scrollbox {
     border-image: url("b-panel-r.png") 12 12 12 12;
     padding: 0px 2px 4px 2px;
-    width: 492px;
+    width: 392px;
 }
 
 .gnomenu-applications-box-wrapper {
@@ -164,16 +167,16 @@
 
 .gnomenu-applications-list-box {
     padding-bottom: 0px;
-    padding-left: 48px;
+    padding-left: 28px;
     padding-right: 0px;
-    padding-top: 8px;
+    padding-top: 0px;
 }
 
 .gnomenu-application-button {
     padding: 0px 10px;
     border-width: 1px;
-    border-radius: 4px;
-    width: 440px;
+    border-radius: 17px 4px 4px 17px;
+    width: 324px;
 }
 
 .gnomenu-application-button-label {
@@ -195,13 +198,15 @@
     border-width: 1px;
     border-radius: 5px;
     padding: 5px;
-    width: 82px;
-    height: 72px;
+    width: 62px;
+    height: 52px;
 }
 
 .gnomenu-application-grid-button-label {
+    font-weight: bold;
+    font-size: 12px;
     text-align: center;
-    width: 64px;
+    width: 44px;
 }
 
 .gnomenu-application-grid-button:active,
@@ -220,11 +225,11 @@
 .gnomenu-selected-app-title {
     height: 17px;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .gnomenu-selected-app-description {
     height: 17px;
     /*max-width: 150px;*/
-    font-size: 14px;
+    font-size: 12px;
 }
