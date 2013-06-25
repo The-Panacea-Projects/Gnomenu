@@ -11,7 +11,7 @@
  * ========================================================================================================
  */
 
-const _DEBUG_ = true;
+const _DEBUG_ = false;
 
 const IconTheme = imports.gi.Gtk.IconTheme;
 const GLib = imports.gi.GLib;
@@ -94,8 +94,8 @@ const CategoryListButton = new Lang.Class({
             categoryIconName = altIconName;
         } else {
             this._app = app;
-            categoryNameText = app.get_name();
-            categoryIconName =  app.get_icon().get_names().toString();
+            categoryNameText = app.get_name() ? app.get_name() : "";
+            categoryIconName = app.get_icon() ? app.get_icon().get_names().toString() : "error";
         }
 
         //if (categoryIconName) {
@@ -2354,7 +2354,7 @@ function enable() {
     // Load stylesheet
     loadStylesheet();
 
-	// Remove default Activities Button
+    // Remove default Activities Button
     if (hideDefaultActivitiesButton) {
         if (gsVersion[1] > 4) {
             let button = Main.panel.statusArea['activities'];
@@ -2367,7 +2367,7 @@ function enable() {
                 button.actor.hide();
             }
         }
-	}
+    }
 
     // Add GnoMenu to panel
     GnoMenu = new GnoMenuButton();
@@ -2384,8 +2384,8 @@ function disable() {
     // Unload stylesheet
     unloadStylesheet();
 
-	//Restore default Activities Button
-	if (hideDefaultActivitiesButton) {
+    //Restore default Activities Button
+    if (hideDefaultActivitiesButton) {
         if (gsVersion[1] > 4) {
             let button = Main.panel.statusArea['activities'];
             if (button) {
@@ -2397,7 +2397,7 @@ function disable() {
                 button.actor.show();
             }
         }
-	}
+    }
 
     // Destroy GnoMenu
     GnoMenu.destroy();
