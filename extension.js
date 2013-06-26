@@ -64,6 +64,8 @@ if (gsVersion[1] > 4) {
     PlaceDisplay = imports.ui.placeDisplay;
 }
 
+const PREFS_DIALOG = "gnome-shell-extension-prefs gnomenu@panacier.gmail.com";
+
 const appsDisplay = {
     ALL: 0,
     FAVORITES: 1,
@@ -2007,6 +2009,28 @@ const PanelMenuButton = new Lang.Class({
         this.selectedAppDescription = new St.Label({ style_class: 'gnomenu-selected-app-description', text: "" });
         this.selectedAppBox.add_actor(this.selectedAppDescription);
 
+        // Extension Preferences
+        let extensionPreferences = new GroupButton('emblem-system-symbolic', 24, null, {style_class: 'gnomenu-power-group-button'});
+        extensionPreferences.actor.connect('enter-event', Lang.bind(this, function() {
+            extensionPreferences.actor.add_style_pseudo_class('active');
+            this.selectedAppTitle.set_text(_('Shutdown'));
+            this.selectedAppDescription.set_text('');
+        }));
+        extensionPreferences.actor.connect('leave-event', Lang.bind(this, function() {
+            extensionPreferences.actor.remove_style_pseudo_class('active');
+            this.selectedAppTitle.set_text('');
+            this.selectedAppDescription.set_text('');
+        }));
+        extensionPreferences.actor.connect('button-release-event', Lang.bind(this, function() {
+            // code to show extension preferences
+            extensionPreferences.actor.remove_style_pseudo_class('active');
+            this.selectedAppTitle.set_text('');
+            this.selectedAppDescription.set_text('');
+            Main.Util.trySpawnCommandLine(PREFS_DIALOG);
+            this.menu.close();
+        }));
+
+
 
         // Place boxes in proper containers. The order added determines position
         // ----------------------------------------------------------------------
@@ -2035,6 +2059,8 @@ const PanelMenuButton = new Lang.Class({
         bottomPane.add(this.powerGroupBox, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
         bottomPane.add(topPaneSpacer1, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         bottomPane.add(this.selectedAppBox, {expand: true, x_align:St.Align.END, y_align:St.Align.MIDDLE});
+        bottomPane.add(extensionPreferences.actor, {x_fill:false, y_fill: false, x_align:St.Align.END, y_align:St.Align.MIDDLE});
+
 
         // mainbox packs vertically
         this.mainBox.add_actor(topPane);
