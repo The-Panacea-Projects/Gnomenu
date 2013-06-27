@@ -11,7 +11,7 @@
     padding: 0px 10px;
 }
 
-.gnomenu-panel-menu-button:hover {
+.gnomenu-panel-menu-button:active {
 }
 
 .gnomenu-main-menu-box {
@@ -40,9 +40,9 @@
 }
 
 .gnomenu-user-group-button {
-    border-radius: 15px;
+    border-radius: 14px;
     border-width: 1px;
-    padding: 0px 8px;
+    padding: 1px 8px 2px 8px;
 }
 
 .gnomenu-user-group-button:insensitive {
@@ -70,7 +70,7 @@
 }
 
 .gnomenu-view-mode-button {
-    border-radius: 15px;
+    border-radius: 14px;
     border-width: 1px;
     padding: 0px 8px;
 }
@@ -97,13 +97,13 @@
 }
 
 .gnomenu-favorites-box {
-    padding: 6px;
+    padding: 6px 4px;
 }
 
 .gnomenu-favorite-button {
     border-radius: 4px;
     border-width: 1px;
-    padding: 2px;
+    padding: 3px 4px;
 }
 
 .gnomenu-favorite-button:active {
@@ -132,7 +132,7 @@
     border-radius: 4px;
     border-width: 2px;
     padding: 0px;
-    width: 118px;
+    width: 124px;
 }
 
 .gnomenu-category-button-label {
@@ -145,13 +145,13 @@
 
 .gnomenu-power-group-box {
     border: 2px;
-    padding: 5px 0px 0px 0px;
+    padding: 8px 0px 0px 0px;
 }
 
 .gnomenu-power-group-button {
     border-radius: 4px;
     border: 2px;
-    padding: 1px 5px;
+    padding: 0px 5px;
 }
 
 .gnomenu-power-group-button:active {
@@ -170,7 +170,7 @@
     padding-bottom: 0px;
     padding-left: 28px;
     padding-right: 0px;
-    padding-top: 0px;
+    padding-top: 8px;
 }
 
 .gnomenu-application-button {
@@ -181,7 +181,7 @@
 }
 
 .gnomenu-application-button-label {
-    padding: 4px 24px 6px 24px
+    padding: 1px 24px 2px 24px
 }
 
 .gnomenu-application-button:active,
@@ -230,6 +230,5 @@
 
 .gnomenu-selected-app-description {
     height: 17px;
-    /*max-width: 150px;*/
     font-size: 12px;
 }
