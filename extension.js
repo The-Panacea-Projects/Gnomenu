@@ -661,33 +661,53 @@ const PanelMenuButton = new Lang.Class({
 
             // Disable webLinksCategory if SearchWebBookmarks extension missing
             let extension = ExtensionUtils.extensions[SearchWebBookmarks_UUID];
-            let userGroupButtons = this.userGroupBox.get_children();
-            let webLinksCategory = userGroupButtons[2]._delegate;
-            if (extension) {
-                if (extension.state == ExtensionSystem.ExtensionState.ENABLED) {
-                    webLinksCategory.actor.connect('enter-event', Lang.bind(this, function() {
-                        webLinksCategory.actor.add_style_pseudo_class('active');
-                        this.selectedAppTitle.set_text(webLinksCategory.label.get_text());
+            //let userGroupButtons = this.userGroupBox.get_children();
+            //let webLinksCategory = userGroupButtons[2]._delegate;
+            if (extension && extension.state == ExtensionSystem.ExtensionState.ENABLED) {
+                this.weblinksCategory.actor.remove_style_pseudo_class('insensitive');
+                if (!this.weblinksCategoryEnterId) {
+                    this.weblinksCategoryEnterId = this.weblinksCategory.actor.connect('enter-event', Lang.bind(this, function() {
+                        this.weblinksCategory.actor.add_style_pseudo_class('active');
+                        this.selectedAppTitle.set_text(this.weblinksCategory.label.get_text());
                         this.selectedAppDescription.set_text('');
                     }));
-                    webLinksCategory.actor.connect('leave-event', Lang.bind(this, function() {
-                        webLinksCategory.actor.remove_style_pseudo_class('active');
+                }
+                if (!this.weblinksCategoryLeaveId) {
+                    this.weblinksCategoryLeaveId = this.weblinksCategory.actor.connect('leave-event', Lang.bind(this, function() {
+                        this.weblinksCategory.actor.remove_style_pseudo_class('active');
                         this.selectedAppTitle.set_text('');
                         this.selectedAppDescription.set_text('');
                     }));
-                    webLinksCategory.actor.connect('button-release-event', Lang.bind(this, function() {
-                        webLinksCategory.actor.remove_style_pseudo_class('active');
-                        this._selectWebBookmarks(webLinksCategory);
-                        this.selectedAppTitle.set_text(webLinksCategory.label.get_text());
-                        this.selectedAppDescription.set_text('');
-                    }));
-                } else {
-                    webLinksCategory.actor.add_style_pseudo_class('insensitive');
                 }
+                if (this.weblinksCategoryReleaseId) {
+                    this.weblinksCategory.actor.disconnect(this.weblinksCategoryReleaseId);
+                }
+                this.weblinksCategoryReleaseId = this.weblinksCategory.actor.connect('button-release-event', Lang.bind(this, function() {
+                    this.weblinksCategory.actor.remove_style_pseudo_class('active');
+                    this._selectWebBookmarks(this.weblinksCategory);
+                    this.selectedAppTitle.set_text(this.weblinksCategory.label.get_text());
+                    this.selectedAppDescription.set_text('');
+                }));
             } else {
-                webLinksCategory.actor.add_style_pseudo_class('insensitive');
+                this.weblinksCategory.actor.add_style_pseudo_class('insensitive');
+                if (this.weblinksCategoryEnterId) {
+                    this.weblinksCategory.actor.disconnect(this.weblinksCategoryEnterId);
+                    this.weblinksCategoryEnterId = null;
+                }
+                if (this.weblinksCategoryLeaveId) {
+                    this.weblinksCategory.actor.disconnect(this.weblinksCategoryLeaveId);
+                    this.weblinksCategoryLeaveId = null;
+                }
+                if (this.weblinksCategoryReleaseId) {
+                    this.weblinksCategory.actor.disconnect(this.weblinksCategoryReleaseId);
+                }
+                this.weblinksCategoryReleaseId = this.weblinksCategory.actor.connect('button-release-event', Lang.bind(this, function() {
+                    this.weblinksCategory.actor.remove_style_pseudo_class('active');
+                    Main.notify(
+                        _("Weblinks requires the Search Bookmarks extension by bmh1980"),
+                        _("Please install the Search Bookmarks extension at https://extensions.gnome.org/extension/557/search-bookmarks/"));
+                }));
             }
-
 
         } else {
             this.resetSearch();
@@ -1622,7 +1642,7 @@ const PanelMenuButton = new Lang.Class({
         }));
 
         // Load 'webBookmarks' category
-        let weblinksCategory = new GroupButton( null, null, _('Weblinks'), {style_class: 'gnomenu-user-group-button'});
+        this.weblinksCategory = new GroupButton( null, null, _('Weblinks'), {style_class: 'gnomenu-user-group-button'});
 
         // Load 'all places' category
         let placesCategory = new GroupButton( null, null, _('Places'), {style_class: 'gnomenu-user-group-button'});
@@ -1649,7 +1669,7 @@ const PanelMenuButton = new Lang.Class({
         let userGroupBoxSpacer2 = new St.Label({text: ''});
         this.userGroupBox.add(recentCategory.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         this.userGroupBox.add(userGroupBoxSpacer1, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
-        this.userGroupBox.add(weblinksCategory.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
+        this.userGroupBox.add(this.weblinksCategory.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         this.userGroupBox.add(userGroupBoxSpacer2, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         this.userGroupBox.add(placesCategory.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
 
@@ -2013,7 +2033,7 @@ const PanelMenuButton = new Lang.Class({
         let extensionPreferences = new GroupButton('emblem-system-symbolic', 24, null, {style_class: 'gnomenu-power-group-button'});
         extensionPreferences.actor.connect('enter-event', Lang.bind(this, function() {
             extensionPreferences.actor.add_style_pseudo_class('active');
-            this.selectedAppTitle.set_text(_('Shutdown'));
+            this.selectedAppTitle.set_text(_('Preferences'));
             this.selectedAppDescription.set_text('');
         }));
         extensionPreferences.actor.connect('leave-event', Lang.bind(this, function() {
