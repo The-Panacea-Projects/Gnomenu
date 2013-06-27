@@ -1862,7 +1862,13 @@ const PanelMenuButton = new Lang.Class({
 
         // PowerGroupBox
         this.powerGroupBox = new St.BoxLayout({ style_class: 'gnomenu-power-group-box'});
-        let systemRestart = new GroupButton('refresh-symbolic', 24, null, {style_class: 'gnomenu-power-group-button'});
+        let powerGroupButtonIconSize = 24;
+        if (settings.get_enum('menu-layout') == menuLayout.SMALL) {
+            powerGroupButtonIconSize = 20;
+        } else if (settings.get_enum('menu-layout') == menuLayout.MEDIUM) {
+            powerGroupButtonIconSize = 20;
+        }
+        let systemRestart = new GroupButton('refresh-symbolic', powerGroupButtonIconSize, null, {style_class: 'gnomenu-power-group-button'});
         systemRestart.actor.connect('enter-event', Lang.bind(this, function() {
             systemRestart.actor.add_style_pseudo_class('active');
             this.selectedAppTitle.set_text(_('Restart Shell'));
@@ -1881,7 +1887,7 @@ const PanelMenuButton = new Lang.Class({
             this.menu.close();
             global.reexec_self();
         }));
-        let systemSuspend = new GroupButton('suspend-symbolic', 24, null, {style_class: 'gnomenu-power-group-button'});
+        let systemSuspend = new GroupButton('suspend-symbolic', powerGroupButtonIconSize, null, {style_class: 'gnomenu-power-group-button'});
         systemSuspend.actor.connect('enter-event', Lang.bind(this, function() {
             systemSuspend.actor.add_style_pseudo_class('active');
             this.selectedAppTitle.set_text(_('Suspend'));
@@ -1923,7 +1929,7 @@ const PanelMenuButton = new Lang.Class({
                 }
             }
         }));
-        let systemShutdown = new GroupButton('shutdown-symbolic', 24, null, {style_class: 'gnomenu-power-group-button'});
+        let systemShutdown = new GroupButton('shutdown-symbolic', powerGroupButtonIconSize, null, {style_class: 'gnomenu-power-group-button'});
         systemShutdown.actor.connect('enter-event', Lang.bind(this, function() {
             systemShutdown.actor.add_style_pseudo_class('active');
             this.selectedAppTitle.set_text(_('Shutdown'));
@@ -1942,7 +1948,7 @@ const PanelMenuButton = new Lang.Class({
             this.menu.close();
             this._session.ShutdownRemote();
         }));
-        let logoutUser = new GroupButton('user-logout-symbolic', 24, null, {style_class: 'gnomenu-power-group-button'});
+        let logoutUser = new GroupButton('user-logout-symbolic', powerGroupButtonIconSize, null, {style_class: 'gnomenu-power-group-button'});
         logoutUser.actor.connect('enter-event', Lang.bind(this, function() {
             logoutUser.actor.add_style_pseudo_class('active');
             this.selectedAppTitle.set_text(_('Logout User'));
@@ -1961,7 +1967,7 @@ const PanelMenuButton = new Lang.Class({
             this.menu.close();
             this._session.LogoutRemote(0);
         }));
-        let lockScreen = new GroupButton('user-lock-symbolic', 24, null, {style_class: 'gnomenu-power-group-button'});
+        let lockScreen = new GroupButton('user-lock-symbolic', powerGroupButtonIconSize, null, {style_class: 'gnomenu-power-group-button'});
         lockScreen.actor.connect('enter-event', Lang.bind(this, function() {
             lockScreen.actor.add_style_pseudo_class('active');
             this.selectedAppTitle.set_text(_('Lock Screen'));
@@ -2030,7 +2036,7 @@ const PanelMenuButton = new Lang.Class({
         this.selectedAppBox.add_actor(this.selectedAppDescription);
 
         // Extension Preferences
-        let extensionPreferences = new GroupButton('emblem-system-symbolic', 24, null, {style_class: 'gnomenu-power-group-button'});
+        let extensionPreferences = new GroupButton('emblem-system-symbolic', powerGroupButtonIconSize, null, {style_class: 'gnomenu-power-group-button'});
         extensionPreferences.actor.connect('enter-event', Lang.bind(this, function() {
             extensionPreferences.actor.add_style_pseudo_class('active');
             this.selectedAppTitle.set_text(_('Preferences'));
