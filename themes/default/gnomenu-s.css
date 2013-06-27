@@ -51,7 +51,7 @@
 
 .gnomenu-user-group-button-label {
     font-weight: bold;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .gnomenu-user-group-button:active {
@@ -126,6 +126,7 @@
 .gnomenu-categories-box {
     spacing: 2px;
     padding-left: 8px;
+    padding-right: 8px;
 }
 
 .gnomenu-category-button {
