@@ -3,12 +3,12 @@
 
 .gnomenu-panel-button {
     margin: 0px;
-    padding: 0px 12px;
+    padding: 0px 10px;
 }
 
 .gnomenu-panel-menu-button {
     margin: 0px;
-    padding: 0px 12px;
+    padding: 0px 10px;
 }
 
 .gnomenu-panel-menu-button:active {
@@ -21,7 +21,7 @@
 }
 
 .gnomenu-menu-top-pane {
-    padding: 0px 0px 15px 0px;
+    padding: 0px 0px 20px 0px;
 }
 
 .gnomenu-menu-middle-pane {
@@ -42,9 +42,9 @@
 }
 
 .gnomenu-user-group-button {
-    border-radius: 15px;
+    border-radius: 14px;
     border-width: 1px;
-    padding: 5px 12px;
+    padding: 1px 8px 2px 8px;
 }
 
 .gnomenu-user-group-button:insensitive {
@@ -53,6 +53,7 @@
 
 .gnomenu-user-group-button-label {
     font-weight: bold;
+    font-size: 12px;
 }
 
 .gnomenu-user-group-button:active {
@@ -74,9 +75,9 @@
 }
 
 .gnomenu-view-mode-button {
-    border-radius: 15px;
+    border-radius: 14px;
     border-width: 1px;
-    padding: 4px 10px;
+    padding: 0px 8px;
 }
 
 .gnomenu-view-mode-button:active {
@@ -86,6 +87,11 @@
 }
 
 .gnomenu-search-box {
+}
+
+#gnomenuMenuMainbox #searchEntry {
+    height: 0px;
+    width: 180px;
 }
 
 .gnomenu-favorites-scrollbox {
@@ -105,7 +111,7 @@
 .gnomenu-favorite-button {
     border-radius: 4px;
     border-width: 1px;
-    padding: 6px 8px;
+    padding: 3px 4px;
 }
 
 .gnomenu-favorite-button:active {
@@ -120,27 +126,30 @@
 
 .gnomenu-categories-workspaces-scrollbox {
     border-image: url("sepa-right.png") 12 12 12 12;
-    height: 480px;
-    padding: 12px 2px;
+    height: 316px;
+    padding: 10px 2px;
 }
 
 .gnomenu-workspaces-background {
-    padding: 6px 20px 6px 14px;
+    padding: 6px 18px 6px 12px;
 }
 
 .gnomenu-categories-box {
+    spacing: 2px;
     padding-left: 8px;
+    padding-right: 8px;
 }
 
 .gnomenu-category-button {
     border-radius: 4px;
     border-width: 2px;
     padding: 0px;
-    width: 156px;
+    width: 124px;
 }
 
 .gnomenu-category-button-label {
-    padding: 3px 10px 5px 10px;
+    font-size: 14px;
+    padding: 0px 10px 1px 10px;
 }
 .gnomenu-category-button:active,
 .gnomenu-category-button-selected {
@@ -151,13 +160,13 @@
 
 .gnomenu-power-group-box {
     border: 2px;
-    padding: 5px 0px 0px 0px;
+    padding: 8px 0px 0px 0px;
 }
 
 .gnomenu-power-group-button {
     border-radius: 4px;
     border: 2px;
-    padding: 3px 10px;
+    padding: 0px 5px;
 }
 
 .gnomenu-power-group-button:active {
@@ -167,10 +176,9 @@
 }
 
 .gnomenu-applications-scrollbox {
-    border-image: url("b-panel-r.png") 10 10;
-    padding-right: 2px;
-    padding-bottom: 4px;
-    width: 600px;
+    border-image: url("b-panel-r.png") 12 12 12 12;
+    padding: 0px 2px 4px 2px;
+    width: 392px;
 }
 
 .gnomenu-applications-box-wrapper {
@@ -178,20 +186,20 @@
 
 .gnomenu-applications-list-box {
     padding-bottom: 0px;
-    padding-left: 52px;
+    padding-left: 28px;
     padding-right: 0px;
-    padding-top: 11px;
+    padding-top: 8px;
 }
 
 .gnomenu-application-button {
     padding: 0px 10px;
     border-width: 1px;
     border-radius: 17px 4px 4px 17px;
-    width: 512px;
+    width: 324px;
 }
 
 .gnomenu-application-button-label {
-    padding: 4px 24px 6px 24px
+    padding: 1px 24px 2px 24px
 }
 
 .gnomenu-application-button:active,
@@ -211,14 +219,16 @@
 .gnomenu-application-grid-button {
     border-width: 1px;
     border-radius: 5px;
-    padding: 7px;
-    width: 100px;
-    height: 82px;
+    padding: 5px;
+    width: 62px;
+    height: 52px;
 }
 
 .gnomenu-application-grid-button-label {
+    font-weight: bold;
+    font-size: 12px;
     text-align: center;
-    width: 64px;
+    width: 44px;
 }
 
 .gnomenu-application-grid-button:active,
@@ -230,19 +240,19 @@
 
 .gnomenu-selected-app-box {
     padding-top: 5px;
-    padding-bottom: 0px;
+    padding-bottom: 5px;
     padding-right: 10px;
     text-align: right;
     max-width: 100px;
 }
 
 .gnomenu-selected-app-title {
-    height: 20px;
+    height: 17px;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .gnomenu-selected-app-description {
-    height: 20px;
-    font-size: 14px;
+    height: 17px;
+    font-size: 12px;
 }
