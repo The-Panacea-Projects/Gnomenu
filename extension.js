@@ -635,15 +635,18 @@ const PanelMenuButton = new Lang.Class({
             if (this.powerGroupBox.width > (this.groupCategoriesWorkspacesScrollBox.width + this.favoritesScrollBox.width)) {
                 this.userGroupBox.width = this.powerGroupBox.width;
                 let categoryWidth = this.powerGroupBox.width - this.favoritesScrollBox.width;
-                this.groupCategoriesWorkspacesScrollBox.width = categoryWidth;
-                this.thumbnailsBox.actor.width = categoryWidth - 0;
-                this.thumbnailsBox._actualThumbnailWidth = categoryWidth - 0;
+                //this.groupCategoriesWorkspacesScrollBox.width = categoryWidth;
+                this.categoriesBox.width = categoryWidth;
+                this.thumbnailsBox.actor.width = categoryWidth;
+                this.thumbnailsBox._actualThumbnailWidth = categoryWidth;
             } else {
                 let groupWidth = this.groupCategoriesWorkspacesScrollBox.width + this.favoritesScrollBox.width;
                 this.powerGroupBox.width = groupWidth;
                 this.userGroupBox.width = groupWidth;
-                this.thumbnailsBox.actor.width = this.groupCategoriesWorkspacesScrollBox.width - 0;
-                this.thumbnailsBox._actualThumbnailWidth = this.groupCategoriesWorkspacesScrollBox.width - 0;
+                //this.thumbnailsBox.actor.width = this.groupCategoriesWorkspacesScrollBox.width - 0;
+                //this.thumbnailsBox._actualThumbnailWidth = this.groupCategoriesWorkspacesScrollBox.width - 0;
+                this.thumbnailsBox.actor.width = this.categoriesBox.width;
+                this.thumbnailsBox._actualThumbnailWidth = this.categoriesBox.width;
             }
 
             // Set Category or Workspace Mode
