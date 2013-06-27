@@ -1868,10 +1868,10 @@ const PanelMenuButton = new Lang.Class({
 
         // PowerGroupBox
         this.powerGroupBox = new St.BoxLayout({ style_class: 'gnomenu-power-group-box'});
-        let powerGroupButtonIconSize = 24;
-        if (settings.get_enum('menu-layout') == menuLayout.SMALL) {
-            powerGroupButtonIconSize = 20;
-        } else if (settings.get_enum('menu-layout') == menuLayout.MEDIUM) {
+        let powerGroupButtonIconSize = 28;
+        if (settings.get_enum('menu-layout') == menuLayout.MEDIUM) {
+            powerGroupButtonIconSize = 24;
+        } else if (settings.get_enum('menu-layout') == menuLayout.SMALL) {
             powerGroupButtonIconSize = 20;
         }
         let systemRestart = new GroupButton('refresh-symbolic', powerGroupButtonIconSize, null, {style_class: 'gnomenu-power-group-button'});
@@ -2042,7 +2042,7 @@ const PanelMenuButton = new Lang.Class({
         this.selectedAppBox.add_actor(this.selectedAppDescription);
 
         // Extension Preferences
-        let extensionPreferences = new GroupButton('emblem-system-symbolic', powerGroupButtonIconSize, null, {style_class: 'gnomenu-power-group-button'});
+        let extensionPreferences = new GroupButton('control-center-symbolic', powerGroupButtonIconSize, null, {style_class: 'gnomenu-power-group-button'});
         extensionPreferences.actor.connect('enter-event', Lang.bind(this, function() {
             extensionPreferences.actor.add_style_pseudo_class('active');
             this.selectedAppTitle.set_text(_('Preferences'));
