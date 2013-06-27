@@ -651,11 +651,13 @@ const PanelMenuButton = new Lang.Class({
             this._categoryWorkspaceMode = CategoryWorkspaceMode.CATEGORY;
             if (this._categoryWorkspaceMode == CategoryWorkspaceMode.CATEGORY) {
                 this.thumbnailsBox.actor.hide();
-                this.categoriesBox.show();
+                this.thumbnailsBoxFiller.width = 0;
                 this.thumbnailsBoxFiller.height = 0;
+                this.categoriesBox.show();
             } else {
                 this.categoriesBox.hide();
                 this.thumbnailsBox.actor.show();
+                this.thumbnailsBoxFiller.width = this.categoriesBox.width;
                 this.thumbnailsBoxFiller.height = this.thumbnailsBox.actor.height;
             }
 
@@ -665,20 +667,22 @@ const PanelMenuButton = new Lang.Class({
             //let webLinksCategory = userGroupButtons[2]._delegate;
             if (extension && extension.state == ExtensionSystem.ExtensionState.ENABLED) {
                 this.weblinksCategory.actor.remove_style_pseudo_class('insensitive');
-                if (!this.weblinksCategoryEnterId) {
-                    this.weblinksCategoryEnterId = this.weblinksCategory.actor.connect('enter-event', Lang.bind(this, function() {
-                        this.weblinksCategory.actor.add_style_pseudo_class('active');
-                        this.selectedAppTitle.set_text(this.weblinksCategory.label.get_text());
-                        this.selectedAppDescription.set_text('');
-                    }));
+                if (this.weblinksCategoryEnterId) {
+                    this.weblinksCategory.actor.disconnect(this.weblinksCategoryEnterId);
                 }
-                if (!this.weblinksCategoryLeaveId) {
-                    this.weblinksCategoryLeaveId = this.weblinksCategory.actor.connect('leave-event', Lang.bind(this, function() {
-                        this.weblinksCategory.actor.remove_style_pseudo_class('active');
-                        this.selectedAppTitle.set_text('');
-                        this.selectedAppDescription.set_text('');
-                    }));
+                this.weblinksCategoryEnterId = this.weblinksCategory.actor.connect('enter-event', Lang.bind(this, function() {
+                    this.weblinksCategory.actor.add_style_pseudo_class('active');
+                    this.selectedAppTitle.set_text(this.weblinksCategory.label.get_text());
+                    this.selectedAppDescription.set_text('');
+                }));
+                if (this.weblinksCategoryLeaveId) {
+                    this.weblinksCategory.actor.disconnect(this.weblinksCategoryLeaveId);
                 }
+                this.weblinksCategoryLeaveId = this.weblinksCategory.actor.connect('leave-event', Lang.bind(this, function() {
+                    this.weblinksCategory.actor.remove_style_pseudo_class('active');
+                    this.selectedAppTitle.set_text('');
+                    this.selectedAppDescription.set_text('');
+                }));
                 if (this.weblinksCategoryReleaseId) {
                     this.weblinksCategory.actor.disconnect(this.weblinksCategoryReleaseId);
                 }
@@ -738,13 +742,15 @@ const PanelMenuButton = new Lang.Class({
             this._categoryWorkspaceMode = CategoryWorkspaceMode.WORKSPACE;
             this.categoriesBox.hide();
             this.thumbnailsBox.actor.show();
+            this.thumbnailsBoxFiller.width = this.categoriesBox.width;
             this.thumbnailsBoxFiller.height = this.thumbnailsBox.actor.height;
             if (_DEBUG_) global.log("toggleCategoryWorkspaceMode - thumbnailsBox height = "+this.thumbnailsBox.actor.height+" scrollbox height = "+this.groupCategoriesWorkspacesScrollBox.height);
         } else if (this._categoryWorkspaceMode == CategoryWorkspaceMode.WORKSPACE || mode == CategoryWorkspaceMode.CATEGORY){
             this._categoryWorkspaceMode = CategoryWorkspaceMode.CATEGORY;
             this.thumbnailsBox.actor.hide();
-            this.categoriesBox.show();
+            this.thumbnailsBoxFiller.width = 0;
             this.thumbnailsBoxFiller.height = 0;
+            this.categoriesBox.show();
             if (_DEBUG_) global.log("toggleCategoryWorkspaceMode - categoryPlaces height = "+this.categoriesBox.height+" scrollbox height = "+this.groupCategoriesWorkspacesScrollBox.height);
         }
 
