@@ -28,7 +28,10 @@ msgstr ""
 msgid "All Applications"
 msgstr ""
 
-msgid "All Places"
+#msgid "All Places"
+#msgstr ""
+
+msgid "Places"
 msgstr ""
 
 msgid "Computer"
@@ -41,6 +44,15 @@ msgid "Devices"
 msgstr ""
 
 msgid "Recent"
+msgstr ""
+
+msgid "Weblinks"
+msgstr ""
+
+msgid "Weblinks requires the Search Bookmarks extension by bmh1980"
+msgstr ""
+
+msgid "Please install the Search Bookmarks extension at https://extensions.gnome.org/extension/557/search-bookmarks/"
 msgstr ""
 
 msgid "Logout User"
@@ -68,6 +80,9 @@ msgid "Suspend"
 msgstr ""
 
 msgid "Shutdown"
+msgstr ""
+
+msgid "Preferences"
 msgstr ""
 
 
@@ -107,6 +122,9 @@ msgid "Disable Menu button keyboard shortcut"
 msgstr ""
 
 msgid "<b>Menu Settings</b>"
+msgstr ""
+
+msgid "Menu layout style"
 msgstr ""
 
 msgid "Startup applications to display"
