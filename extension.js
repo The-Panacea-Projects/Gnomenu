@@ -631,8 +631,9 @@ const PanelMenuButton = new Lang.Class({
             this.thumbnailsBox._createThumbnails();
             this.thumbnailsBox.actor.set_position(1, 0); // position inside wrapper
 
-            if (_DEBUG_) global.log("powerGroup width = "+this.powerGroupBox.width+" scrollBox width = "+this.groupCategoriesWorkspacesScrollBox.width);
+            if (_DEBUG_) global.log("onOpenStateToggled - powerGroup width = "+this.powerGroupBox.width+" category width = "+this.groupCategoriesWorkspacesScrollBox.width+" favorites width = "+this.favoritesScrollBox.width);
             if (this.powerGroupBox.width > (this.groupCategoriesWorkspacesScrollBox.width + this.favoritesScrollBox.width)) {
+                if (_DEBUG_) global.log("onOpenStateToggled - powerGroup width > categories-workspaces+favorites");
                 this.userGroupBox.width = this.powerGroupBox.width;
                 let categoryWidth = this.powerGroupBox.width - this.favoritesScrollBox.width;
                 //this.groupCategoriesWorkspacesScrollBox.width = categoryWidth;
@@ -640,6 +641,7 @@ const PanelMenuButton = new Lang.Class({
                 this.thumbnailsBox.actor.width = categoryWidth;
                 this.thumbnailsBox._actualThumbnailWidth = categoryWidth;
             } else {
+                if (_DEBUG_) global.log("onOpenStateToggled - powerGroup width < categories-workspaces+favorites");
                 let groupWidth = this.groupCategoriesWorkspacesScrollBox.width + this.favoritesScrollBox.width;
                 this.powerGroupBox.width = groupWidth;
                 this.userGroupBox.width = groupWidth;
@@ -1620,7 +1622,7 @@ const PanelMenuButton = new Lang.Class({
         this.groupCategoriesWorkspacesScrollBox.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER);
         this.groupCategoriesWorkspacesScrollBox.set_mouse_scrolling(true);
         this.groupCategoriesWorkspacesScrollBox.connect('button-release-event', Lang.bind(this, function(actor, event) {
-            if (_DEBUG_) global.log("scrollbox button release event");
+            if (_DEBUG_) global.log("categories-workspaces-scrollbox button release event");
             let button = event.get_button();
             if (button == 3) { //right click
                 this.toggleCategoryWorkspaceMode();
@@ -1871,9 +1873,9 @@ const PanelMenuButton = new Lang.Class({
 
         // PowerGroupBox
         this.powerGroupBox = new St.BoxLayout({ style_class: 'gnomenu-power-group-box'});
-        let powerGroupButtonIconSize = 28;
+        let powerGroupButtonIconSize = 24;
         if (settings.get_enum('menu-layout') == menuLayout.MEDIUM) {
-            powerGroupButtonIconSize = 24;
+            powerGroupButtonIconSize = 22;
         } else if (settings.get_enum('menu-layout') == menuLayout.SMALL) {
             powerGroupButtonIconSize = 20;
         }

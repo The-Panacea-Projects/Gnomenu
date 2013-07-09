@@ -31,8 +31,8 @@ const Gettext = imports.gettext.domain(Me.metadata['gettext-domain']);
 const _ = Gettext.gettext;
 
 // The maximum size of a thumbnail is 1/8 the width and height of the screen
-let MAX_THUMBNAIL_SCALE = 1/8.;
-let MAX_THUMBNAIL_WIDTH = 200;
+let MAX_THUMBNAIL_SCALE = 1/6.;
+let INIT_THUMBNAIL_WIDTH = 200;
 
 // When we create workspaces by dragging, we add a "cut" into the top and
 // bottom of each workspace so that the user doesn't have to hit the
@@ -385,13 +385,14 @@ const myThumbnailsBox = new Lang.Class({
         if (this._thumbnails.length == 0)
             return;
 
-        global.log("myThumbnailsBox: _getPreferredWidth - actualThumbnailWidth = "+this._actualThumbnailWidth);
+        if (_DEBUG_) global.log("myThumbnailsBox: _getPreferredWidth - actualThumbnailWidth = "+this._actualThumbnailWidth);
         let scale;
         if (this._actualThumbnailWidth > 0) {
             scale = this._actualThumbnailWidth / this._porthole.width;
         } else {
-            scale = MAX_THUMBNAIL_WIDTH / this._porthole.width;
+            scale = INIT_THUMBNAIL_WIDTH / this._porthole.width;
         }
+        if (_DEBUG_) global.log ("myThumbnailsBox: _getPreferredWidth - scale is min of thumbnailWidth scale = "+scale+" vs MAX_THUMBNAIL_SCALE = "+MAX_THUMBNAIL_SCALE);
         scale = Math.min(scale, MAX_THUMBNAIL_SCALE);
 
         let width = Math.round(this._porthole.width * scale);
@@ -414,13 +415,14 @@ const myThumbnailsBox = new Lang.Class({
         let nWorkspaces = global.screen.n_workspaces;
         let totalSpacing = (nWorkspaces - 1) * spacing;
 
-        global.log("myThumbnailsBox: _getPreferredHeight - actualThumbnailWidth = "+this._actualThumbnailWidth);
+        if (_DEBUG_) global.log("myThumbnailsBox: _getPreferredHeight - actualThumbnailWidth = "+this._actualThumbnailWidth);
         let scale;
         if (this._actualThumbnailWidth > 0) {
             scale = this._actualThumbnailWidth / this._porthole.width;
         } else {
-            scale = MAX_THUMBNAIL_WIDTH / this._porthole.width;
+            scale = INIT_THUMBNAIL_WIDTH / this._porthole.width;
         }
+        if (_DEBUG_) global.log ("myThumbnailsBox: _getPreferredHeight - scale is min of thumbnailWidth scale = "+scale+" vs MAX_THUMBNAIL_SCALE = "+MAX_THUMBNAIL_SCALE);
         scale = Math.min(scale, MAX_THUMBNAIL_SCALE);
 
         [alloc.min_size, alloc.natural_size] =
