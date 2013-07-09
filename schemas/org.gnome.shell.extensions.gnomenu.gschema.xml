@@ -86,7 +86,7 @@
       <description>Method of selecting categories</description>
     </key>
     <key type="i" name="favorites-icon-size">
-      <default>32</default>
+      <default>48</default>
       <summary>Favorites menu panel icon size</summary>
       <description>Favorites menu panel icon size</description>
     </key>

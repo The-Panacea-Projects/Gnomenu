@@ -296,7 +296,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
                         appsListIconSizeCombo.set_active(iconSizes.indexOf(28));
                         appsGridIconSizeCombo.set_active(iconSizes.indexOf(48));
                     } else {
-                        favoritesIconSizeCombo.set_active(iconSizes.indexOf(32));
+                        favoritesIconSizeCombo.set_active(iconSizes.indexOf(48));
                         appsListIconSizeCombo.set_active(iconSizes.indexOf(28));
                         appsGridIconSizeCombo.set_active(iconSizes.indexOf(64));
                     }
