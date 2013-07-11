@@ -46,7 +46,7 @@ msgstr ""
 msgid "Recent"
 msgstr ""
 
-msgid "Weblinks"
+msgid "Web"
 msgstr ""
 
 msgid "Weblinks requires the Search Bookmarks extension by bmh1980"

@@ -1653,7 +1653,7 @@ const PanelMenuButton = new Lang.Class({
         }));
 
         // Load 'webBookmarks' category
-        this.weblinksCategory = new GroupButton( null, null, _('Weblinks'), {style_class: 'gnomenu-user-group-button'});
+        this.weblinksCategory = new GroupButton( null, null, _('Web'), {style_class: 'gnomenu-user-group-button'});
 
         // Load 'all places' category
         let placesCategory = new GroupButton( null, null, _('Places'), {style_class: 'gnomenu-user-group-button'});
@@ -2047,7 +2047,7 @@ const PanelMenuButton = new Lang.Class({
         this.selectedAppBox.add_actor(this.selectedAppDescription);
 
         // Extension Preferences
-        let extensionPreferences = new GroupButton('control-center-symbolic', powerGroupButtonIconSize, null, {style_class: 'gnomenu-power-group-button'});
+        let extensionPreferences = new GroupButton('control-center-symbolic-a', powerGroupButtonIconSize, null, {style_class: 'gnomenu-power-group-button'});
         extensionPreferences.actor.connect('enter-event', Lang.bind(this, function() {
             extensionPreferences.actor.add_style_pseudo_class('active');
             this.selectedAppTitle.set_text(_('Preferences'));
