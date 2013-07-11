@@ -355,8 +355,10 @@ const PanelMenuButton = new Lang.Class({
         this.recentManager = Gtk.RecentManager.get_default();
         if (PlaceDisplay) {
             this.placesManager = new PlaceDisplay.PlacesManager();
+            if (_DEBUG_) global.log("PanelMenuButton: _init - initialized PlacesManager")
         } else {
             this.placesManager = null;
+            if (_DEBUG_) global.log("PanelMenuButton: _init - no PlacesManager")
         }
 
         this._display();
@@ -1231,7 +1233,7 @@ const PanelMenuButton = new Lang.Class({
     },
 
     _display : function() {
-
+        if (_DEBUG_) global.log("PanelMenuButton: _display");
         // popupMenuSection holds the mainbox
         let section = new PopupMenu.PopupMenuSection();
 
@@ -1433,6 +1435,7 @@ const PanelMenuButton = new Lang.Class({
         this.favoritesScrollBox.set_mouse_scrolling(true);
 
         //Load favorites
+        if (_DEBUG_) global.log("PanelMenuButton: _display - start loading favorites");
         this.favorites = [];
         let launchers = global.settings.get_strv('favorite-apps');
         let j = 0;
@@ -1463,6 +1466,7 @@ const PanelMenuButton = new Lang.Class({
                 ++j;
             }
         }
+        if (_DEBUG_) global.log("PanelMenuButton: _display - end loading favorites");
 
 
         // CategoriesBox
@@ -1501,6 +1505,7 @@ const PanelMenuButton = new Lang.Class({
         this.categoriesBox.add_actor(appCategory.actor);
 
         // Load rest of categories
+        if (_DEBUG_) global.log("PanelMenuButton: _display - start loading categories");
         let tree = Shell.AppSystem.get_default().get_tree();
         let root = tree.get_root_directory();
         let iter = root.iter();
@@ -1543,6 +1548,7 @@ const PanelMenuButton = new Lang.Class({
                 }
             }
         }
+        if (_DEBUG_) global.log("PanelMenuButton: _display - end loading categories");
 
 
         // PlacesBox
