@@ -71,6 +71,9 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         hidePanelViewBox.add(hidePanelViewLabel);
         hidePanelViewBox.add(hidePanelViewSwitch);
 
+        let panelViewBox = new Gtk.Box({
+            orientation: Gtk.Orientation.VERTICAL
+        });
 
         let disableHotCornerBox = new Gtk.Box({
             spacing: 20,
@@ -90,8 +93,42 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             this.settings.set_boolean('disable-panel-view-hotcorner', check.get_active());
         }));
 
-        this.settings.bind('hide-panel-view', disableHotCornerBox, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
+        //this.settings.bind('hide-panel-view', disableHotCornerBox, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
         disableHotCornerBox.add(disableHotCorner);
+
+        let customViewLabelBox = new Gtk.Box({
+            spacing: 20,
+            orientation: Gtk.Orientation.HORIZONTAL,
+            homogeneous: false,
+            margin_left: 20,
+            margin_top: 0,
+            margin_bottom: 5,
+            margin_right: 10
+        });
+        let customViewLabel = new Gtk.CheckButton({
+            label: _("Use custom label for View button"),
+            margin_left: 20
+        });
+        customViewLabel.set_active(this.settings.get_boolean('custom-panel-view-label'));
+        customViewLabel.connect('toggled', Lang.bind(this, function(check) {
+            this.settings.set_boolean('custom-panel-view-label', check.get_active());
+        }));
+
+        let customViewLabelEntry = new Gtk.Entry();
+        customViewLabelEntry.set_width_chars(20);
+        customViewLabelEntry.set_text(this.settings.get_strv('custom-panel-view-label-text')[0]);
+        customViewLabelEntry.connect('changed', Lang.bind(this, function(entry) {
+            let iconName = entry.get_text();
+            this.settings.set_strv('custom-panel-view-label-text', [iconName]);
+        }));
+
+        this.settings.bind('custom-panel-view-label', customViewLabelEntry, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
+        customViewLabelBox.add(customViewLabel);
+        customViewLabelBox.add(customViewLabelEntry);
+
+        this.settings.bind('hide-panel-view', panelViewBox, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
+        panelViewBox.add(disableHotCornerBox);
+        panelViewBox.add(customViewLabelBox);
 
 
         let hidePanelAppsBox = new Gtk.Box({
@@ -119,6 +156,43 @@ const GnoMenuPreferencesWidget = new GObject.Class({
 
         hidePanelAppsBox.add(hidePanelAppsLabel);
         hidePanelAppsBox.add(hidePanelAppsSwitch);
+
+        let panelAppsBox = new Gtk.Box({
+            orientation: Gtk.Orientation.VERTICAL
+        });
+
+        let customAppsLabelBox = new Gtk.Box({
+            spacing: 20,
+            orientation: Gtk.Orientation.HORIZONTAL,
+            homogeneous: false,
+            margin_left: 20,
+            margin_top: 0,
+            margin_bottom: 5,
+            margin_right: 10
+        });
+        let customAppsLabel = new Gtk.CheckButton({
+            label: _("Use custom label for Apps button"),
+            margin_left: 20
+        });
+        customAppsLabel.set_active(this.settings.get_boolean('custom-panel-apps-label'));
+        customAppsLabel.connect('toggled', Lang.bind(this, function(check) {
+            this.settings.set_boolean('custom-panel-apps-label', check.get_active());
+        }));
+
+        let customAppsLabelEntry = new Gtk.Entry();
+        customAppsLabelEntry.set_width_chars(20);
+        customAppsLabelEntry.set_text(this.settings.get_strv('custom-panel-apps-label-text')[0]);
+        customAppsLabelEntry.connect('changed', Lang.bind(this, function(entry) {
+            let iconName = entry.get_text();
+            this.settings.set_strv('custom-panel-apps-label-text', [iconName]);
+        }));
+
+        this.settings.bind('custom-panel-apps-label', customAppsLabelEntry, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
+        customAppsLabelBox.add(customAppsLabel);
+        customAppsLabelBox.add(customAppsLabelEntry);
+
+        this.settings.bind('hide-panel-apps', panelAppsBox, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
+        panelAppsBox.add(customAppsLabelBox);
 
 
         let hidePanelMenuBox = new Gtk.Box({
@@ -209,6 +283,35 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         disableMenuKeyboardAccelBox.add(disableMenuKeyboardAccel);
         disableMenuKeyboardAccelBox.add(keyboardAccelEntry);
 
+        let customMenuLabelBox = new Gtk.Box({
+            spacing: 20,
+            orientation: Gtk.Orientation.HORIZONTAL,
+            homogeneous: false,
+            margin_left: 20,
+            margin_top: 0,
+            margin_bottom: 5,
+            margin_right: 10
+        });
+        let customMenuLabel = new Gtk.CheckButton({
+            label: _("Use custom label for Menu button"),
+            margin_left: 20
+        });
+        customMenuLabel.set_active(this.settings.get_boolean('custom-panel-menu-label'));
+        customMenuLabel.connect('toggled', Lang.bind(this, function(check) {
+            this.settings.set_boolean('custom-panel-menu-label', check.get_active());
+        }));
+
+        let customMenuLabelEntry = new Gtk.Entry();
+        customMenuLabelEntry.set_width_chars(20);
+        customMenuLabelEntry.set_text(this.settings.get_strv('custom-panel-menu-label-text')[0]);
+        customMenuLabelEntry.connect('changed', Lang.bind(this, function(entry) {
+            let iconName = entry.get_text();
+            this.settings.set_strv('custom-panel-menu-label-text', [iconName]);
+        }));
+
+        this.settings.bind('custom-panel-menu-label', customMenuLabelEntry, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
+        customMenuLabelBox.add(customMenuLabel);
+        customMenuLabelBox.add(customMenuLabelEntry);
 
         let customMenuIconBox = new Gtk.Box({
             spacing: 20,
@@ -243,17 +346,20 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         this.settings.bind('hide-panel-menu', panelMenuBox, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
         panelMenuBox.add(disableMenuHotSpotBox);
         panelMenuBox.add(disableMenuKeyboardAccelBox);
+        panelMenuBox.add(customMenuLabelBox);
         panelMenuBox.add(customMenuIconBox);
+
 
         panelSettings.add(panelSettingsTitle);
         panelSettings.add(hidePanelViewBox);
-        panelSettings.add(disableHotCornerBox);
+        panelSettings.add(panelViewBox);
         panelSettings.add(hidePanelAppsBox);
+        panelSettings.add(panelAppsBox);
         panelSettings.add(hidePanelMenuBox);
         panelSettings.add(panelMenuBox);
 
 
-        /* APPS DISPLAY SETTINGS */
+        /* MENU SETTINGS */
 
         let appsSettings = new Gtk.Box({
             orientation: Gtk.Orientation.VERTICAL,
@@ -472,7 +578,16 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         frame.add(appsSettings);
 
 
-        this.add(frame);
+        //this.add(frame);
+
+        let scrollWindow = new Gtk.ScrolledWindow({
+            'hscrollbar-policy': Gtk.PolicyType.AUTOMATIC,
+            'vscrollbar-policy': Gtk.PolicyType.AUTOMATIC,
+            'hexpand': true, 'vexpand': true
+        });
+        scrollWindow.add_with_viewport(frame);
+
+        this.add(scrollWindow);
 
     }
 });
@@ -491,4 +606,5 @@ function buildPrefsWidget() {
 
     return widget;
 }
+
 

@@ -11,7 +11,7 @@
  * ========================================================================================================
  */
 
-const _DEBUG_ = true;
+const _DEBUG_ = false;
 
 const IconTheme = imports.gi.Gtk.IconTheme;
 const GLib = imports.gi.GLib;
@@ -541,7 +541,11 @@ const PanelMenuButton = new Lang.Class({
         }
 
         // Add label to button
-        let label = new St.Label({ text: ' '+_('Menu')});
+        let labelText = _('Menu');
+        if (settings.get_boolean('custom-panel-menu-label')) {
+            labelText = settings.get_strv('custom-panel-menu-label-text')[0];
+        }
+        let label = new St.Label({ text: ' '+labelText});
         this._box.add_actor(label);
 
         this.menu.connect('open-state-changed', Lang.bind(this, this._onOpenStateToggled));
@@ -2208,14 +2212,22 @@ const GnoMenuButton = new Lang.Class({
         if (_DEBUG_) global.log("GnoMenu: _display");
         // Initialize view button
         if (!settings.get_boolean('hide-panel-view')) {
-            this.viewButton = new PanelButton(_('View'));
+            let viewLabel = _('View');
+            if (settings.get_boolean('custom-panel-view-label')) {
+                viewLabel = settings.get_strv('custom-panel-view-label-text')[0];
+            }
+            this.viewButton = new PanelButton(viewLabel);
             this.viewButton.actor.connect('button-release-event', Lang.bind(this, this._onViewButtonRelease));
         }
         if (_DEBUG_) global.log("GnoMenu: _display initialized view button");
 
         // Initialize apps button
         if (!settings.get_boolean('hide-panel-apps')) {
-            this.appsButton = new PanelButton(_('Apps'));
+            let appsLabel = _('Apps');
+            if (settings.get_boolean('custom-panel-apps-label')) {
+                appsLabel = settings.get_strv('custom-panel-apps-label-text')[0];
+            }
+            this.appsButton = new PanelButton(appsLabel);
             this.appsButton.actor.connect('button-release-event', Lang.bind(this, this._onAppsButtonRelease));
         }
         if (_DEBUG_) global.log("GnoMenu: _display initialized apps button");
@@ -2530,11 +2542,17 @@ const GnoMenuButton = new Lang.Class({
     _bindSettingsChanges: function() {
         if (_DEBUG_) global.log("_bindSettingsChanges");
         settings.connect('changed::hide-panel-view', Lang.bind(this, this.refresh));
-        settings.connect('changed::hide-panel-apps', Lang.bind(this, this.refresh));
-        settings.connect('changed::hide-panel-menu', Lang.bind(this, this.refresh));
         settings.connect('changed::disable-panel-view-hotcorner', Lang.bind(this, this.refresh));
+        settings.connect('changed::custom-panel-view-label', Lang.bind(this, this.refresh));
+        settings.connect('changed::custom-panel-view-label-text', Lang.bind(this, this.refresh));
+        settings.connect('changed::hide-panel-apps', Lang.bind(this, this.refresh));
+        settings.connect('changed::custom-panel-apps-label', Lang.bind(this, this.refresh));
+        settings.connect('changed::custom-panel-apps-label-text', Lang.bind(this, this.refresh));
+        settings.connect('changed::hide-panel-menu', Lang.bind(this, this.refresh));
         settings.connect('changed::disable-panel-menu-hotspot', Lang.bind(this, this.refresh));
         settings.connect('changed::disable-panel-menu-keyboard', Lang.bind(this, this.refresh));
+        settings.connect('changed::custom-panel-menu-label', Lang.bind(this, this.refresh));
+        settings.connect('changed::custom-panel-menu-label-text', Lang.bind(this, this.refresh));
         settings.connect('changed::custom-panel-menu-icon', Lang.bind(this, this.refresh));
         settings.connect('changed::custom-panel-menu-icon-name', Lang.bind(this, this.refresh));
         settings.connect('changed::category-selection-method', Lang.bind(this, function() {

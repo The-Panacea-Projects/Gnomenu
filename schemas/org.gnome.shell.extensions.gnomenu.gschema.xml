@@ -30,10 +30,30 @@
       <summary>Disable the view button hot corner</summary>
       <description>Disable the view button hot corner</description>
     </key>
+    <key type="b" name="custom-panel-view-label">
+      <default>false</default>
+      <summary>Use custom view button label</summary>
+      <description>Use custom view button label</description>
+    </key>
+    <key type="as" name="custom-panel-view-label-text">
+        <default><![CDATA[['View']]]></default>
+      <summary>Set the custom view button label</summary>
+      <description>Set the custom view button label</description>
+    </key>
     <key type="b" name="hide-panel-apps">
       <default>false</default>
       <summary>Remove the apps button from the panel</summary>
       <description>Remove the apps button from the panel</description>
+    </key>
+    <key type="b" name="custom-panel-apps-label">
+      <default>false</default>
+      <summary>Use custom apps button label</summary>
+      <description>Use custom apps button label</description>
+    </key>
+    <key type="as" name="custom-panel-apps-label-text">
+        <default><![CDATA[['Apps']]]></default>
+      <summary>Set the custom apps button label</summary>
+      <description>Set the custom apps button label</description>
     </key>
     <key type="b" name="hide-panel-menu">
       <default>false</default>
@@ -54,6 +74,16 @@
         <default><![CDATA[['F2']]]></default>
       <summary>Disable the menu button keyboard shortcut</summary>
       <description>Disable the menu button keyboard shortcut</description>
+    </key>
+    <key type="b" name="custom-panel-menu-label">
+      <default>false</default>
+      <summary>Use custom menu button icon</summary>
+      <description>Use custom menu button icon</description>
+    </key>
+    <key type="as" name="custom-panel-menu-label-text">
+        <default><![CDATA[['Menu']]]></default>
+      <summary>Set the custom menu button icon name</summary>
+      <description>Set the custom menu button icon name</description>
     </key>
     <key type="b" name="custom-panel-menu-icon">
       <default>false</default>
