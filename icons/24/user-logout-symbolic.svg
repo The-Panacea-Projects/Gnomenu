@@ -14,7 +14,7 @@
    height="24.360001"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.3.1 r9886"
+   inkscape:version="0.48.4 r9939"
    sodipodi:docname="user-logout-symbolic.svg">
   <defs
      id="defs4">
@@ -101,10 +101,10 @@
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1276"
-     inkscape:window-height="953"
+     inkscape:window-width="1272"
+     inkscape:window-height="961"
      inkscape:window-x="0"
-     inkscape:window-y="37"
+     inkscape:window-y="27"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
@@ -124,7 +124,7 @@
      id="layer1"
      transform="translate(0,-1027.9943)">
     <g
-       transform="matrix(1.27,0,0,1.2615385,-52.987781,604.32565)"
+       transform="matrix(1.37,0,0,1.2615385,-57.387781,604.12575)"
        id="layer9">
       <path
          d="m 47,345 c -1.5545,0.11593 -3,1.4148 -3,3 v 4 h 10 v -4 c 0,-1.5852 -1.4455,-2.8841 -3,-3 v 1 h -4 z"

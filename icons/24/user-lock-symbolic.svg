@@ -14,8 +14,8 @@
    height="24.360001"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.3.1 r9886"
-   sodipodi:docname="changes-prevent-symbolic.svg">
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="user-lock-symbolic.svg">
   <defs
      id="defs4">
     <linearGradient
@@ -101,10 +101,10 @@
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1276"
-     inkscape:window-height="953"
+     inkscape:window-width="1272"
+     inkscape:window-height="961"
      inkscape:window-x="0"
-     inkscape:window-y="37"
+     inkscape:window-y="27"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
@@ -124,7 +124,7 @@
      id="layer1"
      transform="translate(0,-1027.9943)">
     <g
-       transform="matrix(1.1666667,0,0,1.1538417,-208.5,758.13298)"
+       transform="matrix(1.2666667,0,0,1.2538413,-227.5,733.43307)"
        id="layer9">
       <path
          d="m 184,244 c -0.554,0 -1,0.446 -1,1 v 0.53125 5.4688 h 12 v -5.4688 -0.53 c 0,-0.554 -0.446,-1 -1,-1 h -10 z"

@@ -13,7 +13,7 @@
    height="16"
    width="16"
    version="1.1"
-   inkscape:version="0.48.3.1 r9886"
+   inkscape:version="0.48.4 r9939"
    sodipodi:docname="user-logout-symbolic.svg">
   <defs
      id="defs10" />
@@ -26,16 +26,16 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1280"
-     inkscape:window-height="972"
+     inkscape:window-width="793"
+     inkscape:window-height="447"
      id="namedview8"
      showgrid="false"
      inkscape:zoom="14.75"
-     inkscape:cx="-3.1525424"
+     inkscape:cx="4.759322"
      inkscape:cy="8"
-     inkscape:window-x="0"
-     inkscape:window-y="27"
-     inkscape:window-maximized="1"
+     inkscape:window-x="98"
+     inkscape:window-y="69"
+     inkscape:window-maximized="0"
      inkscape:current-layer="svg7384" />
   <metadata
      id="metadata90">
@@ -52,7 +52,7 @@
   <title
      id="title9167">Gnome Symbolic Icon Theme</title>
   <g
-     transform="matrix(1.15623,0,0,0.98134614,-49.72977,-331.03559)"
+     transform="matrix(1.2362,0,0,1.0813077,-53.4158,-365.54031)"
      id="layer9">
     <path
        d="m 47,345 c -1.5545,0.11593 -3,1.4148 -3,3 v 4 h 10 v -4 c 0,-1.5852 -1.4455,-2.8841 -3,-3 v 1 h -4 z"
@@ -67,7 +67,7 @@
        inkscape:connector-curvature="0" />
   </g>
   <g
-     transform="matrix(0.50610314,0,0,0.45146129,-51.300436,-281.37128)"
+     transform="matrix(0.50610314,0,0,0.45146129,-51.100876,-281.37128)"
      id="layer12">
     <path
        d="m 125.03,628 h 1 c 0.0104,-1.2e-4 0.0208,-4.6e-4 0.0313,0 0.25495,0.0112 0.50987,0.12858 0.6875,0.3125 l 5.2812,5.2188 -5.2812,5.1875 c -0.19,0.19 -0.45,0.28 -0.72,0.28 h -1 v -1 c 0,-0.26529 0.0931,-0.53058 0.28125,-0.71875 l 3.8125,-3.75 -3.8125,-3.7812 c -0.21074,-0.19463 -0.30316,-0.46925 -0.28125,-0.75 v -1 z"
