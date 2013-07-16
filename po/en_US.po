@@ -49,7 +49,7 @@ msgstr ""
 msgid "Web"
 msgstr ""
 
-msgid "Weblinks requires the Search Bookmarks extension by bmh1980"
+msgid "Web bookmarks functionality requires the Search Bookmarks extension by bmh1980"
 msgstr ""
 
 msgid "Please install the Search Bookmarks extension at https://extensions.gnome.org/extension/557/search-bookmarks/"

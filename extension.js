@@ -94,7 +94,7 @@ const CategoryListButton = new Lang.Class({
     Name: 'GnoMenu.CategoryListButton',
 
     _init: function (app, altNameText, altIconName) {
-        let style = (gsVersion[1] > 4) ? 'popup-menu-item gnomenu-category-button' : 'gnomenu-category-button';
+        let style = (gsVersion[1] > 4) ? 'popup-menu-item popup-submenu-menu-item gnomenu-category-button' : 'gnomenu-category-button';
         this.actor = new St.Button({ reactive: true, style_class: style, x_align: St.Align.START, y_align: St.Align.START });
         this.actor._delegate = this;
         this.buttonbox = new St.BoxLayout();
@@ -444,7 +444,7 @@ const GroupButton = new Lang.Class({
 
     _init: function(iconName, iconSize, labelText, params) {
 
-        let style = (gsVersion[1] > 4) ? 'popup-menu-item' : '';
+        let style = (gsVersion[1] > 4) ? 'popup-menu-item popup-submenu-menu-item' : '';
         this.actor = new St.Button({ reactive: true, style_class: style, x_align: St.Align.MIDDLE, y_align: St.Align.MIDDLE });
         this.actor.add_style_class_name(params.style_class);
 
@@ -696,7 +696,9 @@ const PanelMenuButton = new Lang.Class({
                     this.weblinksCategory.actor.disconnect(this.weblinksCategoryReleaseId);
                 }
                 this.weblinksCategoryReleaseId = this.weblinksCategory.actor.connect('button-release-event', Lang.bind(this, function() {
-                    this.weblinksCategory.actor.remove_style_pseudo_class('active');
+                    this.weblinksCategory.actor.add_style_pseudo_class('open');
+                    this.recentCategory.actor.remove_style_pseudo_class('open');
+                    this.placesCategory.actor.remove_style_pseudo_class('open');
                     this._selectWebBookmarks(this.weblinksCategory);
                     this.selectedAppTitle.set_text(this.weblinksCategory.label.get_text());
                     this.selectedAppDescription.set_text('');
@@ -715,9 +717,9 @@ const PanelMenuButton = new Lang.Class({
                     this.weblinksCategory.actor.disconnect(this.weblinksCategoryReleaseId);
                 }
                 this.weblinksCategoryReleaseId = this.weblinksCategory.actor.connect('button-release-event', Lang.bind(this, function() {
-                    this.weblinksCategory.actor.remove_style_pseudo_class('active');
+                    this.weblinksCategory.actor.remove_style_pseudo_class('open');
                     Main.notify(
-                        _("Weblinks requires the Search Bookmarks extension by bmh1980"),
+                        _("Web bookmarks functionality requires the Search Bookmarks extension by bmh1980"),
                         _("Please install the Search Bookmarks extension at https://extensions.gnome.org/extension/557/search-bookmarks/"));
                 }));
             }
@@ -725,6 +727,7 @@ const PanelMenuButton = new Lang.Class({
         } else {
             this.resetSearch();
             this._clearCategorySelections(this.categoriesBox);
+            this._clearUserGroupButtons();
             this._clearApplicationSelections();
             this._clearApplicationsBox();
             global.stage.set_key_focus(null);
@@ -800,6 +803,7 @@ const PanelMenuButton = new Lang.Class({
 
     _selectCategory: function(button) {
         this.resetSearch();
+        this._clearUserGroupButtons();
         this._clearApplicationsBox(button);
         let category = button._app;
         if (category)
@@ -886,11 +890,11 @@ const PanelMenuButton = new Lang.Class({
             for (let i = 0; i < categoryActors.length; i++) {
                 let actor = categoryActors[i];
                 if (selectedCategory && (actor == selectedCategory.actor)) {
-                    actor.add_style_pseudo_class('selected');
+                    actor.add_style_pseudo_class('open');
                     actor.add_style_pseudo_class('active');
                     actor.add_style_class_name("gnomenu-category-button-selected");
                 } else {
-                    actor.remove_style_pseudo_class('selected');
+                    actor.remove_style_pseudo_class('open');
                     actor.remove_style_pseudo_class('active');
                     actor.remove_style_class_name("gnomenu-category-button-selected");
                 }
@@ -898,6 +902,12 @@ const PanelMenuButton = new Lang.Class({
         }
     },
 
+    _clearUserGroupButtons: function() {
+        this.recentCategory.actor.remove_style_pseudo_class('open');
+        this.weblinksCategory.actor.remove_style_pseudo_class('open');
+        this.placesCategory.actor.remove_style_pseudo_class('open');
+    },
+    
     _clearApplicationSelections: function(selectedApplication) {
         let viewMode = this._applicationsViewMode;
         this.applicationsListBox.get_children().forEach(function(actor) {
@@ -951,10 +961,12 @@ const PanelMenuButton = new Lang.Class({
             for (let i = 0; i < categoryActors.length; i++) {
                 let actor = categoryActors[i];
                 if (selectedCategory && (actor == selectedCategory.actor)) {
-                    actor.add_style_pseudo_class('active');
+                    //actor.add_style_pseudo_class('active');
+                    actor.add_style_pseudo_class('open');
                     actor.add_style_class_name("gnomenu-category-button-selected");
                 } else {
-                    actor.remove_style_pseudo_class('active');
+                    //actor.remove_style_pseudo_class('active');
+                    actor.remove_style_pseudo_class('open');
                     actor.remove_style_class_name("gnomenu-category-button-selected");
                 }
             }
@@ -1471,8 +1483,10 @@ const PanelMenuButton = new Lang.Class({
             let startupApplications = this.categoriesBox.get_first_child()._delegate;
             if (this.searchEntry.get_text() == "") {
                 this._clearCategorySelections(this.categoriesBox, startupApplications);
+                this._clearUserGroupButtons();
             } else {
                 this._clearCategorySelections(this.categoriesBox);
+                this._clearUserGroupButtons();
             }
         }
         this._clearApplicationSelections();
@@ -1638,21 +1652,23 @@ const PanelMenuButton = new Lang.Class({
         this.userGroupBox = new St.BoxLayout({ style_class: 'gnomenu-user-group-box' });
 
         // Load recent category
-        let recentCategory = new GroupButton( null, null, _('Recent'), {style_class: 'gnomenu-user-group-button'});
-        recentCategory.actor.connect('enter-event', Lang.bind(this, function() {
-            recentCategory.actor.add_style_pseudo_class('active');
-            this.selectedAppTitle.set_text(recentCategory.label.get_text());
+        this.recentCategory = new GroupButton( null, null, _('Recent'), {style_class: 'gnomenu-user-group-button'});
+        this.recentCategory.actor.connect('enter-event', Lang.bind(this, function() {
+            this.recentCategory.actor.add_style_pseudo_class('active');
+            this.selectedAppTitle.set_text(this.recentCategory.label.get_text());
             this.selectedAppDescription.set_text('');
         }));
-        recentCategory.actor.connect('leave-event', Lang.bind(this, function() {
-            recentCategory.actor.remove_style_pseudo_class('active');
+        this.recentCategory.actor.connect('leave-event', Lang.bind(this, function() {
+            this.recentCategory.actor.remove_style_pseudo_class('active');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
         }));
-        recentCategory.actor.connect('button-release-event', Lang.bind(this, function() {
-            recentCategory.actor.remove_style_pseudo_class('active');
-            this._selectRecent(recentCategory);
-            this.selectedAppTitle.set_text(recentCategory.label.get_text());
+        this.recentCategory.actor.connect('button-release-event', Lang.bind(this, function() {
+            this.recentCategory.actor.add_style_pseudo_class('open');
+            this.weblinksCategory.actor.remove_style_pseudo_class('open');
+            this.placesCategory.actor.remove_style_pseudo_class('open');
+            this._selectRecent(this.recentCategory);
+            this.selectedAppTitle.set_text(this.recentCategory.label.get_text());
             this.selectedAppDescription.set_text('');
         }));
 
@@ -1660,21 +1676,23 @@ const PanelMenuButton = new Lang.Class({
         this.weblinksCategory = new GroupButton( null, null, _('Web'), {style_class: 'gnomenu-user-group-button'});
 
         // Load 'all places' category
-        let placesCategory = new GroupButton( null, null, _('Places'), {style_class: 'gnomenu-user-group-button'});
-        placesCategory.actor.connect('enter-event', Lang.bind(this, function() {
-            placesCategory.actor.add_style_pseudo_class('active');
-            this.selectedAppTitle.set_text(placesCategory.label.get_text());
+        this.placesCategory = new GroupButton( null, null, _('Places'), {style_class: 'gnomenu-user-group-button'});
+        this.placesCategory.actor.connect('enter-event', Lang.bind(this, function() {
+            this.placesCategory.actor.add_style_pseudo_class('active');
+            this.selectedAppTitle.set_text(this.placesCategory.label.get_text());
             this.selectedAppDescription.set_text('');
         }));
-        placesCategory.actor.connect('leave-event', Lang.bind(this, function() {
-            placesCategory.actor.remove_style_pseudo_class('active');
+        this.placesCategory.actor.connect('leave-event', Lang.bind(this, function() {
+            this.placesCategory.actor.remove_style_pseudo_class('active');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
         }));
-        placesCategory.actor.connect('button-release-event', Lang.bind(this, function() {
-            placesCategory.actor.remove_style_pseudo_class('active');
-            this._selectAllPlaces(placesCategory);
-            this.selectedAppTitle.set_text(placesCategory.label.get_text());
+        this.placesCategory.actor.connect('button-release-event', Lang.bind(this, function() {
+            this.placesCategory.actor.add_style_pseudo_class('open');
+            this.weblinksCategory.actor.remove_style_pseudo_class('open');
+            this.recentCategory.actor.remove_style_pseudo_class('open');
+            this._selectAllPlaces(this.placesCategory);
+            this.selectedAppTitle.set_text(this.placesCategory.label.get_text());
             this.selectedAppDescription.set_text('');
         }));
 
@@ -1682,11 +1700,11 @@ const PanelMenuButton = new Lang.Class({
 
         let userGroupBoxSpacer1 = new St.Label({text: ''});
         let userGroupBoxSpacer2 = new St.Label({text: ''});
-        this.userGroupBox.add(recentCategory.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
+        this.userGroupBox.add(this.recentCategory.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         this.userGroupBox.add(userGroupBoxSpacer1, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         this.userGroupBox.add(this.weblinksCategory.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         this.userGroupBox.add(userGroupBoxSpacer2, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
-        this.userGroupBox.add(placesCategory.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
+        this.userGroupBox.add(this.placesCategory.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
 
 
         // ViewModeBox
@@ -1704,7 +1722,8 @@ const PanelMenuButton = new Lang.Class({
             this.selectedAppDescription.set_text('');
         }));
         listView.actor.connect('button-release-event', Lang.bind(this, function() {
-            listView.actor.remove_style_pseudo_class('active');
+            listView.actor.add_style_pseudo_class('open');
+            gridView.actor.remove_style_pseudo_class('open');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
             this._switchApplicationsView(0);
@@ -1721,7 +1740,8 @@ const PanelMenuButton = new Lang.Class({
             this.selectedAppDescription.set_text('');
         }));
         gridView.actor.connect('button-release-event', Lang.bind(this, function() {
-            gridView.actor.remove_style_pseudo_class('active');
+            gridView.actor.add_style_pseudo_class('open');
+            listView.actor.remove_style_pseudo_class('open');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
             this._switchApplicationsView(1);
@@ -1729,7 +1749,12 @@ const PanelMenuButton = new Lang.Class({
         this.viewModeBox.add(gridView.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         this.viewModeBox.add(listView.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         this.viewModeBoxWrapper.add_actor(this.viewModeBox);
-
+        let viewMode = this._applicationsViewMode;
+        if (viewMode == ApplicationsViewMode.LIST) {
+            listView.actor.add_style_pseudo_class('open');
+        } else {
+            gridView.actor.add_style_pseudo_class('open');
+        }
 
         // SearchBox
         this._searchInactiveIcon = new St.Icon({ style_class: 'search-entry-icon', icon_name: 'edit-find-symbolic' });
@@ -1814,12 +1839,12 @@ const PanelMenuButton = new Lang.Class({
             }));
         } else {
             appCategory.actor.connect('enter-event', Lang.bind(this, function() {
-                //appCategory.actor.add_style_pseudo_class('active');
+                appCategory.actor.add_style_pseudo_class('active');
                 this.selectedAppTitle.set_text(appCategory.label.get_text());
                 this.selectedAppDescription.set_text('');
             }));
             appCategory.actor.connect('leave-event', Lang.bind(this, function() {
-                //appCategory.actor.remove_style_pseudo_class('active');
+                appCategory.actor.remove_style_pseudo_class('active');
                 this.selectedAppTitle.set_text('');
                 this.selectedAppDescription.set_text('');
             }));
@@ -1855,12 +1880,12 @@ const PanelMenuButton = new Lang.Class({
                         }));
                     } else {
                         appCategory.actor.connect('enter-event', Lang.bind(this, function() {
-                            //appCategory.actor.add_style_pseudo_class('active');
+                            appCategory.actor.add_style_pseudo_class('active');
                             this.selectedAppTitle.set_text(appCategory.label.get_text());
                             this.selectedAppDescription.set_text('');
                         }));
                         appCategory.actor.connect('leave-event', Lang.bind(this, function() {
-                            //appCategory.actor.remove_style_pseudo_class('active');
+                            appCategory.actor.remove_style_pseudo_class('active');
                             this.selectedAppTitle.set_text('');
                             this.selectedAppDescription.set_text('');
                         }));
