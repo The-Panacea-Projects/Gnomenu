@@ -54,7 +54,11 @@
     font-weight: bold;
 }
 
-.gnomenu-user-group-button:active {
+.gnomenu-user-group-button:active,
+.gnomenu-user-group-button:open {
+}
+
+.gnomenu-user-group-button:pressed {
 }
 
 .gnomenu-view-mode-box-wrapper {
@@ -75,7 +79,11 @@
     padding: 0px 8px;
 }
 
-.gnomenu-view-mode-button:active {
+.gnomenu-view-mode-button:active,
+.gnomenu-view-mode-button:open {
+}
+
+.gnomenu-view-mode-button:pressed {
 }
 
 .gnomenu-search-box {
@@ -141,8 +149,9 @@
     font-weight: bold;
     padding: 1px 10px 2px 10px;
 }
+
 .gnomenu-category-button:active,
-.gnomenu-category-button-selected {
+.gnomenu-category-button:open {
 }
 
 .gnomenu-power-group-box {
@@ -156,7 +165,11 @@
     padding: 1px 5px;
 }
 
-.gnomenu-power-group-button:active {
+.gnomenu-power-group-button:active,
+.gnomenu-power-group-button:open {
+}
+
+.gnomenu-power-group-button:pressed {
 }
 
 .gnomenu-applications-scrollbox {
@@ -187,7 +200,7 @@
 }
 
 .gnomenu-application-button:active,
-.gnomenu-application-button-selected {
+.gnomenu-application-button:open {
 }
 
 .gnomenu-applications-grid-box {
@@ -213,7 +226,7 @@
 }
 
 .gnomenu-application-grid-button:active,
-.gnomenu-application-grid-button-selected {
+.gnomenu-application-grid-button:open {
 }
 
 .gnomenu-selected-app-box {

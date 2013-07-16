@@ -53,10 +53,14 @@
     font-weight: bold;
 }
 
-.gnomenu-user-group-button:active {
+.gnomenu-user-group-button:active,
+.gnomenu-user-group-button:open {
     background-gradient-direction: vertical;
     background-gradient-start: rgba(119,119,119,0.5);
     background-gradient-end: rgba(119,119,119,0.7);
+}
+
+.gnomenu-user-group-button:pressed {
 }
 
 .gnomenu-view-mode-box-wrapper {
@@ -77,10 +81,14 @@
     padding: 3px 10px;
 }
 
-.gnomenu-view-mode-button:active {
+.gnomenu-view-mode-button:active,
+.gnomenu-view-mode-button:open {
     background-gradient-direction: vertical;
     background-gradient-start: rgba(119,119,119,0.5);
     background-gradient-end: rgba(119,119,119,0.7);
+}
+
+.gnomenu-view-mode-button:pressed {
 }
 
 .gnomenu-search-box {
@@ -147,7 +155,7 @@
     padding: 3px 10px 4px 10px;
 }
 .gnomenu-category-button:active,
-.gnomenu-category-button-selected {
+.gnomenu-category-button:open {
     background-gradient-direction: vertical;
     background-gradient-start: rgba(119,119,119,0.5);
     background-gradient-end: rgba(119,119,119,0.7);
@@ -164,10 +172,14 @@
     padding: 2px 8px;
 }
 
-.gnomenu-power-group-button:active {
+.gnomenu-power-group-button:active,
+.gnomenu-power-group-button:open {
     background-gradient-direction: vertical;
     background-gradient-start: rgba(119,119,119,0.5);
     background-gradient-end: rgba(119,119,119,0.7);
+}
+
+.gnomenu-power-group-button:pressed {
 }
 
 .gnomenu-applications-scrollbox {
@@ -198,7 +210,7 @@
 }
 
 .gnomenu-application-button:active,
-.gnomenu-application-button-selected {
+.gnomenu-application-button:open {
     background-gradient-direction: vertical;
     background-gradient-start: rgba(119,119,119,0.5);
     background-gradient-end: rgba(119,119,119,0.7);
@@ -226,7 +238,7 @@
 }
 
 .gnomenu-application-grid-button:active,
-.gnomenu-application-grid-button-selected {
+.gnomenu-application-grid-button:open {
     background-gradient-direction: vertical;
     background-gradient-start: rgba(119,119,119,0.5);
     background-gradient-end: rgba(119,119,119,0.7);

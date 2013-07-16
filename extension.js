@@ -616,7 +616,7 @@ const PanelMenuButton = new Lang.Class({
             this._selectedItemIndex = null;
             this._activeContainer = null;
 
-            this._applicationsViewMode = settings.get_enum('startup-view-mode');
+            //this._applicationsViewMode = settings.get_enum('startup-view-mode');
             if (settings.get_enum('startup-apps-display') == appsDisplay.FAVORITES) {
                 this._clearApplicationsBox();
                 this._displayApplications(this._listApplications('favorites'));
@@ -692,10 +692,17 @@ const PanelMenuButton = new Lang.Class({
                     this.selectedAppTitle.set_text('');
                     this.selectedAppDescription.set_text('');
                 }));
+                if (this.weblinksCategoryPressId) {
+                    this.weblinksCategory.actor.disconnect(this.weblinksCategoryPressId);
+                }
+                this.weblinksCategoryPressId = this.weblinksCategory.actor.connect('button-press-event', Lang.bind(this, function() {
+                    this.weblinksCategory.actor.add_style_pseudo_class('pressed');
+                }));
                 if (this.weblinksCategoryReleaseId) {
                     this.weblinksCategory.actor.disconnect(this.weblinksCategoryReleaseId);
                 }
                 this.weblinksCategoryReleaseId = this.weblinksCategory.actor.connect('button-release-event', Lang.bind(this, function() {
+                    this.weblinksCategory.actor.remove_style_pseudo_class('pressed');
                     this.weblinksCategory.actor.add_style_pseudo_class('open');
                     this.recentCategory.actor.remove_style_pseudo_class('open');
                     this.placesCategory.actor.remove_style_pseudo_class('open');
@@ -712,6 +719,9 @@ const PanelMenuButton = new Lang.Class({
                 if (this.weblinksCategoryLeaveId) {
                     this.weblinksCategory.actor.disconnect(this.weblinksCategoryLeaveId);
                     this.weblinksCategoryLeaveId = null;
+                }
+                if (this.weblinksCategoryPressId) {
+                    this.weblinksCategory.actor.disconnect(this.weblinksCategoryPressId);
                 }
                 if (this.weblinksCategoryReleaseId) {
                     this.weblinksCategory.actor.disconnect(this.weblinksCategoryReleaseId);
@@ -890,13 +900,13 @@ const PanelMenuButton = new Lang.Class({
             for (let i = 0; i < categoryActors.length; i++) {
                 let actor = categoryActors[i];
                 if (selectedCategory && (actor == selectedCategory.actor)) {
-                    actor.add_style_pseudo_class('open');
                     actor.add_style_pseudo_class('active');
-                    actor.add_style_class_name("gnomenu-category-button-selected");
+                    actor.add_style_pseudo_class('open');
+                    //actor.add_style_class_name("gnomenu-category-button-selected");
                 } else {
-                    actor.remove_style_pseudo_class('open');
                     actor.remove_style_pseudo_class('active');
-                    actor.remove_style_class_name("gnomenu-category-button-selected");
+                    actor.remove_style_pseudo_class('open');
+                    //actor.remove_style_class_name("gnomenu-category-button-selected");
                 }
             }
         }
@@ -907,35 +917,36 @@ const PanelMenuButton = new Lang.Class({
         this.weblinksCategory.actor.remove_style_pseudo_class('open');
         this.placesCategory.actor.remove_style_pseudo_class('open');
     },
-    
+
     _clearApplicationSelections: function(selectedApplication) {
         let viewMode = this._applicationsViewMode;
         this.applicationsListBox.get_children().forEach(function(actor) {
             if (selectedApplication && (actor == selectedApplication)) {
-                actor.add_style_pseudo_class('selected');
                 actor.add_style_pseudo_class('active');
-                actor.add_style_class_name("gnomenu-application-button-selected");
+                actor.add_style_pseudo_class('open');
+                //actor.add_style_class_name("gnomenu-application-button-selected");
             } else {
-                actor.remove_style_pseudo_class('selected');
                 actor.remove_style_pseudo_class('active');
-                actor.remove_style_class_name("gnomenu-application-button-selected");
+                actor.remove_style_pseudo_class('open');
+                //actor.remove_style_class_name("gnomenu-application-button-selected");
             }
         });
 
         this.applicationsGridBox.get_children().forEach(function(actor) {
             if (selectedApplication && (actor == selectedApplication)) {
-                actor.add_style_pseudo_class('selected');
                 actor.add_style_pseudo_class('active');
-                actor.add_style_class_name("gnomenu-application-grid-button-selected");
+                actor.add_style_pseudo_class('open');
+                //actor.add_style_class_name("gnomenu-application-grid-button-selected");
             } else {
-                actor.remove_style_pseudo_class('selected');
                 actor.remove_style_pseudo_class('active');
-                actor.remove_style_class_name("gnomenu-application-grid-button-selected");
+                actor.remove_style_pseudo_class('open');
+                //actor.remove_style_class_name("gnomenu-application-grid-button-selected");
             }
         });
     },
 
     _clearApplicationsBox: function(selectedCategory, refresh){
+        this._selectedItemIndex = -1;
         let listActors = this.applicationsListBox.get_children();
         if (listActors) {
             for (let i=0; i<listActors.length; i++) {
@@ -963,11 +974,11 @@ const PanelMenuButton = new Lang.Class({
                 if (selectedCategory && (actor == selectedCategory.actor)) {
                     //actor.add_style_pseudo_class('active');
                     actor.add_style_pseudo_class('open');
-                    actor.add_style_class_name("gnomenu-category-button-selected");
+                    //actor.add_style_class_name("gnomenu-category-button-selected");
                 } else {
                     //actor.remove_style_pseudo_class('active');
                     actor.remove_style_pseudo_class('open');
-                    actor.remove_style_class_name("gnomenu-category-button-selected");
+                    //actor.remove_style_class_name("gnomenu-category-button-selected");
                 }
             }
         }
@@ -1134,7 +1145,8 @@ const PanelMenuButton = new Lang.Class({
                            else this.selectedAppDescription.set_text("");
                         }));
                         appListButton.actor.connect('leave-event', Lang.bind(this, function() {
-                           if (!appListButton.actor.has_style_pseudo_class('selected')) appListButton.actor.remove_style_pseudo_class('active');
+                           //if (!appListButton.actor.has_style_pseudo_class('open')) appListButton.actor.remove_style_pseudo_class('active');
+                           appListButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
                         }));
@@ -1155,7 +1167,8 @@ const PanelMenuButton = new Lang.Class({
                            else this.selectedAppDescription.set_text("");
                         }));
                         appGridButton.actor.connect('leave-event', Lang.bind(this, function() {
-                           if (!appGridButton.actor.has_style_pseudo_class('selected')) appGridButton.actor.remove_style_pseudo_class('active');
+                           //if (!appGridButton.actor.has_style_pseudo_class('open')) appGridButton.actor.remove_style_pseudo_class('active');
+                           appGridButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
                         }));
@@ -1200,7 +1213,8 @@ const PanelMenuButton = new Lang.Class({
                            else this.selectedAppDescription.set_text("");
                         }));
                         appListButton.actor.connect('leave-event', Lang.bind(this, function() {
-                           if (!appListButton.actor.has_style_pseudo_class('selected')) appListButton.actor.remove_style_pseudo_class('active');
+                           //if (!appListButton.actor.has_style_pseudo_class('selected')) appListButton.actor.remove_style_pseudo_class('active');
+                           appListButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
                         }));
@@ -1225,7 +1239,8 @@ const PanelMenuButton = new Lang.Class({
                            else this.selectedAppDescription.set_text("");
                         }));
                         appGridButton.actor.connect('leave-event', Lang.bind(this, function() {
-                           if (!appGridButton.actor.has_style_pseudo_class('selected')) appGridButton.actor.remove_style_pseudo_class('active');
+                           //if (!appGridButton.actor.has_style_pseudo_class('selected')) appGridButton.actor.remove_style_pseudo_class('active');
+                           appGridButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
                         }));
@@ -1275,7 +1290,8 @@ const PanelMenuButton = new Lang.Class({
                            else this.selectedAppDescription.set_text("");
                         }));
                         appListButton.actor.connect('leave-event', Lang.bind(this, function() {
-                           if (!appListButton.actor.has_style_pseudo_class('selected')) appListButton.actor.remove_style_pseudo_class('active');
+                           //if (!appListButton.actor.has_style_pseudo_class('selected')) appListButton.actor.remove_style_pseudo_class('active');
+                           appListButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
                         }));
@@ -1296,7 +1312,8 @@ const PanelMenuButton = new Lang.Class({
                            else this.selectedAppDescription.set_text("");
                         }));
                         appGridButton.actor.connect('leave-event', Lang.bind(this, function() {
-                           if (!appGridButton.actor.has_style_pseudo_class('selected')) appGridButton.actor.remove_style_pseudo_class('active');
+                           //if (!appGridButton.actor.has_style_pseudo_class('selected')) appGridButton.actor.remove_style_pseudo_class('active');
+                           appGridButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
                         }));
@@ -1663,7 +1680,11 @@ const PanelMenuButton = new Lang.Class({
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
         }));
+        this.recentCategory.actor.connect('button-press-event', Lang.bind(this, function() {
+            this.recentCategory.actor.add_style_pseudo_class('pressed');
+        }));
         this.recentCategory.actor.connect('button-release-event', Lang.bind(this, function() {
+            this.recentCategory.actor.remove_style_pseudo_class('pressed');
             this.recentCategory.actor.add_style_pseudo_class('open');
             this.weblinksCategory.actor.remove_style_pseudo_class('open');
             this.placesCategory.actor.remove_style_pseudo_class('open');
@@ -1687,7 +1708,11 @@ const PanelMenuButton = new Lang.Class({
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
         }));
+        this.placesCategory.actor.connect('button-press-event', Lang.bind(this, function() {
+            this.placesCategory.actor.add_style_pseudo_class('pressed');
+        }));
         this.placesCategory.actor.connect('button-release-event', Lang.bind(this, function() {
+            this.placesCategory.actor.remove_style_pseudo_class('pressed');
             this.placesCategory.actor.add_style_pseudo_class('open');
             this.weblinksCategory.actor.remove_style_pseudo_class('open');
             this.recentCategory.actor.remove_style_pseudo_class('open');
@@ -1721,7 +1746,11 @@ const PanelMenuButton = new Lang.Class({
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
         }));
+        listView.actor.connect('button-press-event', Lang.bind(this, function() {
+            listView.actor.add_style_pseudo_class('pressed');
+        }));
         listView.actor.connect('button-release-event', Lang.bind(this, function() {
+            listView.actor.remove_style_pseudo_class('pressed');
             listView.actor.add_style_pseudo_class('open');
             gridView.actor.remove_style_pseudo_class('open');
             this.selectedAppTitle.set_text('');
@@ -1739,7 +1768,11 @@ const PanelMenuButton = new Lang.Class({
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
         }));
+        gridView.actor.connect('button-press-event', Lang.bind(this, function() {
+            gridView.actor.add_style_pseudo_class('pressed');
+        }));
         gridView.actor.connect('button-release-event', Lang.bind(this, function() {
+            gridView.actor.remove_style_pseudo_class('pressed');
             gridView.actor.add_style_pseudo_class('open');
             listView.actor.remove_style_pseudo_class('open');
             this.selectedAppTitle.set_text('');
@@ -1919,8 +1952,12 @@ const PanelMenuButton = new Lang.Class({
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
         }));
+        systemRestart.actor.connect('button-press-event', Lang.bind(this, function() {
+            systemRestart.actor.add_style_pseudo_class('pressed');
+        }));
         systemRestart.actor.connect('button-release-event', Lang.bind(this, function() {
             // code to refresh shell
+            systemRestart.actor.remove_style_pseudo_class('pressed');
             systemRestart.actor.remove_style_pseudo_class('active');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
@@ -1938,8 +1975,12 @@ const PanelMenuButton = new Lang.Class({
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
         }));
+        systemSuspend.actor.connect('button-press-event', Lang.bind(this, function() {
+            systemSuspend.actor.add_style_pseudo_class('pressed');
+        }));
         systemSuspend.actor.connect('button-release-event', Lang.bind(this, function() {
             // code to suspend
+            systemSuspend.actor.remove_style_pseudo_class('pressed');
             systemSuspend.actor.remove_style_pseudo_class('active');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
@@ -1980,8 +2021,12 @@ const PanelMenuButton = new Lang.Class({
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
         }));
+        systemShutdown.actor.connect('button-press-event', Lang.bind(this, function() {
+            systemShutdown.actor.add_style_pseudo_class('pressed');
+        }));
         systemShutdown.actor.connect('button-release-event', Lang.bind(this, function() {
             // code to shutdown (power off)
+            systemShutdown.actor.remove_style_pseudo_class('pressed');
             systemShutdown.actor.remove_style_pseudo_class('active');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
@@ -1999,8 +2044,12 @@ const PanelMenuButton = new Lang.Class({
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
         }));
+        logoutUser.actor.connect('button-press-event', Lang.bind(this, function() {
+            logoutUser.actor.add_style_pseudo_class('pressed');
+        }));
         logoutUser.actor.connect('button-release-event', Lang.bind(this, function() {
             // code to logout user
+            logoutUser.actor.remove_style_pseudo_class('pressed');
             logoutUser.actor.remove_style_pseudo_class('active');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
@@ -2018,8 +2067,12 @@ const PanelMenuButton = new Lang.Class({
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
         }));
+        lockScreen.actor.connect('button-press-event', Lang.bind(this, function() {
+            lockScreen.actor.add_style_pseudo_class('pressed');
+        }));
         lockScreen.actor.connect('button-release-event', Lang.bind(this, function() {
             // code for lock options
+            lockScreen.actor.remove_style_pseudo_class('pressed');
             lockScreen.actor.remove_style_pseudo_class('active');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
@@ -2087,8 +2140,12 @@ const PanelMenuButton = new Lang.Class({
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
         }));
+        extensionPreferences.actor.connect('button-press-event', Lang.bind(this, function() {
+            extensionPreferences.actor.add_style_pseudo_class('pressed');
+        }));
         extensionPreferences.actor.connect('button-release-event', Lang.bind(this, function() {
             // code to show extension preferences
+            extensionPreferences.actor.remove_style_pseudo_class('pressed');
             extensionPreferences.actor.remove_style_pseudo_class('active');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
