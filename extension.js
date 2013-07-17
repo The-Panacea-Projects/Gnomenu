@@ -1476,11 +1476,11 @@ const PanelMenuButton = new Lang.Class({
            else this.selectedAppDescription.set_text("");
         } else if (itemActor._delegate._type == 1) {
            this.selectedAppTitle.set_text(itemActor._delegate._app.name);
-           if (itemActor._delegate._app.get_description()) this.selectedAppDescription.set_text(itemActor._delegate._app.description);
+           if (itemActor._delegate._app.description) this.selectedAppDescription.set_text(itemActor._delegate._app.description);
            else this.selectedAppDescription.set_text("");
         } else if (itemActor._delegate._type == 2) {
            this.selectedAppTitle.set_text(itemActor._delegate._app.name);
-           if (itemActor._delegate._app.get_description()) this.selectedAppDescription.set_text(itemActor._delegate._app.description);
+           if (itemActor._delegate._app.description) this.selectedAppDescription.set_text(itemActor._delegate._app.description);
            else this.selectedAppDescription.set_text("");
         }
 
