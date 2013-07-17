@@ -66,11 +66,9 @@ if (gsVersion[1] > 4) {
 
 const PREFS_DIALOG = "gnome-shell-extension-prefs gnomenu@panacier.gmail.com";
 
-const appsDisplay = {
+const startupAppsDisplay = {
     ALL: 0,
-    FAVORITES: 1,
-    PLACES: 2,
-    RECENT: 3
+    FAVORITES: 1
 };
 
 const selectMethod = {
@@ -82,6 +80,12 @@ const menuLayout = {
     LARGE: 0,
     MEDIUM: 1,
     SMALL: 2
+};
+
+const applicationType = {
+    APPLICATION: 0,
+    PLACE: 1,
+    RECENT: 2
 };
 
 
@@ -210,12 +214,11 @@ const AppListButton = new Lang.Class({
         this.actor._delegate = this;
         let iconSize = (settings.get_int('apps-list-icon-size') > 0) ? settings.get_int('apps-list-icon-size') : 28;
 
-        // appType should probably be enumerated
-        // appType 0 = application, appType 1 = place
-        if (appType == 0) {
+        // appType 0 = application, appType 1 = place, appType 2 = recent
+        if (appType == applicationType.APPLICATION) {
             this.icon = app.create_icon_texture(iconSize);
             this.label = new St.Label({ text: app.get_name(), style_class: 'gnomenu-application-button-label' });
-        } else if (appType == 1) {
+        } else if (appType == applicationType.PLACE) {
             if (gsVersion[1] > 4) {
                 this.icon = new St.Icon({gicon: app.icon, icon_size: iconSize});
                 if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR, style_class: 'overview-icon'});
@@ -224,7 +227,7 @@ const AppListButton = new Lang.Class({
                 if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR, style_class: 'overview-icon'});
             }
             this.label = new St.Label({ text: app.name, style_class: 'gnomenu-application-button-label' });
-        } else if (appType == 2) {
+        } else if (appType == applicationType.RECENT) {
             let gicon = Gio.content_type_get_icon(app.mime);
             this.icon = new St.Icon({gicon: gicon, icon_size: iconSize});
             if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR});
@@ -262,9 +265,9 @@ const AppListButton = new Lang.Class({
         let appIcon;
         //let iconSize = (settings.get_int('apps-grid-icon-size') > 0) ? settings.get_int('apps-grid-icon-size') : 64;
         let iconSize = Main.overview.dashIconSize;
-        if (this._type == 0) {
+        if (this._type == applicationType.APPLICATION) {
             appIcon = this._app.create_icon_texture(iconSize);
-        } else if (this._type == 1) {
+        } else if (this._type == applicationType.PLACE) {
             if (gsVersion[1] > 4) {
                 appIcon = new St.Icon({gicon: this._app.icon, icon_size: iconSize});
                 if(!appIcon) appIcon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR});
@@ -272,7 +275,7 @@ const AppListButton = new Lang.Class({
                 appIcon = this._app.iconFactory(iconSize);
                 if(!appIcon) appIcon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR});
             }
-        } else if (this._type == 2) {
+        } else if (this._type == applicationType.RECENT) {
             let gicon = Gio.content_type_get_icon(this._app.mime);
             appIcon = new St.Icon({gicon: gicon, icon_size: iconSize});
             if(!appIcon) appIcon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR});
@@ -290,15 +293,15 @@ const AppListButton = new Lang.Class({
         params = Params.parse(params, { workspace: -1,
                                         timestamp: 0 });
 
-        if (this._type == 0) {
+        if (this._type == applicationType.APPLICATION) {
             this._app.open_new_window(params.workspace);
-        } else if (this._type == 1) {
+        } else if (this._type == applicationType.PLACE) {
            if (this._app.uri) {
                this._app.app.launch_uris([this._app.uri], null);
            } else {
                this._app.launch();
            }
-        } else if (this._type == 2) {
+        } else if (this._type == applicationType.RECENT) {
             Gio.app_info_launch_default_for_uri(this._app.uri, global.create_app_launch_context());
         }
 
@@ -328,12 +331,11 @@ const AppGridButton = new Lang.Class({
         this.actor._delegate = this;
         let iconSize = (settings.get_int('apps-grid-icon-size') > 0) ? settings.get_int('apps-grid-icon-size') : 64;
 
-        // appType should probably be enumerated
         // appType 0 = application, appType 1 = place, appType 2 = recent
-        if (appType == 0) {
+        if (appType == applicationType.APPLICATION) {
             this.icon = app.create_icon_texture(iconSize);
             this.label = new St.Label({ text: app.get_name(), style_class: 'gnomenu-application-grid-button-label' });
-        } else if (appType == 1) {
+        } else if (appType == applicationType.PLACE) {
             if (gsVersion[1] > 4) {
                 this.icon = new St.Icon({gicon: app.icon, icon_size: iconSize});
                 if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR});
@@ -342,7 +344,7 @@ const AppGridButton = new Lang.Class({
                 if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR});
             }
             this.label = new St.Label({ text: app.name, style_class: 'gnomenu-application-grid-button-label' });
-        } else if (appType == 2) {
+        } else if (appType == applicationType.RECENT) {
             let gicon = Gio.content_type_get_icon(app.mime);
             this.icon = new St.Icon({gicon: gicon, icon_size: iconSize});
             if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR});
@@ -384,9 +386,9 @@ const AppGridButton = new Lang.Class({
         let appIcon;
         //let iconSize = (settings.get_int('apps-grid-icon-size') > 0) ? settings.get_int('apps-grid-icon-size') : 64;
         let iconSize = Main.overview.dashIconSize;
-        if (this._type == 0) {
+        if (this._type == applicationType.APPLICATION) {
             appIcon = this._app.create_icon_texture(iconSize);
-        } else if (this._type == 1) {
+        } else if (this._type == applicationType.PLACE) {
             if (gsVersion[1] > 4) {
                 appIcon = new St.Icon({gicon: this._app.icon, icon_size: iconSize});
                 if(!appIcon) appIcon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR});
@@ -394,7 +396,7 @@ const AppGridButton = new Lang.Class({
                 appIcon = this._app.iconFactory(iconSize);
                 if(!appIcon) appIcon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR});
             }
-        } else if (this._type == 2) {
+        } else if (this._type == applicationType.RECENT) {
             let gicon = Gio.content_type_get_icon(this._app.mime);
             appIcon = new St.Icon({gicon: gicon, icon_size: iconSize});
             if(!appIcon) appIcon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR});
@@ -412,15 +414,15 @@ const AppGridButton = new Lang.Class({
         params = Params.parse(params, { workspace: -1,
                                         timestamp: 0 });
 
-        if (this._type == 0) {
+        if (this._type == applicationType.APPLICATION) {
             this._app.open_new_window(params.workspace);
-        } else if (this._type == 1) {
+        } else if (this._type == applicationType.PLACE) {
            if (this._app.uri) {
                this._app.app.launch_uris([this._app.uri], null);
            } else {
                this._app.launch();
            }
-        } else if (this._type == 2) {
+        } else if (this._type == applicationType.RECENT) {
             Gio.app_info_launch_default_for_uri(this._app.uri, global.create_app_launch_context());
         }
 
@@ -617,7 +619,7 @@ const PanelMenuButton = new Lang.Class({
             this._activeContainer = null;
 
             //this._applicationsViewMode = settings.get_enum('startup-view-mode');
-            if (settings.get_enum('startup-apps-display') == appsDisplay.FAVORITES) {
+            if (settings.get_enum('startup-apps-display') == startupAppsDisplay.FAVORITES) {
                 this._clearApplicationsBox();
                 this._displayApplications(this._listApplications('favorites'));
             } else {
@@ -919,7 +921,6 @@ const PanelMenuButton = new Lang.Class({
     },
 
     _clearApplicationSelections: function(selectedApplication) {
-        let viewMode = this._applicationsViewMode;
         this.applicationsListBox.get_children().forEach(function(actor) {
             if (selectedApplication && (actor == selectedApplication)) {
                 actor.add_style_pseudo_class('active');
@@ -1131,12 +1132,12 @@ const PanelMenuButton = new Lang.Class({
         }
 
         if (apps){
-            appType = 0;
+            appType = applicationType.APPLICATION;
             for (let i in apps) {
                 let app = apps[i];
                 // only add if not already in this._applications or refreshing
                 if (refresh || !this._applications[app]) {
-                    if (viewMode == 0) { // ListView
+                    if (viewMode == ApplicationsViewMode.LIST) { // ListView
                         let appListButton = new AppListButton(app, appType);
                         appListButton.actor.connect('enter-event', Lang.bind(this, function() {
                            appListButton.actor.add_style_pseudo_class('active');
@@ -1199,12 +1200,12 @@ const PanelMenuButton = new Lang.Class({
         }
 
         if (places){
-            appType = 1;
+            appType = applicationType.PLACE;
             for (let i in places) {
                 let app = places[i];
                 // only add if not already in this._places or refreshing
                 if (refresh || !this._places[app.name]) {
-                    if (viewMode == 0) { // ListView
+                    if (viewMode == ApplicationsViewMode.LIST) { // ListView
                         let appListButton = new AppListButton(app, appType);
                         appListButton.actor.connect('enter-event', Lang.bind(this, function() {
                            appListButton.actor.add_style_pseudo_class('active');
@@ -1213,7 +1214,7 @@ const PanelMenuButton = new Lang.Class({
                            else this.selectedAppDescription.set_text("");
                         }));
                         appListButton.actor.connect('leave-event', Lang.bind(this, function() {
-                           //if (!appListButton.actor.has_style_pseudo_class('selected')) appListButton.actor.remove_style_pseudo_class('active');
+                           //if (!appListButton.actor.has_style_pseudo_class('open')) appListButton.actor.remove_style_pseudo_class('active');
                            appListButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
@@ -1239,7 +1240,7 @@ const PanelMenuButton = new Lang.Class({
                            else this.selectedAppDescription.set_text("");
                         }));
                         appGridButton.actor.connect('leave-event', Lang.bind(this, function() {
-                           //if (!appGridButton.actor.has_style_pseudo_class('selected')) appGridButton.actor.remove_style_pseudo_class('active');
+                           //if (!appGridButton.actor.has_style_pseudo_class('open')) appGridButton.actor.remove_style_pseudo_class('active');
                            appGridButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
@@ -1276,12 +1277,12 @@ const PanelMenuButton = new Lang.Class({
         }
 
         if (recent){
-            appType = 2;
+            appType = applicationType.RECENT;
             for (let i in recent) {
                 let app = recent[i];
                 // only add if not already in this._recent or refreshing
                 if (refresh || !this._recent[app.name]) {
-                    if (viewMode == 0) { // ListView
+                    if (viewMode == ApplicationsViewMode.LIST) { // ListView
                         let appListButton = new AppListButton(app, appType);
                         appListButton.actor.connect('enter-event', Lang.bind(this, function() {
                            appListButton.actor.add_style_pseudo_class('active');
@@ -1290,7 +1291,7 @@ const PanelMenuButton = new Lang.Class({
                            else this.selectedAppDescription.set_text("");
                         }));
                         appListButton.actor.connect('leave-event', Lang.bind(this, function() {
-                           //if (!appListButton.actor.has_style_pseudo_class('selected')) appListButton.actor.remove_style_pseudo_class('active');
+                           //if (!appListButton.actor.has_style_pseudo_class('open')) appListButton.actor.remove_style_pseudo_class('active');
                            appListButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
@@ -1312,7 +1313,7 @@ const PanelMenuButton = new Lang.Class({
                            else this.selectedAppDescription.set_text("");
                         }));
                         appGridButton.actor.connect('leave-event', Lang.bind(this, function() {
-                           //if (!appGridButton.actor.has_style_pseudo_class('selected')) appGridButton.actor.remove_style_pseudo_class('active');
+                           //if (!appGridButton.actor.has_style_pseudo_class('open')) appGridButton.actor.remove_style_pseudo_class('active');
                            appGridButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
@@ -1358,15 +1359,15 @@ const PanelMenuButton = new Lang.Class({
 
         // Set initial active container (default is this.applicationsListBox or this.applicationsGridBox)
         if (this._activeContainer === null && symbol == Clutter.KEY_Up) {
-            this._activeContainer = (viewMode == 0) ? this.applicationsListBox : this.applicationsGridBox;
+            this._activeContainer = (viewMode == ApplicationsViewMode.LIST) ? this.applicationsListBox : this.applicationsGridBox;
         } else if (this._activeContainer === null && symbol == Clutter.KEY_Down) {
-            this._activeContainer = (viewMode == 0) ? this.applicationsListBox : this.applicationsGridBox;
+            this._activeContainer = (viewMode == ApplicationsViewMode.LIST) ? this.applicationsListBox : this.applicationsGridBox;
         } else if (this._activeContainer === null && symbol == Clutter.KEY_Left) {
             this._activeContainer = this.categoriesBox;
         } else if (this._activeContainer === null && symbol == Clutter.KEY_Right) {
-            this._activeContainer = (viewMode == 0) ? this.applicationsListBox : this.applicationsGridBox;
+            this._activeContainer = (viewMode == ApplicationsViewMode.LIST) ? this.applicationsListBox : this.applicationsGridBox;
         } else if (this._activeContainer === null) {
-            this._activeContainer = (viewMode == 0) ? this.applicationsListBox : this.applicationsGridBox;
+            this._activeContainer = (viewMode == ApplicationsViewMode.LIST) ? this.applicationsListBox : this.applicationsGridBox;
         }
 
         // Any items in container?
@@ -1383,7 +1384,7 @@ const PanelMenuButton = new Lang.Class({
         if (this._activeContainer == this.applicationsListBox || this._activeContainer == this.applicationsGridBox) {
                 if (symbol == Clutter.KEY_Up) {
                     if (this._selectedItemIndex != null && this._selectedItemIndex > -1) {
-                        if (viewMode == 0) {
+                        if (viewMode == ApplicationsViewMode.LIST) {
                             index = (this._selectedItemIndex - 1 < 0) ? this._selectedItemIndex : this._selectedItemIndex - 1;
                         } else {
                             var columns = this._appGridColumns;
@@ -1394,7 +1395,7 @@ const PanelMenuButton = new Lang.Class({
                     if (this._selectedItemIndex == null || this._selectedItemIndex < 0) {
                         index = 0;
                     } else {
-                        if (viewMode == 0) {
+                        if (viewMode == ApplicationsViewMode.LIST) {
                             index = (this._selectedItemIndex + 1 == children.length) ? children.length - 1 : this._selectedItemIndex + 1;
                         } else {
                             var columns = this._appGridColumns;
@@ -1403,7 +1404,7 @@ const PanelMenuButton = new Lang.Class({
                     }
                 } else if (symbol == Clutter.KEY_Left) {
                     if (this._selectedItemIndex != null && this._selectedItemIndex > 0) {
-                        if (viewMode == 0) {
+                        if (viewMode == ApplicationsViewMode.LIST) {
                             // Move to categoriesBox
 
                         } else {
@@ -1417,7 +1418,7 @@ const PanelMenuButton = new Lang.Class({
                     if (this._selectedItemIndex == null || this._selectedItemIndex < 0) {
                         index = 0;
                     } else {
-                        if (viewMode == 0) {
+                        if (viewMode == ApplicationsViewMode.LIST) {
                             // Do nothing
                         } else {
                             var columns = this._appGridColumns;
@@ -1470,15 +1471,15 @@ const PanelMenuButton = new Lang.Class({
 
         // Set selected app name/description
         let itemActor = children[this._selectedItemIndex];
-        if (itemActor._delegate._type == 0) {
+        if (itemActor._delegate._type == applicationType.APPLICATION) {
            this.selectedAppTitle.set_text(itemActor._delegate._app.get_name());
            if (itemActor._delegate._app.get_description()) this.selectedAppDescription.set_text(itemActor._delegate._app.get_description());
            else this.selectedAppDescription.set_text("");
-        } else if (itemActor._delegate._type == 1) {
+        } else if (itemActor._delegate._type == applicationType.PLACE) {
            this.selectedAppTitle.set_text(itemActor._delegate._app.name);
            if (itemActor._delegate._app.description) this.selectedAppDescription.set_text(itemActor._delegate._app.description);
            else this.selectedAppDescription.set_text("");
-        } else if (itemActor._delegate._type == 2) {
+        } else if (itemActor._delegate._type == applicationType.RECENT) {
            this.selectedAppTitle.set_text(itemActor._delegate._app.name);
            if (itemActor._delegate._app.description) this.selectedAppDescription.set_text(itemActor._delegate._app.description);
            else this.selectedAppDescription.set_text("");
@@ -1591,7 +1592,7 @@ const PanelMenuButton = new Lang.Class({
 
         // Set active container
         let viewMode = this._applicationsViewMode;
-        this._activeContainer = (viewMode == 0) ? this.applicationsListBox : this.applicationsGridBox;
+        this._activeContainer = (viewMode == ApplicationsViewMode.LIST) ? this.applicationsListBox : this.applicationsGridBox;
 
         // Any items in container?
         let children = this._activeContainer.get_children();
@@ -1599,19 +1600,17 @@ const PanelMenuButton = new Lang.Class({
             // Set selected app name/description
             this._selectedItemIndex = 0;
             let itemActor = children[this._selectedItemIndex];
-            if (itemActor._delegate._type == 0) {
+            if (itemActor._delegate._type == applicationType.APPLICATION) {
                this.selectedAppTitle.set_text(itemActor._delegate._app.get_name());
                if (itemActor._delegate._app.get_description()) this.selectedAppDescription.set_text(itemActor._delegate._app.get_description());
                else this.selectedAppDescription.set_text("");
-            } else if (itemActor._delegate._type == 1) {
+            } else if (itemActor._delegate._type == applicationType.PLACE) {
                this.selectedAppTitle.set_text(itemActor._delegate._app.name);
-               //if (itemActor._delegate._app.get_description()) this.selectedAppDescription.set_text(itemActor._delegate._app.description);
-               if (itemActor._delegate._app.name) this.selectedAppDescription.set_text(itemActor._delegate._app.name);
+               if (itemActor._delegate._app.description) this.selectedAppDescription.set_text(itemActor._delegate._app.description);
                else this.selectedAppDescription.set_text("");
-            } else if (itemActor._delegate._type == 2) {
+            } else if (itemActor._delegate._type == applicationType.RECENT) {
                this.selectedAppTitle.set_text(itemActor._delegate._app.name);
-               //if (itemActor._delegate._app.get_description()) this.selectedAppDescription.set_text(itemActor._delegate._app.description);
-               if (itemActor._delegate._app.name) this.selectedAppDescription.set_text(itemActor._delegate._app.name);
+               if (itemActor._delegate._app.description) this.selectedAppDescription.set_text(itemActor._delegate._app.description);
                else this.selectedAppDescription.set_text("");
             }
             // Clear out container and select item actor
@@ -1755,7 +1754,7 @@ const PanelMenuButton = new Lang.Class({
             gridView.actor.remove_style_pseudo_class('open');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
-            this._switchApplicationsView(0);
+            this._switchApplicationsView(ApplicationsViewMode.LIST);
         }));
         let gridView = new GroupButton( 'grid-symbolic', 24, null, {style_class: 'gnomenu-view-mode-button'});
         gridView.actor.connect('enter-event', Lang.bind(this, function() {
@@ -1777,7 +1776,7 @@ const PanelMenuButton = new Lang.Class({
             listView.actor.remove_style_pseudo_class('open');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
-            this._switchApplicationsView(1);
+            this._switchApplicationsView(ApplicationsViewMode.GRID);
         }));
         this.viewModeBox.add(gridView.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         this.viewModeBox.add(listView.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
