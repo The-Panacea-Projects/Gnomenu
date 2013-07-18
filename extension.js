@@ -44,7 +44,7 @@ const DND = imports.ui.dnd;
 const ExtensionSystem = imports.ui.extensionSystem;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const MyThumbnailsBox = Me.imports.myThumbnailsBox;
+const WorkspaceThumbnail = Me.imports.workspaceThumbnail;
 const Convenience = Me.imports.convenience;
 let settings = Convenience.getSettings('org.gnome.shell.extensions.gnomenu');
 
@@ -1879,7 +1879,7 @@ const PanelMenuButton = new Lang.Class({
 
         // Workspaces thumbnails Box
         this.thumbnailsBoxFiller = new St.BoxLayout({ style_class: 'gnomenu-workspaces-filler', vertical: true });
-        this.thumbnailsBox = new MyThumbnailsBox.myThumbnailsBox(gsVersion, settings, this.thumbnailsBoxFiller);
+        this.thumbnailsBox = new WorkspaceThumbnail.myThumbnailsBox(gsVersion, settings, this.thumbnailsBoxFiller);
 
         // CategoriesBox
         this.categoriesBox = new St.BoxLayout({ style_class: 'gnomenu-categories-box', vertical: true });
