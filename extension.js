@@ -66,28 +66,37 @@ if (gsVersion[1] > 4) {
 
 const PREFS_DIALOG = "gnome-shell-extension-prefs gnomenu@panacier.gmail.com";
 
-const startupAppsDisplay = {
+const StartupAppsDisplay = {
     ALL: 0,
     FAVORITES: 1
 };
 
-const selectMethod = {
+const SelectMethod = {
     HOVER: 0,
     CLICK: 1
 };
 
-const menuLayout = {
+const MenuLayout = {
     LARGE: 0,
     MEDIUM: 1,
     SMALL: 2
 };
 
-const applicationType = {
+const ApplicationType = {
     APPLICATION: 0,
     PLACE: 1,
     RECENT: 2
 };
 
+const CategoryWorkspaceMode = {
+    CATEGORY: 0,
+    WORKSPACE: 1
+};
+
+const ApplicationsViewMode = {
+    LIST: 0,
+    GRID: 1
+};
 
 /* =========================================================================
 /* name:    CategoryListButton
@@ -215,10 +224,10 @@ const AppListButton = new Lang.Class({
         let iconSize = (settings.get_int('apps-list-icon-size') > 0) ? settings.get_int('apps-list-icon-size') : 28;
 
         // appType 0 = application, appType 1 = place, appType 2 = recent
-        if (appType == applicationType.APPLICATION) {
+        if (appType == ApplicationType.APPLICATION) {
             this.icon = app.create_icon_texture(iconSize);
             this.label = new St.Label({ text: app.get_name(), style_class: 'gnomenu-application-list-button-label' });
-        } else if (appType == applicationType.PLACE) {
+        } else if (appType == ApplicationType.PLACE) {
             if (gsVersion[1] > 4) {
                 this.icon = new St.Icon({gicon: app.icon, icon_size: iconSize});
                 if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR, style_class: 'overview-icon'});
@@ -227,7 +236,7 @@ const AppListButton = new Lang.Class({
                 if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR, style_class: 'overview-icon'});
             }
             this.label = new St.Label({ text: app.name, style_class: 'gnomenu-application-list-button-label' });
-        } else if (appType == applicationType.RECENT) {
+        } else if (appType == ApplicationType.RECENT) {
             let gicon = Gio.content_type_get_icon(app.mime);
             this.icon = new St.Icon({gicon: gicon, icon_size: iconSize});
             if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR});
@@ -265,9 +274,9 @@ const AppListButton = new Lang.Class({
         let appIcon;
         //let iconSize = (settings.get_int('apps-grid-icon-size') > 0) ? settings.get_int('apps-grid-icon-size') : 64;
         let iconSize = Main.overview.dashIconSize;
-        if (this._type == applicationType.APPLICATION) {
+        if (this._type == ApplicationType.APPLICATION) {
             appIcon = this._app.create_icon_texture(iconSize);
-        } else if (this._type == applicationType.PLACE) {
+        } else if (this._type == ApplicationType.PLACE) {
             if (gsVersion[1] > 4) {
                 appIcon = new St.Icon({gicon: this._app.icon, icon_size: iconSize});
                 if(!appIcon) appIcon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR});
@@ -275,7 +284,7 @@ const AppListButton = new Lang.Class({
                 appIcon = this._app.iconFactory(iconSize);
                 if(!appIcon) appIcon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR});
             }
-        } else if (this._type == applicationType.RECENT) {
+        } else if (this._type == ApplicationType.RECENT) {
             let gicon = Gio.content_type_get_icon(this._app.mime);
             appIcon = new St.Icon({gicon: gicon, icon_size: iconSize});
             if(!appIcon) appIcon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR});
@@ -293,15 +302,15 @@ const AppListButton = new Lang.Class({
         params = Params.parse(params, { workspace: -1,
                                         timestamp: 0 });
 
-        if (this._type == applicationType.APPLICATION) {
+        if (this._type == ApplicationType.APPLICATION) {
             this._app.open_new_window(params.workspace);
-        } else if (this._type == applicationType.PLACE) {
+        } else if (this._type == ApplicationType.PLACE) {
            if (this._app.uri) {
                this._app.app.launch_uris([this._app.uri], null);
            } else {
                this._app.launch();
            }
-        } else if (this._type == applicationType.RECENT) {
+        } else if (this._type == ApplicationType.RECENT) {
             Gio.app_info_launch_default_for_uri(this._app.uri, global.create_app_launch_context());
         }
 
@@ -332,10 +341,10 @@ const AppGridButton = new Lang.Class({
         let iconSize = (settings.get_int('apps-grid-icon-size') > 0) ? settings.get_int('apps-grid-icon-size') : 64;
 
         // appType 0 = application, appType 1 = place, appType 2 = recent
-        if (appType == applicationType.APPLICATION) {
+        if (appType == ApplicationType.APPLICATION) {
             this.icon = app.create_icon_texture(iconSize);
             this.label = new St.Label({ text: app.get_name(), style_class: 'gnomenu-application-grid-button-label' });
-        } else if (appType == applicationType.PLACE) {
+        } else if (appType == ApplicationType.PLACE) {
             if (gsVersion[1] > 4) {
                 this.icon = new St.Icon({gicon: app.icon, icon_size: iconSize});
                 if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR});
@@ -344,7 +353,7 @@ const AppGridButton = new Lang.Class({
                 if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR});
             }
             this.label = new St.Label({ text: app.name, style_class: 'gnomenu-application-grid-button-label' });
-        } else if (appType == applicationType.RECENT) {
+        } else if (appType == ApplicationType.RECENT) {
             let gicon = Gio.content_type_get_icon(app.mime);
             this.icon = new St.Icon({gicon: gicon, icon_size: iconSize});
             if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR});
@@ -386,9 +395,9 @@ const AppGridButton = new Lang.Class({
         let appIcon;
         //let iconSize = (settings.get_int('apps-grid-icon-size') > 0) ? settings.get_int('apps-grid-icon-size') : 64;
         let iconSize = Main.overview.dashIconSize;
-        if (this._type == applicationType.APPLICATION) {
+        if (this._type == ApplicationType.APPLICATION) {
             appIcon = this._app.create_icon_texture(iconSize);
-        } else if (this._type == applicationType.PLACE) {
+        } else if (this._type == ApplicationType.PLACE) {
             if (gsVersion[1] > 4) {
                 appIcon = new St.Icon({gicon: this._app.icon, icon_size: iconSize});
                 if(!appIcon) appIcon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR});
@@ -396,7 +405,7 @@ const AppGridButton = new Lang.Class({
                 appIcon = this._app.iconFactory(iconSize);
                 if(!appIcon) appIcon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR});
             }
-        } else if (this._type == applicationType.RECENT) {
+        } else if (this._type == ApplicationType.RECENT) {
             let gicon = Gio.content_type_get_icon(this._app.mime);
             appIcon = new St.Icon({gicon: gicon, icon_size: iconSize});
             if(!appIcon) appIcon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR});
@@ -414,15 +423,15 @@ const AppGridButton = new Lang.Class({
         params = Params.parse(params, { workspace: -1,
                                         timestamp: 0 });
 
-        if (this._type == applicationType.APPLICATION) {
+        if (this._type == ApplicationType.APPLICATION) {
             this._app.open_new_window(params.workspace);
-        } else if (this._type == applicationType.PLACE) {
+        } else if (this._type == ApplicationType.PLACE) {
            if (this._app.uri) {
                this._app.app.launch_uris([this._app.uri], null);
            } else {
                this._app.launch();
            }
-        } else if (this._type == applicationType.RECENT) {
+        } else if (this._type == ApplicationType.RECENT) {
             Gio.app_info_launch_default_for_uri(this._app.uri, global.create_app_launch_context());
         }
 
@@ -510,15 +519,6 @@ const PanelButton = new Lang.Class({
  * @desc    A top panel button the toggles a popup menu
  * @impl    Used for menu button on top panel
  * ========================================================================= */
-const CategoryWorkspaceMode = {
-    CATEGORY: 0,
-    WORKSPACE: 1
-};
-
-const ApplicationsViewMode = {
-    LIST: 0,
-    GRID: 1
-};
 
 const PanelMenuButton = new Lang.Class({
     Name: 'GnoMenu.PanelMenuButton',
@@ -619,7 +619,7 @@ const PanelMenuButton = new Lang.Class({
             this._activeContainer = null;
 
             //this._applicationsViewMode = settings.get_enum('startup-view-mode');
-            if (settings.get_enum('startup-apps-display') == startupAppsDisplay.FAVORITES) {
+            if (settings.get_enum('startup-apps-display') == StartupAppsDisplay.FAVORITES) {
                 this._clearApplicationsBox();
                 this._displayApplications(this._listApplications('favorites'));
             } else {
@@ -1132,7 +1132,7 @@ const PanelMenuButton = new Lang.Class({
         }
 
         if (apps){
-            appType = applicationType.APPLICATION;
+            appType = ApplicationType.APPLICATION;
             for (let i in apps) {
                 let app = apps[i];
                 // only add if not already in this._applications or refreshing
@@ -1208,7 +1208,7 @@ const PanelMenuButton = new Lang.Class({
         }
 
         if (places){
-            appType = applicationType.PLACE;
+            appType = ApplicationType.PLACE;
             for (let i in places) {
                 let app = places[i];
                 // only add if not already in this._places or refreshing
@@ -1293,7 +1293,7 @@ const PanelMenuButton = new Lang.Class({
         }
 
         if (recent){
-            appType = applicationType.RECENT;
+            appType = ApplicationType.RECENT;
             for (let i in recent) {
                 let app = recent[i];
                 // only add if not already in this._recent or refreshing
@@ -1495,15 +1495,15 @@ const PanelMenuButton = new Lang.Class({
 
         // Set selected app name/description
         let itemActor = children[this._selectedItemIndex];
-        if (itemActor._delegate._type == applicationType.APPLICATION) {
+        if (itemActor._delegate._type == ApplicationType.APPLICATION) {
            this.selectedAppTitle.set_text(itemActor._delegate._app.get_name());
            if (itemActor._delegate._app.get_description()) this.selectedAppDescription.set_text(itemActor._delegate._app.get_description());
            else this.selectedAppDescription.set_text("");
-        } else if (itemActor._delegate._type == applicationType.PLACE) {
+        } else if (itemActor._delegate._type == ApplicationType.PLACE) {
            this.selectedAppTitle.set_text(itemActor._delegate._app.name);
            if (itemActor._delegate._app.description) this.selectedAppDescription.set_text(itemActor._delegate._app.description);
            else this.selectedAppDescription.set_text("");
-        } else if (itemActor._delegate._type == applicationType.RECENT) {
+        } else if (itemActor._delegate._type == ApplicationType.RECENT) {
            this.selectedAppTitle.set_text(itemActor._delegate._app.name);
            if (itemActor._delegate._app.description) this.selectedAppDescription.set_text(itemActor._delegate._app.description);
            else this.selectedAppDescription.set_text("");
@@ -1624,15 +1624,15 @@ const PanelMenuButton = new Lang.Class({
             // Set selected app name/description
             this._selectedItemIndex = 0;
             let itemActor = children[this._selectedItemIndex];
-            if (itemActor._delegate._type == applicationType.APPLICATION) {
+            if (itemActor._delegate._type == ApplicationType.APPLICATION) {
                this.selectedAppTitle.set_text(itemActor._delegate._app.get_name());
                if (itemActor._delegate._app.get_description()) this.selectedAppDescription.set_text(itemActor._delegate._app.get_description());
                else this.selectedAppDescription.set_text("");
-            } else if (itemActor._delegate._type == applicationType.PLACE) {
+            } else if (itemActor._delegate._type == ApplicationType.PLACE) {
                this.selectedAppTitle.set_text(itemActor._delegate._app.name);
                if (itemActor._delegate._app.description) this.selectedAppDescription.set_text(itemActor._delegate._app.description);
                else this.selectedAppDescription.set_text("");
-            } else if (itemActor._delegate._type == applicationType.RECENT) {
+            } else if (itemActor._delegate._type == ApplicationType.RECENT) {
                this.selectedAppTitle.set_text(itemActor._delegate._app.name);
                if (itemActor._delegate._app.description) this.selectedAppDescription.set_text(itemActor._delegate._app.description);
                else this.selectedAppDescription.set_text("");
@@ -1887,7 +1887,7 @@ const PanelMenuButton = new Lang.Class({
         // Load 'all applications' category
         this.applicationsByCategory = {};
         let appCategory = new CategoryListButton(null, _('All Applications'));
-        if (settings.get_enum('category-selection-method') == selectMethod.HOVER ) {
+        if (settings.get_enum('category-selection-method') == SelectMethod.HOVER ) {
             appCategory.actor.connect('enter-event', Lang.bind(this, function() {
                 this._selectCategory(appCategory);
                 this.selectedAppTitle.set_text(appCategory.label.get_text());
@@ -1933,7 +1933,7 @@ const PanelMenuButton = new Lang.Class({
                 this._loadCategories(dir);
                 if (this.applicationsByCategory[dir.get_menu_id()].length>0){
                     let appCategory = new CategoryListButton(dir);
-                    if (settings.get_enum('category-selection-method') == selectMethod.HOVER) {
+                    if (settings.get_enum('category-selection-method') == SelectMethod.HOVER) {
                         appCategory.actor.connect('enter-event', Lang.bind(this, function() {
                             this._selectCategory(appCategory);
                             this.selectedAppTitle.set_text(appCategory.label.get_text());
@@ -1973,9 +1973,9 @@ const PanelMenuButton = new Lang.Class({
         // PowerGroupBox
         this.powerGroupBox = new St.BoxLayout({ style_class: 'gnomenu-power-group-box'});
         let powerGroupButtonIconSize = 24;
-        if (settings.get_enum('menu-layout') == menuLayout.MEDIUM) {
+        if (settings.get_enum('menu-layout') == MenuLayout.MEDIUM) {
             powerGroupButtonIconSize = 22;
-        } else if (settings.get_enum('menu-layout') == menuLayout.SMALL) {
+        } else if (settings.get_enum('menu-layout') == MenuLayout.SMALL) {
             powerGroupButtonIconSize = 20;
         }
         let systemRestart = new GroupButton('refresh-symbolic', powerGroupButtonIconSize, null, {style_class: 'gnomenu-power-group-button'});
@@ -2569,9 +2569,9 @@ const GnoMenuButton = new Lang.Class({
         if (_DEBUG_) global.log("_changeStylesheet");
         // Get menu layout
         let ml = "";
-        if (settings.get_enum('menu-layout') == menuLayout.SMALL) {
+        if (settings.get_enum('menu-layout') == MenuLayout.SMALL) {
             ml = "-s";
-        } else if (settings.get_enum('menu-layout') == menuLayout.MEDIUM) {
+        } else if (settings.get_enum('menu-layout') == MenuLayout.MEDIUM) {
             ml = "-m";
         }
 
@@ -2716,9 +2716,9 @@ function loadStylesheet() {
     if (_DEBUG_) global.log("GnoMenu loadStylesheet");
     // Get menu layout
     let ml = "";
-    if (settings.get_enum('menu-layout') == menuLayout.SMALL) {
+    if (settings.get_enum('menu-layout') == MenuLayout.SMALL) {
         ml = "-s";
-    } else if (settings.get_enum('menu-layout') == menuLayout.MEDIUM) {
+    } else if (settings.get_enum('menu-layout') == MenuLayout.MEDIUM) {
         ml = "-m";
     }
 
