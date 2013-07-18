@@ -1908,7 +1908,12 @@ const PanelMenuButton = new Lang.Class({
                 this.selectedAppTitle.set_text('');
                 this.selectedAppDescription.set_text('');
             }));
-            appCategory.actor.connect('clicked', Lang.bind(this, function() {
+            appCategory.actor.connect('button-press-event', Lang.bind(this, function() {
+                appCategory.actor.add_style_pseudo_class('pressed');
+            }));
+            appCategory.actor.connect('button-release-event', Lang.bind(this, function() {
+                appCategory.actor.remove_style_pseudo_class('pressed');
+                appCategory.actor.remove_style_pseudo_class('active');
                 this._selectCategory(appCategory);
                 this.selectedAppTitle.set_text(appCategory.label.get_text());
                 this.selectedAppDescription.set_text('');
@@ -1949,7 +1954,12 @@ const PanelMenuButton = new Lang.Class({
                             this.selectedAppTitle.set_text('');
                             this.selectedAppDescription.set_text('');
                         }));
-                        appCategory.actor.connect('clicked', Lang.bind(this, function() {
+                        appCategory.actor.connect('button-press-event', Lang.bind(this, function() {
+                            appCategory.actor.add_style_pseudo_class('pressed');
+                        }));
+                        appCategory.actor.connect('button-release-event', Lang.bind(this, function() {
+                            appCategory.actor.remove_style_pseudo_class('pressed');
+                            appCategory.actor.remove_style_pseudo_class('active');
                             this._selectCategory(appCategory);
                             this.selectedAppTitle.set_text(appCategory.label.get_text());
                             this.selectedAppDescription.set_text('');
@@ -2156,7 +2166,7 @@ const PanelMenuButton = new Lang.Class({
         this.selectedAppBox.add_actor(this.selectedAppDescription);
 
         // Extension Preferences
-        let extensionPreferences = new GroupButton('control-center-symbolic-a', powerGroupButtonIconSize, null, {style_class: 'gnomenu-power-group-button'});
+        let extensionPreferences = new GroupButton('control-center-alt-symbolic', powerGroupButtonIconSize, null, {style_class: 'gnomenu-power-group-button'});
         extensionPreferences.actor.connect('enter-event', Lang.bind(this, function() {
             extensionPreferences.actor.add_style_pseudo_class('active');
             this.selectedAppTitle.set_text(_('Preferences'));

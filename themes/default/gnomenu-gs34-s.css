@@ -181,6 +181,13 @@
     background-gradient-end: rgba(119,119,119,0.7);
 }
 
+.gnomenu-category-button:pressed {
+    background-gradient-direction: vertical;
+    background-gradient-start: rgba(255,255,255,0.1);
+    background-gradient-end: rgba(255,255,255,0.3);
+    box-shadow: inset 0px 0px 1px 1px rgba(255,255,255,0.06);
+}
+
 .gnomenu-power-group-box {
     border: 2px;
     padding: 3px 0px 0px 0px;
