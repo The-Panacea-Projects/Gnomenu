@@ -209,7 +209,7 @@ const AppListButton = new Lang.Class({
     _init: function (app, appType) {
         this._app = app;
         this._type = appType;
-        let style = (gsVersion[1] > 4) ? 'popup-menu-item gnomenu-application-button' : 'gnomenu-application-button';
+        let style = (gsVersion[1] > 4) ? 'popup-menu-item gnomenu-application-list-button' : 'gnomenu-application-list-button';
         this.actor = new St.Button({ reactive: true, style_class: style, x_align: St.Align.START, y_align: St.Align.MIDDLE});
         this.actor._delegate = this;
         let iconSize = (settings.get_int('apps-list-icon-size') > 0) ? settings.get_int('apps-list-icon-size') : 28;
@@ -217,7 +217,7 @@ const AppListButton = new Lang.Class({
         // appType 0 = application, appType 1 = place, appType 2 = recent
         if (appType == applicationType.APPLICATION) {
             this.icon = app.create_icon_texture(iconSize);
-            this.label = new St.Label({ text: app.get_name(), style_class: 'gnomenu-application-button-label' });
+            this.label = new St.Label({ text: app.get_name(), style_class: 'gnomenu-application-list-button-label' });
         } else if (appType == applicationType.PLACE) {
             if (gsVersion[1] > 4) {
                 this.icon = new St.Icon({gicon: app.icon, icon_size: iconSize});
@@ -226,12 +226,12 @@ const AppListButton = new Lang.Class({
                 this.icon = app.iconFactory(iconSize);
                 if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR, style_class: 'overview-icon'});
             }
-            this.label = new St.Label({ text: app.name, style_class: 'gnomenu-application-button-label' });
+            this.label = new St.Label({ text: app.name, style_class: 'gnomenu-application-list-button-label' });
         } else if (appType == applicationType.RECENT) {
             let gicon = Gio.content_type_get_icon(app.mime);
             this.icon = new St.Icon({gicon: gicon, icon_size: iconSize});
             if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: iconSize, icon_type: St.IconType.FULLCOLOR});
-            this.label = new St.Label({ text: app.name, style_class: 'gnomenu-application-button-label' });
+            this.label = new St.Label({ text: app.name, style_class: 'gnomenu-application-list-button-label' });
         }
 
         this.buttonbox = new St.BoxLayout();
@@ -1151,7 +1151,11 @@ const PanelMenuButton = new Lang.Class({
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
                         }));
+                        appListButton.actor.connect('button-press-event', Lang.bind(this, function() {
+                            appListButton.actor.add_style_pseudo_class('pressed');
+                        }));
                         appListButton.actor.connect('button-release-event', Lang.bind(this, function() {
+                           appListButton.actor.remove_style_pseudo_class('pressed');
                            appListButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
@@ -1173,7 +1177,11 @@ const PanelMenuButton = new Lang.Class({
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
                         }));
+                        appGridButton.actor.connect('button-press-event', Lang.bind(this, function() {
+                            appGridButton.actor.add_style_pseudo_class('pressed');
+                        }));
                         appGridButton.actor.connect('button-release-event', Lang.bind(this, function() {
+                           appGridButton.actor.remove_style_pseudo_class('pressed');
                            appGridButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
@@ -1219,7 +1227,11 @@ const PanelMenuButton = new Lang.Class({
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
                         }));
+                        appListButton.actor.connect('button-press-event', Lang.bind(this, function() {
+                            appListButton.actor.add_style_pseudo_class('pressed');
+                        }));
                         appListButton.actor.connect('button-release-event', Lang.bind(this, function() {
+                           appListButton.actor.remove_style_pseudo_class('pressed');
                            appListButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
@@ -1245,7 +1257,11 @@ const PanelMenuButton = new Lang.Class({
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
                         }));
+                        appGridButton.actor.connect('button-press-event', Lang.bind(this, function() {
+                            appGridButton.actor.add_style_pseudo_class('pressed');
+                        }));
                         appGridButton.actor.connect('button-release-event', Lang.bind(this, function() {
+                           appGridButton.actor.remove_style_pseudo_class('pressed');
                            appGridButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
@@ -1296,7 +1312,11 @@ const PanelMenuButton = new Lang.Class({
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
                         }));
+                        appListButton.actor.connect('button-press-event', Lang.bind(this, function() {
+                            appListButton.actor.add_style_pseudo_class('pressed');
+                        }));
                         appListButton.actor.connect('button-release-event', Lang.bind(this, function() {
+                           appListButton.actor.remove_style_pseudo_class('pressed');
                            appListButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
@@ -1318,7 +1338,11 @@ const PanelMenuButton = new Lang.Class({
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
                         }));
+                        appGridButton.actor.connect('button-press-event', Lang.bind(this, function() {
+                            appGridButton.actor.add_style_pseudo_class('pressed');
+                        }));
                         appGridButton.actor.connect('button-release-event', Lang.bind(this, function() {
+                           appGridButton.actor.remove_style_pseudo_class('pressed');
                            appGridButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
@@ -1837,7 +1861,11 @@ const PanelMenuButton = new Lang.Class({
                     this.selectedAppTitle.set_text("");
                     this.selectedAppDescription.set_text("");
                 }));
+                favoriteButton.actor.connect('button-press-event', Lang.bind(this, function() {
+                    favoriteButton.actor.add_style_pseudo_class('pressed');
+                }));
                 favoriteButton.actor.connect('button-release-event', Lang.bind(this, function() {
+                    favoriteButton.actor.remove_style_pseudo_class('pressed');
                     favoriteButton.actor.remove_style_pseudo_class('active');
                     this.selectedAppTitle.set_text("");
                     this.selectedAppDescription.set_text("");
