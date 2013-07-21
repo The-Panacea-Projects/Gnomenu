@@ -21,30 +21,26 @@ const GMenu = imports.gi.GMenu;
 const Clutter = imports.gi.Clutter;
 const St = imports.gi.St;
 const Shell = imports.gi.Shell;
-const Pango = imports.gi.Pango;
+//const Pango = imports.gi.Pango;
 const Meta = imports.gi.Meta;
-
 const Mainloop = imports.mainloop;
 const Lang = imports.lang;
 const Signals = imports.signals;
-
 const Params = imports.misc.params;
 const Config = imports.misc.config;
 const GnomeSession = imports.misc.gnomeSession;
-
 const AppFavorites = imports.ui.appFavorites;
 const Layout = imports.ui.layout;
 const Main = imports.ui.main;
-const Panel = imports.ui.panel;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
-const AppDisplay = imports.ui.appDisplay;
 const DND = imports.ui.dnd;
 
 const ExtensionSystem = imports.ui.extensionSystem;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const WorkspaceThumbnail = Me.imports.workspaceThumbnail;
+
 const Convenience = Me.imports.convenience;
 let settings = Convenience.getSettings('org.gnome.shell.extensions.gnomenu');
 
@@ -56,10 +52,8 @@ const _ = Gettext.gettext;
 
 const gsVersion = Config.PACKAGE_VERSION.split('.');
 let PlaceDisplay;
-let UnlockDialog;
 if (gsVersion[1] > 4) {
     PlaceDisplay = Me.imports.placeDisplay;
-    UnlockDialog = imports.ui.unlockDialog;
 } else {
     PlaceDisplay = imports.ui.placeDisplay;
 }
@@ -97,6 +91,7 @@ const ApplicationsViewMode = {
     LIST: 0,
     GRID: 1
 };
+
 
 /* =========================================================================
 /* name:    CategoryListButton
@@ -270,7 +265,6 @@ const AppListButton = new Lang.Class({
     },
 
     getDragActor: function() {
-        //return this._app.create_icon_texture(Main.overview.dashIconSize);
         let appIcon;
         //let iconSize = (settings.get_int('apps-grid-icon-size') > 0) ? settings.get_int('apps-grid-icon-size') : 64;
         let iconSize = Main.overview.dashIconSize;
@@ -391,7 +385,6 @@ const AppGridButton = new Lang.Class({
     },
 
     getDragActor: function() {
-        //return this._app.create_icon_texture(Main.overview.dashIconSize);
         let appIcon;
         //let iconSize = (settings.get_int('apps-grid-icon-size') > 0) ? settings.get_int('apps-grid-icon-size') : 64;
         let iconSize = Main.overview.dashIconSize;
@@ -642,7 +635,6 @@ const PanelMenuButton = new Lang.Class({
                 if (_DEBUG_) global.log("onOpenStateToggled - powerGroup width > categories-workspaces+favorites");
                 this.userGroupBox.width = this.powerGroupBox.width;
                 let categoryWidth = this.powerGroupBox.width - this.favoritesScrollBox.width;
-                //this.groupCategoriesWorkspacesScrollBox.width = categoryWidth;
                 this.categoriesBox.width = categoryWidth;
                 this.thumbnailsBox.actor.width = categoryWidth;
                 this.thumbnailsBox._actualThumbnailWidth = categoryWidth;
@@ -651,8 +643,6 @@ const PanelMenuButton = new Lang.Class({
                 let groupWidth = this.groupCategoriesWorkspacesScrollBox.width + this.favoritesScrollBox.width;
                 this.powerGroupBox.width = groupWidth;
                 this.userGroupBox.width = groupWidth;
-                //this.thumbnailsBox.actor.width = this.groupCategoriesWorkspacesScrollBox.width - 0;
-                //this.thumbnailsBox._actualThumbnailWidth = this.groupCategoriesWorkspacesScrollBox.width - 0;
                 this.thumbnailsBox.actor.width = this.categoriesBox.width;
                 this.thumbnailsBox._actualThumbnailWidth = this.categoriesBox.width;
             }
