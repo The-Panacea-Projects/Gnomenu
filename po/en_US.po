@@ -49,10 +49,13 @@ msgstr ""
 msgid "Web"
 msgstr ""
 
-msgid "Web bookmarks functionality requires the Search Bookmarks extension by bmh1980"
+msgid "Search Firefox bookmarks disabled"
 msgstr ""
 
-msgid "Please install the Search Bookmarks extension at https://extensions.gnome.org/extension/557/search-bookmarks/"
+msgid "Search Midori bookmarks disabled"
+msgstr ""
+
+msgid "The library 'Gda-5.0.typelib' could not be imported. If you want to search in Firefox bookmarks, you must install the package that contains the file 'Gda-5.0.typelib'."
 msgstr ""
 
 msgid "Logout User"
@@ -109,7 +112,13 @@ msgstr ""
 msgid "Disable View button hot corner"
 msgstr ""
 
+msgid "Use custom label for View button"
+msgstr ""
+
 msgid "Remove Apps button from panel"
+msgstr ""
+
+msgid "Use custom label for Apps button"
 msgstr ""
 
 msgid "Remove Menu button from panel"
@@ -119,6 +128,9 @@ msgid "Disable Menu button hot spot"
 msgstr ""
 
 msgid "Disable Menu button keyboard shortcut"
+msgstr ""
+
+msgid "Use custom label for Menu button"
 msgstr ""
 
 msgid "<b>Menu Settings</b>"

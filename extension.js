@@ -44,8 +44,12 @@ const WorkspaceThumbnail = Me.imports.workspaceThumbnail;
 const Convenience = Me.imports.convenience;
 let settings = Convenience.getSettings('org.gnome.shell.extensions.gnomenu');
 
-const SearchWebBookmarks_UUID = "searchbookmarks@bmh1980de.gmail.com";
-let SearchWebBookmarks = null;
+const Chromium = Me.imports.webChromium;
+const Epiphany = Me.imports.webEpiphany;
+const Firefox = Me.imports.webFirefox;
+const GoogleChrome = Me.imports.webGoogleChrome;
+const Midori = Me.imports.webMidori;
+const Opera = Me.imports.webOpera;
 
 const Gettext = imports.gettext.domain(Me.metadata['gettext-domain']);
 const _ = Gettext.gettext;
@@ -91,6 +95,57 @@ const ApplicationsViewMode = {
     LIST: 0,
     GRID: 1
 };
+
+
+/* =========================================================================
+/* name:    SearchWebBookmarks
+ * @desc    Class to consolodate search of web browser(s) bookmarks
+ * @desc    Code borrowed from SearchBookmarks extension by bmh1980
+ * @desc    at https://extensions.gnome.org/extension/557/search-bookmarks/
+ * ========================================================================= */
+
+const SearchWebBookmarks = new Lang.Class({
+    Name: 'Gnomenu.SearchWebBookmarks',
+
+    _init: function() {
+        if (!Firefox.Gda) {
+            Main.notify(
+                _("Gno-Menu: Search Firefox bookmarks disabled"),
+                _("The library 'Gda-5.0.typelib' could not be imported. If you want to search in Firefox bookmarks, you must install the package that contains the file 'Gda-5.0.typelib'.")
+            );
+        }
+        if (!Midori.Gda) {
+            Main.notify(
+                _("Gno-Menu: Search Midori bookmarks disabled"),
+                _("The library 'Gda-5.0.typelib' could not be imported. If you want to search in Midori bookmarks, you must install the package that contains the file 'Gda-5.0.typelib'.")
+            );
+        }
+
+        Chromium.init();
+        Epiphany.init();
+        Firefox.init();
+        GoogleChrome.init();
+        Midori.init();
+        Opera.init();
+    },
+
+    bookmarksSort: function(a, b) {
+        if (a.score < b.score) return 1;
+        if (a.score > b.score) return -1;
+        if (a.name < b.name) return -1;
+        if (a.name > b.name) return 1;
+        return 0;
+    },
+
+    destroy: function() {
+        Chromium.deinit();
+        Epiphany.deinit();
+        Firefox.deinit();
+        GoogleChrome.deinit();
+        Midori.deinit();
+        Opera.deinit();
+    }
+});
 
 
 /* =========================================================================
@@ -560,6 +615,7 @@ const PanelMenuButton = new Lang.Class({
         this._activeContainer = null;
         this._categoryWorkspaceMode = CategoryWorkspaceMode.CATEGORY;
 
+        this._searchWebBookmarks = new SearchWebBookmarks();
         this._session = new GnomeSession.SessionManager();
         this.recentManager = Gtk.RecentManager.get_default();
         if (PlaceDisplay) {
@@ -571,6 +627,11 @@ const PanelMenuButton = new Lang.Class({
         this._display();
     },
 
+    destroy: function() {
+        this.parent();
+        this._searchWebBookmarks.destroy();
+    },
+    
     // Override _onStyleChanged function
     _onStyleChanged: function(actor) {
         // Ignore HPadding
@@ -660,70 +721,6 @@ const PanelMenuButton = new Lang.Class({
                 this.thumbnailsBox.actor.show();
                 this.thumbnailsBoxFiller.width = this.categoriesBox.width;
                 this.thumbnailsBoxFiller.height = this.thumbnailsBox.actor.height;
-            }
-
-            // Disable webLinksCategory if SearchWebBookmarks extension missing
-            let extension = ExtensionUtils.extensions[SearchWebBookmarks_UUID];
-            //let userGroupButtons = this.userGroupBox.get_children();
-            //let webLinksCategory = userGroupButtons[2]._delegate;
-            if (extension && extension.state == ExtensionSystem.ExtensionState.ENABLED) {
-                this.weblinksCategory.actor.remove_style_pseudo_class('insensitive');
-                if (this.weblinksCategoryEnterId) {
-                    this.weblinksCategory.actor.disconnect(this.weblinksCategoryEnterId);
-                }
-                this.weblinksCategoryEnterId = this.weblinksCategory.actor.connect('enter-event', Lang.bind(this, function() {
-                    this.weblinksCategory.actor.add_style_pseudo_class('active');
-                    this.selectedAppTitle.set_text(this.weblinksCategory.label.get_text());
-                    this.selectedAppDescription.set_text('');
-                }));
-                if (this.weblinksCategoryLeaveId) {
-                    this.weblinksCategory.actor.disconnect(this.weblinksCategoryLeaveId);
-                }
-                this.weblinksCategoryLeaveId = this.weblinksCategory.actor.connect('leave-event', Lang.bind(this, function() {
-                    this.weblinksCategory.actor.remove_style_pseudo_class('active');
-                    this.selectedAppTitle.set_text('');
-                    this.selectedAppDescription.set_text('');
-                }));
-                if (this.weblinksCategoryPressId) {
-                    this.weblinksCategory.actor.disconnect(this.weblinksCategoryPressId);
-                }
-                this.weblinksCategoryPressId = this.weblinksCategory.actor.connect('button-press-event', Lang.bind(this, function() {
-                    this.weblinksCategory.actor.add_style_pseudo_class('pressed');
-                }));
-                if (this.weblinksCategoryReleaseId) {
-                    this.weblinksCategory.actor.disconnect(this.weblinksCategoryReleaseId);
-                }
-                this.weblinksCategoryReleaseId = this.weblinksCategory.actor.connect('button-release-event', Lang.bind(this, function() {
-                    this.weblinksCategory.actor.remove_style_pseudo_class('pressed');
-                    this.weblinksCategory.actor.add_style_pseudo_class('open');
-                    this.recentCategory.actor.remove_style_pseudo_class('open');
-                    this.placesCategory.actor.remove_style_pseudo_class('open');
-                    this._selectWebBookmarks(this.weblinksCategory);
-                    this.selectedAppTitle.set_text(this.weblinksCategory.label.get_text());
-                    this.selectedAppDescription.set_text('');
-                }));
-            } else {
-                this.weblinksCategory.actor.add_style_pseudo_class('insensitive');
-                if (this.weblinksCategoryEnterId) {
-                    this.weblinksCategory.actor.disconnect(this.weblinksCategoryEnterId);
-                    this.weblinksCategoryEnterId = null;
-                }
-                if (this.weblinksCategoryLeaveId) {
-                    this.weblinksCategory.actor.disconnect(this.weblinksCategoryLeaveId);
-                    this.weblinksCategoryLeaveId = null;
-                }
-                if (this.weblinksCategoryPressId) {
-                    this.weblinksCategory.actor.disconnect(this.weblinksCategoryPressId);
-                }
-                if (this.weblinksCategoryReleaseId) {
-                    this.weblinksCategory.actor.disconnect(this.weblinksCategoryReleaseId);
-                }
-                this.weblinksCategoryReleaseId = this.weblinksCategory.actor.connect('button-release-event', Lang.bind(this, function() {
-                    this.weblinksCategory.actor.remove_style_pseudo_class('open');
-                    Main.notify(
-                        _("Web bookmarks functionality requires the Search Bookmarks extension by bmh1980"),
-                        _("Please install the Search Bookmarks extension at https://extensions.gnome.org/extension/557/search-bookmarks/"));
-                }));
             }
 
         } else {
@@ -906,7 +903,7 @@ const PanelMenuButton = new Lang.Class({
 
     _clearUserGroupButtons: function() {
         this.recentCategory.actor.remove_style_pseudo_class('open');
-        this.weblinksCategory.actor.remove_style_pseudo_class('open');
+        this.webBookmarksCategory.actor.remove_style_pseudo_class('open');
         this.placesCategory.actor.remove_style_pseudo_class('open');
     },
 
@@ -1001,39 +998,30 @@ const PanelMenuButton = new Lang.Class({
 
     _listWebBookmarks: function(pattern) {
         if (_DEBUG_) global.log("_listWebBookmarks");
-        let res = new Array();
+        let res = [];
+        let searchResults = [];
+        let bookmarks = [];
 
-        let extension = ExtensionUtils.extensions[SearchWebBookmarks_UUID];
-        if (extension && extension.state == ExtensionSystem.ExtensionState.ENABLED) {
-            if (_DEBUG_) global.log("_listWebBookmarks: extension state is ENABLED");
-            SearchWebBookmarks = extension.imports.extension;
-            if (SearchWebBookmarks) {
-                if (_DEBUG_) global.log("_listWebBookmarks: SearchWebBookmarks extension imported");
-                let searchResults = [];
-                let bookmarks = [];
+        bookmarks = bookmarks.concat(Chromium.bookmarks);
+        bookmarks = bookmarks.concat(Epiphany.bookmarks);
+        bookmarks = bookmarks.concat(Firefox.bookmarks);
+        bookmarks = bookmarks.concat(GoogleChrome.bookmarks);
+        bookmarks = bookmarks.concat(Midori.bookmarks);
+        bookmarks = bookmarks.concat(Opera.bookmarks);
 
-                bookmarks = bookmarks.concat(SearchWebBookmarks.Chromium.bookmarks);
-                bookmarks = bookmarks.concat(SearchWebBookmarks.Epiphany.bookmarks);
-                bookmarks = bookmarks.concat(SearchWebBookmarks.Firefox.bookmarks);
-                bookmarks = bookmarks.concat(SearchWebBookmarks.GoogleChrome.bookmarks);
-                bookmarks = bookmarks.concat(SearchWebBookmarks.Midori.bookmarks);
-                bookmarks = bookmarks.concat(SearchWebBookmarks.Opera.bookmarks);
-
-                for (let id = 0; id < bookmarks.length; id++) {
-                    if (!pattern || bookmarks[id].name.toLowerCase().indexOf(pattern)!=-1) {
-                        res.push({
-                            app:   bookmarks[id].appInfo,
-                            name:   bookmarks[id].name,
-                            icon:   bookmarks[id].appInfo.get_icon(),
-                            mime:   null,
-                            uri:    bookmarks[id].uri
-                        });
-                    }
-                }
-
-                res.sort(SearchWebBookmarks._bookmarksSort);
+        for (let id = 0; id < bookmarks.length; id++) {
+            if (!pattern || bookmarks[id].name.toLowerCase().indexOf(pattern)!=-1) {
+                res.push({
+                    app:   bookmarks[id].appInfo,
+                    name:   bookmarks[id].name,
+                    icon:   bookmarks[id].appInfo.get_icon(),
+                    mime:   null,
+                    uri:    bookmarks[id].uri
+                });
             }
         }
+
+        res.sort(this._searchWebBookmarks.bookmarksSort);
         return res;
     },
 
@@ -1699,7 +1687,7 @@ const PanelMenuButton = new Lang.Class({
         this.recentCategory.actor.connect('button-release-event', Lang.bind(this, function() {
             this.recentCategory.actor.remove_style_pseudo_class('pressed');
             this.recentCategory.actor.add_style_pseudo_class('open');
-            this.weblinksCategory.actor.remove_style_pseudo_class('open');
+            this.webBookmarksCategory.actor.remove_style_pseudo_class('open');
             this.placesCategory.actor.remove_style_pseudo_class('open');
             this._selectRecent(this.recentCategory);
             this.selectedAppTitle.set_text(this.recentCategory.label.get_text());
@@ -1707,7 +1695,29 @@ const PanelMenuButton = new Lang.Class({
         }));
 
         // Load 'webBookmarks' category
-        this.weblinksCategory = new GroupButton( null, null, _('Web'), {style_class: 'gnomenu-user-group-button'});
+        this.webBookmarksCategory = new GroupButton( null, null, _('Web'), {style_class: 'gnomenu-user-group-button'});
+        this.webBookmarksCategory.actor.connect('enter-event', Lang.bind(this, function() {
+            this.webBookmarksCategory.actor.add_style_pseudo_class('active');
+            this.selectedAppTitle.set_text(this.webBookmarksCategory.label.get_text());
+            this.selectedAppDescription.set_text('');
+        }));
+        this.webBookmarksCategory.actor.connect('leave-event', Lang.bind(this, function() {
+            this.webBookmarksCategory.actor.remove_style_pseudo_class('active');
+            this.selectedAppTitle.set_text('');
+            this.selectedAppDescription.set_text('');
+        }));
+        this.webBookmarksCategory.actor.connect('button-press-event', Lang.bind(this, function() {
+            this.webBookmarksCategory.actor.add_style_pseudo_class('pressed');
+        }));
+        this.webBookmarksCategory.actor.connect('button-release-event', Lang.bind(this, function() {
+            this.webBookmarksCategory.actor.remove_style_pseudo_class('pressed');
+            this.webBookmarksCategory.actor.add_style_pseudo_class('open');
+            this.recentCategory.actor.remove_style_pseudo_class('open');
+            this.placesCategory.actor.remove_style_pseudo_class('open');
+            this._selectWebBookmarks(this.webBookmarksCategory);
+            this.selectedAppTitle.set_text(this.webBookmarksCategory.label.get_text());
+            this.selectedAppDescription.set_text('');
+        }));
 
         // Load 'all places' category
         this.placesCategory = new GroupButton( null, null, _('Places'), {style_class: 'gnomenu-user-group-button'});
@@ -1727,7 +1737,7 @@ const PanelMenuButton = new Lang.Class({
         this.placesCategory.actor.connect('button-release-event', Lang.bind(this, function() {
             this.placesCategory.actor.remove_style_pseudo_class('pressed');
             this.placesCategory.actor.add_style_pseudo_class('open');
-            this.weblinksCategory.actor.remove_style_pseudo_class('open');
+            this.webBookmarksCategory.actor.remove_style_pseudo_class('open');
             this.recentCategory.actor.remove_style_pseudo_class('open');
             this._selectAllPlaces(this.placesCategory);
             this.selectedAppTitle.set_text(this.placesCategory.label.get_text());
@@ -1740,7 +1750,7 @@ const PanelMenuButton = new Lang.Class({
         let userGroupBoxSpacer2 = new St.Label({text: ''});
         this.userGroupBox.add(this.recentCategory.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         this.userGroupBox.add(userGroupBoxSpacer1, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
-        this.userGroupBox.add(this.weblinksCategory.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
+        this.userGroupBox.add(this.webBookmarksCategory.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         this.userGroupBox.add(userGroupBoxSpacer2, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         this.userGroupBox.add(this.placesCategory.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
 
