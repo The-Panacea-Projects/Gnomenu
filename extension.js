@@ -2022,7 +2022,13 @@ const PanelMenuButton = new Lang.Class({
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
             this.menu.close();
-            if (gsVersion[1] > 4) {
+            if (gsVersion[1] > 6) {
+                let loginManager = LoginManager.getLoginManager();
+                if (loginManager.canSuspend()) {
+                    Main.overview.hide();
+                    loginManager.suspend();
+                }
+            } else if (gsVersion[1] > 4) {
                 let statusMenu = Main.panel.statusArea.userMenu;
                 if (statusMenu._upClient.get_can_suspend()) {
                     Main.overview.hide();
@@ -2063,6 +2069,8 @@ const PanelMenuButton = new Lang.Class({
         }));
         systemShutdown.actor.connect('button-release-event', Lang.bind(this, function() {
             // code to shutdown (power off)
+            // ToDo: GS38 itterates through SystemLoginSession to check for open sessions
+            // and displays an openSessionWarnDialog
             systemShutdown.actor.remove_style_pseudo_class('pressed');
             systemShutdown.actor.remove_style_pseudo_class('active');
             this.selectedAppTitle.set_text('');
