@@ -62,6 +62,10 @@ if (gsVersion[1] > 4) {
     PlaceDisplay = imports.ui.placeDisplay;
 }
 
+if (gsVersion[1] > 6) {
+    const LoginManager = imports.misc.loginManager;
+}
+
 const PREFS_DIALOG = "gnome-shell-extension-prefs gnomenu@panacier.gmail.com";
 
 const StartupAppsDisplay = {
@@ -2023,11 +2027,15 @@ const PanelMenuButton = new Lang.Class({
             this.selectedAppDescription.set_text('');
             this.menu.close();
             if (gsVersion[1] > 6) {
+                //NOTE: alternate is to check if (Main.panel.statusArea.userMenu._haveSuspend) is true
                 let loginManager = LoginManager.getLoginManager();
-                if (loginManager.canSuspend()) {
-                    Main.overview.hide();
-                    loginManager.suspend();
-                }
+                loginManager.canSuspend(Lang.bind(this,
+                    function(result) {
+                        if (result) {
+                            Main.overview.hide();
+                            loginManager.suspend();
+                        }
+                }));
             } else if (gsVersion[1] > 4) {
                 let statusMenu = Main.panel.statusArea.userMenu;
                 if (statusMenu._upClient.get_can_suspend()) {
