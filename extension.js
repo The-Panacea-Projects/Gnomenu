@@ -252,6 +252,9 @@ const FavoriteButton = new Lang.Class({
 
         this._app.open_new_window(params.workspace);
 
+        this.actor.remove_style_pseudo_class('pressed');
+        this.actor.remove_style_pseudo_class('active');
+
         if (GnoMenu.appsMenuButton) {
             if (GnoMenu.appsMenuButton.menu.isOpen)
                 GnoMenu.appsMenuButton.menu.toggle();
@@ -364,6 +367,9 @@ const AppListButton = new Lang.Class({
         } else if (this._type == ApplicationType.RECENT) {
             Gio.app_info_launch_default_for_uri(this._app.uri, global.create_app_launch_context());
         }
+
+        this.actor.remove_style_pseudo_class('pressed');
+        this.actor.remove_style_pseudo_class('active');
 
         if (GnoMenu.appsMenuButton) {
             if (GnoMenu.appsMenuButton.menu.isOpen)
@@ -482,6 +488,9 @@ const AppGridButton = new Lang.Class({
         } else if (this._type == ApplicationType.RECENT) {
             Gio.app_info_launch_default_for_uri(this._app.uri, global.create_app_launch_context());
         }
+
+        this.actor.remove_style_pseudo_class('pressed');
+        this.actor.remove_style_pseudo_class('active');
 
         if (GnoMenu.appsMenuButton) {
             if (GnoMenu.appsMenuButton.menu.isOpen)
