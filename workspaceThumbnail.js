@@ -1,5 +1,5 @@
 /* ========================================================================================================
- * myThumbnailsBox.js - thumbnailsbox object
+ * workspaceThumbnail.js - thumbnailsbox object
  * --------------------------------------------------------------------------------------------------------
  *  CREDITS:  Part of this code was copied from the gnome-shell-extensions framework
  *  http://git.gnome.org/browse/gnome-shell-extensions/
@@ -443,7 +443,7 @@ const myThumbnailsBox = new Lang.Class({
         let themeNode = this._background.get_theme_node();
         let contentBox = themeNode.get_content_box(box);
 
-        global.log("myThumbnailsBox: _allocate - backgroundNode contentBox h ="+(contentBox.y2-contentBox.y1)+" w = "+(contentBox.x2-contentBox.x1));
+        if (_DEBUG_) global.log("myThumbnailsBox: _allocate - backgroundNode contentBox h ="+(contentBox.y2-contentBox.y1)+" w = "+(contentBox.x2-contentBox.x1));
         //this._thumbnailsBoxFiller.height = contentBox.y2 - contentBox.y1;
         this._actualThumbnailWidth = contentBox.x2 - contentBox.x1;
 
@@ -499,7 +499,7 @@ const myThumbnailsBox = new Lang.Class({
         }
         childBox.y1 = box.y1;
         childBox.y2 = box.y2;
-        global.log("myThumbnailsBox: _allocate - childBox height = "+(childBox.y2 - childBox.y1));
+        if (_DEBUG_) global.log("myThumbnailsBox: _allocate - childBox height = "+(childBox.y2 - childBox.y1));
         this._background.allocate(childBox, flags);
 
         // passingthru67 - moved here from below
