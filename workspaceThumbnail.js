@@ -339,6 +339,26 @@ const myThumbnailsBox = new Lang.Class({
         this._spliceIndex = -1;
     },
 
+    // Copy of GS38 removeThumbnails needed because of typo in GS34 function name (removeThumbmails instead of removeThumbnails in GS34 function name)
+    removeThumbnails: function(start, count) {
+        let currentPos = 0;
+        for (let k = 0; k < this._thumbnails.length; k++) {
+            let thumbnail = this._thumbnails[k];
+
+            if (thumbnail.state > ThumbnailState.NORMAL)
+                continue;
+
+            if (currentPos >= start && currentPos < start + count) {
+                thumbnail.workspaceRemoved();
+                this._setThumbnailState(thumbnail, ThumbnailState.REMOVING);
+            }
+
+            currentPos++;
+        }
+
+        this._queueUpdateStates();
+    },
+
     // override _onButtonRelease to provide customized click actions (i.e. overview on right click)
     _onButtonRelease: function(actor, event) {
         if (_DEBUG_) global.log("mythumbnailsBox: _onButtonRelease");
