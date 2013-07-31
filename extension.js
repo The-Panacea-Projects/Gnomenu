@@ -287,10 +287,13 @@ const AppListButton = new Lang.Class({
         } else if (appType == ApplicationType.PLACE) {
             if (gsVersion[1] > 4) {
                 this.icon = new St.Icon({gicon: app.icon, icon_size: this._iconSize});
-                if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: this._iconSize, icon_type: St.IconType.FULLCOLOR, style_class: 'overview-icon'});
+                if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: this._iconSize, icon_type: St.IconType.FULLCOLOR});
             } else {
-                this.icon = app.icon ? new St.Icon({gicon: app.icon, icon_size: this._iconSize}) : app.iconFactory(this._iconSize);
-                if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: this._iconSize, icon_type: St.IconType.FULLCOLOR, style_class: 'overview-icon'});
+                if (app.uri)
+                    this.icon = St.TextureCache.get_default().load_gicon(null, app.icon, this._iconSize);
+                else
+                    this.icon = app.iconFactory(this._iconSize);
+                if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: this._iconSize, icon_type: St.IconType.FULLCOLOR});
             }
             this.label = new St.Label({ text: app.name, style_class: 'gnomenu-application-list-button-label' });
         } else if (appType == ApplicationType.RECENT) {
@@ -333,15 +336,15 @@ const AppListButton = new Lang.Class({
         } else if (this._type == ApplicationType.PLACE) {
             if (gsVersion[1] > 4) {
                 appIcon = new St.Icon({gicon: this._app.icon, icon_size: this._iconSize});
-                if(!appIcon) appIcon = new St.Icon({icon_name: 'error', icon_size: this._iconSize, icon_type: St.IconType.FULLCOLOR});
             } else {
-                appIcon = app.icon ? new St.Icon({gicon: app.icon, icon_size: this._iconSize}) : app.iconFactory(this._iconSize);
-                if(!appIcon) appIcon = new St.Icon({icon_name: 'error', icon_size: this._iconSize, icon_type: St.IconType.FULLCOLOR});
+                if (this._app.uri)
+                    appIcon = St.TextureCache.get_default().load_gicon(null, this._app.icon, this._iconSize);
+                else
+                    appIcon = this._app.iconFactory(this._iconSize);
             }
         } else if (this._type == ApplicationType.RECENT) {
             let gicon = Gio.content_type_get_icon(this._app.mime);
             appIcon = new St.Icon({gicon: gicon, icon_size: this._iconSize});
-            if(!appIcon) appIcon = new St.Icon({icon_name: 'error', icon_size: this._iconSize, icon_type: St.IconType.FULLCOLOR});
         }
         return appIcon;
     },
@@ -406,7 +409,10 @@ const AppGridButton = new Lang.Class({
                 this.icon = new St.Icon({gicon: app.icon, icon_size: this._iconSize});
                 if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: this._iconSize, icon_type: St.IconType.FULLCOLOR});
             } else {
-                this.icon = app.icon ? new St.Icon({gicon: app.icon, icon_size: this._iconSize}) : app.iconFactory(this._iconSize);
+                if (app.uri)
+                    this.icon = St.TextureCache.get_default().load_gicon(null, app.icon, this._iconSize);
+                else
+                    this.icon = app.iconFactory(this._iconSize);
                 if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: this._iconSize, icon_type: St.IconType.FULLCOLOR});
             }
             this.label = new St.Label({ text: app.name, style_class: 'gnomenu-application-grid-button-label' });
@@ -454,15 +460,15 @@ const AppGridButton = new Lang.Class({
         } else if (this._type == ApplicationType.PLACE) {
             if (gsVersion[1] > 4) {
                 appIcon = new St.Icon({gicon: this._app.icon, icon_size: this._iconSize});
-                if(!appIcon) appIcon = new St.Icon({icon_name: 'error', icon_size: this._iconSize, icon_type: St.IconType.FULLCOLOR});
             } else {
-                appIcon = app.icon ? new St.Icon({gicon: app.icon, icon_size: this._iconSize}) : app.iconFactory(this._iconSize);
-                if(!appIcon) appIcon = new St.Icon({icon_name: 'error', icon_size: this._iconSize, icon_type: St.IconType.FULLCOLOR});
+                if (this._app.uri)
+                    appIcon = St.TextureCache.get_default().load_gicon(null, this._app.icon, this._iconSize);
+                else
+                    appIcon = this._app.iconFactory(this._iconSize);
             }
         } else if (this._type == ApplicationType.RECENT) {
             let gicon = Gio.content_type_get_icon(this._app.mime);
             appIcon = new St.Icon({gicon: gicon, icon_size: this._iconSize});
-            if(!appIcon) appIcon = new St.Icon({icon_name: 'error', icon_size: this._iconSize, icon_type: St.IconType.FULLCOLOR});
         }
         return appIcon;
     },
@@ -640,7 +646,7 @@ const PanelMenuButton = new Lang.Class({
         this.parent();
         this._searchWebBookmarks.destroy();
     },
-    
+
     // Override _onStyleChanged function
     _onStyleChanged: function(actor) {
         // Ignore HPadding
