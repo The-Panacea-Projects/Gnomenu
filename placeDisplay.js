@@ -118,9 +118,9 @@ const PlaceDeviceInfo = new Lang.Class({
 
 const DEFAULT_DIRECTORIES = [
     GLib.UserDirectory.DIRECTORY_DOCUMENTS,
-    GLib.UserDirectory.DIRECTORY_PICTURES,
-    GLib.UserDirectory.DIRECTORY_MUSIC,
     GLib.UserDirectory.DIRECTORY_DOWNLOAD,
+    GLib.UserDirectory.DIRECTORY_MUSIC,
+    GLib.UserDirectory.DIRECTORY_PICTURES,
     GLib.UserDirectory.DIRECTORY_VIDEOS
 ];
 

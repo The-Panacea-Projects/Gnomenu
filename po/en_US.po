@@ -28,7 +28,10 @@ msgstr ""
 msgid "All Applications"
 msgstr ""
 
-msgid "All Places"
+#msgid "All Places"
+#msgstr ""
+
+msgid "Places"
 msgstr ""
 
 msgid "Computer"
@@ -41,6 +44,18 @@ msgid "Devices"
 msgstr ""
 
 msgid "Recent"
+msgstr ""
+
+msgid "Web"
+msgstr ""
+
+msgid "Search Firefox bookmarks disabled"
+msgstr ""
+
+msgid "Search Midori bookmarks disabled"
+msgstr ""
+
+msgid "The library 'Gda-5.0.typelib' could not be imported. If you want to search in Firefox bookmarks, you must install the package that contains the file 'Gda-5.0.typelib'."
 msgstr ""
 
 msgid "Logout User"
@@ -70,6 +85,9 @@ msgstr ""
 msgid "Shutdown"
 msgstr ""
 
+msgid "Preferences"
+msgstr ""
+
 
 #: placeDisplay.js
 
@@ -94,7 +112,13 @@ msgstr ""
 msgid "Disable View button hot corner"
 msgstr ""
 
+msgid "Use custom label for View button"
+msgstr ""
+
 msgid "Remove Apps button from panel"
+msgstr ""
+
+msgid "Use custom label for Apps button"
 msgstr ""
 
 msgid "Remove Menu button from panel"
@@ -106,7 +130,13 @@ msgstr ""
 msgid "Disable Menu button keyboard shortcut"
 msgstr ""
 
+msgid "Use custom label for Menu button"
+msgstr ""
+
 msgid "<b>Menu Settings</b>"
+msgstr ""
+
+msgid "Menu layout style"
 msgstr ""
 
 msgid "Startup applications to display"
