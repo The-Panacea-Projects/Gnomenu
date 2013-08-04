@@ -121,7 +121,7 @@
       <description>Favorites menu panel icon size</description>
     </key>
     <key type="i" name="apps-list-icon-size">
-      <default>28</default>
+      <default>32</default>
       <summary>Applications list icon size</summary>
       <description>Applications list icon size</description>
     </key>

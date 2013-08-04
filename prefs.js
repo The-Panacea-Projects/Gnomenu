@@ -395,15 +395,15 @@ const GnoMenuPreferencesWidget = new GObject.Class({
                     let selected = widget.get_active();
                     if (selected == 2) {
                         favoritesIconSizeCombo.set_active(iconSizes.indexOf(24));
-                        appsListIconSizeCombo.set_active(iconSizes.indexOf(20));
+                        appsListIconSizeCombo.set_active(iconSizes.indexOf(22));
                         appsGridIconSizeCombo.set_active(iconSizes.indexOf(32));
                     } else if (selected == 1) {
                         favoritesIconSizeCombo.set_active(iconSizes.indexOf(32));
-                        appsListIconSizeCombo.set_active(iconSizes.indexOf(28));
+                        appsListIconSizeCombo.set_active(iconSizes.indexOf(32));
                         appsGridIconSizeCombo.set_active(iconSizes.indexOf(48));
                     } else {
                         favoritesIconSizeCombo.set_active(iconSizes.indexOf(48));
-                        appsListIconSizeCombo.set_active(iconSizes.indexOf(28));
+                        appsListIconSizeCombo.set_active(iconSizes.indexOf(32));
                         appsGridIconSizeCombo.set_active(iconSizes.indexOf(64));
                     }
             }));
@@ -480,7 +480,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         categorySelectMethodBox.add(categorySelectMethodCombo);
 
 
-        let iconSizes = [16, 20, 24, 28, 32, 48, 64];
+        let iconSizes = [16, 22, 24, 32, 48, 64];
 
         let favoritesIconSizeBox = new Gtk.Box({
             spacing: 20,
@@ -495,9 +495,8 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         let favoritesIconSizeCombo = new Gtk.ComboBoxText({halign:Gtk.Align.END});
             favoritesIconSizeCombo.set_size_request(120, -1);
             favoritesIconSizeCombo.append_text('16');
-            favoritesIconSizeCombo.append_text('20');
+            favoritesIconSizeCombo.append_text('22');
             favoritesIconSizeCombo.append_text('24');
-            favoritesIconSizeCombo.append_text('28');
             favoritesIconSizeCombo.append_text('32');
             favoritesIconSizeCombo.append_text('48');
             favoritesIconSizeCombo.append_text('64');
@@ -522,9 +521,8 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         let appsListIconSizeCombo = new Gtk.ComboBoxText({halign:Gtk.Align.END});
             appsListIconSizeCombo.set_size_request(120, -1);
             appsListIconSizeCombo.append_text('16');
-            appsListIconSizeCombo.append_text('20');
+            appsListIconSizeCombo.append_text('22');
             appsListIconSizeCombo.append_text('24');
-            appsListIconSizeCombo.append_text('28');
             appsListIconSizeCombo.append_text('32');
             appsListIconSizeCombo.append_text('48');
             appsListIconSizeCombo.append_text('64');
@@ -549,9 +547,8 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         let appsGridIconSizeCombo = new Gtk.ComboBoxText({halign:Gtk.Align.END});
             appsGridIconSizeCombo.set_size_request(120, -1);
             appsGridIconSizeCombo.append_text('16');
-            appsGridIconSizeCombo.append_text('20');
+            appsGridIconSizeCombo.append_text('22');
             appsGridIconSizeCombo.append_text('24');
-            appsGridIconSizeCombo.append_text('28');
             appsGridIconSizeCombo.append_text('32');
             appsGridIconSizeCombo.append_text('48');
             appsGridIconSizeCombo.append_text('64');
