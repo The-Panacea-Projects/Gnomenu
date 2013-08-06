@@ -111,7 +111,7 @@
       <description>Startup applications to display</description>
     </key>
     <key enum="org.gnome.shell.extensions.gnomenu.selectMethod" name="category-selection-method">
-      <default>'Hover'</default>
+      <default>'Click'</default>
       <summary>Method of selecting categories</summary>
       <description>Method of selecting categories</description>
     </key>
