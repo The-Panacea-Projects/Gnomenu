@@ -14,7 +14,7 @@ Gno-Menu is a traditional styled full featured Gnome-Shell apps menu, that aims 
       a) Recent >  Offers immediate access to all your recently used files and apps.
       b) Web >  Offers all your internet browsing bookmarks in one place.
       c) Places > Offers access to your home directory, bookmarks and external drives.
-      Note: Workspace thumbnails appear in the application categories area anticipating drag-n-drop action.
+      NOTE: Workspace thumbnails appear in the application categories area anticipating drag-n-drop action.
 
 2) View options >  Comprising of two options ( Grid and List ) 
       
@@ -28,12 +28,13 @@ Gno-Menu is a traditional styled full featured Gnome-Shell apps menu, that aims 
 4) Favorites Panel >  Here you can find all the Apps that you added to your favorites.
   
       a) Apps can be launched via mouse click or drag and drop on any desktop/workspace.
-      Note: Workspace thumbnails appear in the application categories area when drag-n-drop is initiated.
+      NOTE: Workspace thumbnails appear in the application categories area when drag-n-drop is initiated.
 
 5) Categories/Workspace Box >   Access  App categories or  Workspaces via right click.
 
       a) Categories >  Access available apps via traditional styled application groups.
       b) Workspaces > Workspace selection using mouse click, with drag and drop functionality.
+      NOTE: Right click to switch between Categories and Workspaces view.
 
 6) Power Options >  Restart, suspend, power off, logout and lock functions in one place.
 
