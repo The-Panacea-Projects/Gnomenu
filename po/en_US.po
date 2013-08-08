@@ -88,6 +88,9 @@ msgstr ""
 msgid "Preferences"
 msgstr ""
 
+msgid "No GnoMenu stylesheet found"
+msgstr ""
+
 
 #: placeDisplay.js
 
