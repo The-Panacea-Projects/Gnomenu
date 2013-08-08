@@ -2668,6 +2668,7 @@ const GnoMenuButton = new Lang.Class({
         newTheme.load_stylesheet(GnoMenuStylesheet);
         if (_DEBUG_) global.log("Added new stylesheet");
         themeContext.set_theme (newTheme);
+        if (this.appsMenuButton) this.appsMenuButton.refresh();
 
         return true;
     },
