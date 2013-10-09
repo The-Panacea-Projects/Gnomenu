@@ -2503,19 +2503,20 @@ const GnoMenuButton = new Lang.Class({
     // handler for when view panel button clicked
     _onViewButtonRelease: function() {
         if (_DEBUG_) global.log("_onViewButtonRelease");
+        let viewSelector = gsVersion[1] < 10 ? Main.overview._viewSelector : Main.overview.viewSelector;
         if (Main.overview.visible) {
             if (gsVersion[1] > 4) { // GS 3.6+
-                if (!Main.overview._viewSelector._showAppsButton.checked) {
+                if (!viewSelector._showAppsButton.checked) {
                     Main.overview.hide();
-                    Main.overview._viewSelector._showAppsButton.checked = false;
+                    viewSelector._showAppsButton.checked = false;
                 } else {
-                    Main.overview._viewSelector._showAppsButton.checked = false;
+                    viewSelector._showAppsButton.checked = false;
                 }
             } else { // GS 3.4
-                if (Main.overview._viewSelector._activeTab.id == "windows") {
+                if (viewSelector._activeTab.id == "windows") {
                     Main.overview.hide();
                 } else {
-                    Main.overview._viewSelector.switchTab("windows");
+                    viewSelector.switchTab("windows");
                 }
             }
         } else {
@@ -2526,27 +2527,28 @@ const GnoMenuButton = new Lang.Class({
     // handler for when apps panel button clicked
     _onAppsButtonRelease: function() {
         if (_DEBUG_) global.log("_onAppsButtonRelease");
+        let viewSelector = gsVersion[1] < 10 ? Main.overview._viewSelector : Main.overview.viewSelector;
         if (Main.overview.visible) {
             if (gsVersion[1] > 4) { // GS 3.6+
-                if (Main.overview._viewSelector._showAppsButton.checked) {
+                if (viewSelector._showAppsButton.checked) {
                     Main.overview.hide();
-                    Main.overview._viewSelector._showAppsButton.checked = false;
+                    viewSelector._showAppsButton.checked = false;
                 } else {
-                    Main.overview._viewSelector._showAppsButton.checked = true;
+                    viewSelector._showAppsButton.checked = true;
                 }
             } else { // GS 3.4
-                if (Main.overview._viewSelector._activeTab.id == "applications") {
+                if (viewSelector._activeTab.id == "applications") {
                     Main.overview.hide();
                 } else {
-                    Main.overview._viewSelector.switchTab("applications");
+                    viewSelector.switchTab("applications");
                 }
             }
         } else {
             Main.overview.show();
             if (gsVersion[1] > 4) {
-                Main.overview._viewSelector._showAppsButton.checked = true;
+                viewSelector._showAppsButton.checked = true;
             } else {
-                Main.overview._viewSelector.switchTab("applications");
+                viewSelector.switchTab("applications");
             }
         }
     },
