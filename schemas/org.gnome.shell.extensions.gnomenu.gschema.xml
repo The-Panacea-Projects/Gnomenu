@@ -100,6 +100,11 @@
       <summary>Size and layout of the applications menu</summary>
       <description>Size and layout of the applications menu</description>
     </key>
+    <key type="b" name="hide-favorites">
+      <default>false</default>
+      <summary>Hide the favorites section of the menu</summary>
+      <description>Hide the favorites section of the menu</description>
+    </key>
     <key enum="org.gnome.shell.extensions.gnomenu.viewMode" name="startup-view-mode">
       <default>'Grid'</default>
       <summary>Startup applications view mode</summary>

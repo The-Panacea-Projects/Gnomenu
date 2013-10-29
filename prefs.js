@@ -568,6 +568,32 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         appsGridIconSizeBox.add(appsGridIconSizeLabel);
         appsGridIconSizeBox.add(appsGridIconSizeCombo);
 
+        let hideFavoritesBox = new Gtk.Box({
+            spacing: 20,
+            orientation: Gtk.Orientation.HORIZONTAL,
+            homogeneous: false,
+            margin_left: 20,
+            margin_top: 5,
+            margin_bottom: 5,
+            margin_right: 10
+        });
+        let hideFavoritesLabel = new Gtk.Label({
+            label: _("Hide favorites section of menu"),
+            use_markup: true,
+            xalign: 0,
+            hexpand: true
+        });
+        let hideFavoritesSwitch = new Gtk.Switch ({
+            halign: Gtk.Align.END
+        });
+        hideFavoritesSwitch.set_active(this.settings.get_boolean('hide-favorites'));
+        hideFavoritesSwitch.connect("notify::active", Lang.bind(this, function(check) {
+            this.settings.set_boolean('hide-favorites', check.get_active());
+        }));
+
+        hideFavoritesBox.add(hideFavoritesLabel);
+        hideFavoritesBox.add(hideFavoritesSwitch);
+
 
         appsSettings.add(appsSettingsTitle);
         appsSettings.add(menuLayoutBox);
@@ -577,6 +603,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         appsSettings.add(favoritesIconSizeBox);
         appsSettings.add(appsListIconSizeBox);
         appsSettings.add(appsGridIconSizeBox);
+        appsSettings.add(hideFavoritesBox);
 
 
         frame.add(panelSettings);

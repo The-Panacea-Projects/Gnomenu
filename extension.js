@@ -1931,6 +1931,10 @@ const PanelMenuButton = new Lang.Class({
         this.favoritesScrollBox.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER);
         this.favoritesScrollBox.set_mouse_scrolling(true);
 
+        if (settings.get_boolean('hide-favorites')) {
+            this.favoritesScrollBox.hide();
+        }
+
         //Load favorites
         if (_DEBUG_) global.log("PanelMenuButton: _display - start loading favorites");
         this.favorites = [];
@@ -2816,6 +2820,9 @@ const GnoMenuButton = new Lang.Class({
         }));
         settings.connect('changed::menu-layout', Lang.bind(this, function() {
             let ret = this._changeStylesheet();
+            if (this.appsMenuButton) this.appsMenuButton.refresh();
+        }));
+        settings.connect('changed::hide-favorites', Lang.bind(this, function() {
             if (this.appsMenuButton) this.appsMenuButton.refresh();
         }));
     },
