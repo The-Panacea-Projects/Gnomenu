@@ -2438,7 +2438,6 @@ const GnoMenuButton = new Lang.Class({
         this._hotCorner = null;
         if (_DEBUG_) global.log("GnoMenu: _clearAll removed and destroyed hotcorner from gnomenu actor");
 
-        if (this._hotspot) this.actor.remove_actor(this._hotspot);
         if (this._hotspot) this._hotspot.destroy();
         this._hotspot = null;
         this._hotspotId = null;
@@ -2508,7 +2507,8 @@ const GnoMenuButton = new Lang.Class({
 
             // Add hotspot area 1px high at top of appsMenuButton
             if (!settings.get_boolean('disable-panel-menu-hotspot')) {
-                this._hotspot = new Clutter.Rectangle({reactive: true, opacity:0});
+                this._hotspot = new Clutter.Actor({reactive: true, opacity:0});
+                Main.layoutManager.addChrome(this._hotspot);
                 this._hotspot.connect('enter-event', Lang.bind(this, this._onAppsMenuButtonHotSpotEntered));
                 this._hotspotId = this._hotspot.connect('realize', Lang.bind(this, function(){}));
                 if (_DEBUG_) global.log("GnoMenu: _display initialized menu hotspot");
@@ -2549,9 +2549,6 @@ const GnoMenuButton = new Lang.Class({
             if (this.appsMenuButton) this.actor.add(this.appsMenuButton.actor);
         }
         if (_DEBUG_) global.log("GnoMenu: _display added buttons to gnomenu actor");
-
-        // Add appsMenuButton hotspot
-        if (this._hotspot) this.actor.add_actor(this._hotspot);
 
         // Disable or Enable Hot Corner
         if (settings.get_boolean('disable-panel-view-hotcorner')) {
