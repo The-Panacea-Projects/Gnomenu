@@ -1682,7 +1682,11 @@ const PanelMenuButton = new Lang.Class({
         this.groupCategoriesWorkspacesWrapper = new St.BoxLayout({ style_class: 'gnomenu-categories-workspaces-wrapper', vertical: false});
 
         // groupCategoriesWorkspacesScrollBox allows categories or workspaces to scroll vertically
-        this.groupCategoriesWorkspacesScrollBox = new St.ScrollView({ reactive: true, x_fill: true, y_fill: false, y_align: St.Align.START, style_class: 'vfade gnomenu-categories-workspaces-scrollbox' });
+        if (gsVersion[1] < 10) {
+            this.groupCategoriesWorkspacesScrollBox = new St.ScrollView({ reactive: true, x_fill: true, y_fill: false, y_align: St.Align.START, style_class: 'vfade gnomenu-categories-workspaces-scrollbox' });
+        } else {
+            this.groupCategoriesWorkspacesScrollBox = new St.ScrollView({ reactive: true, x_fill: true, y_fill: false, y_align: St.Align.START, style_class: 'gnomenu-categories-workspaces-scrollbox' });
+        }
         let vscroll = this.groupCategoriesWorkspacesScrollBox.get_vscroll_bar();
         vscroll.connect('scroll-start', Lang.bind(this, function() {
             this.menu.passEvents = true;
@@ -1918,7 +1922,11 @@ const PanelMenuButton = new Lang.Class({
 
         // FavoritesBox
         this.favoritesBox = new St.BoxLayout({ style_class: 'gnomenu-favorites-box', vertical: true });
-        this.favoritesScrollBox = new St.ScrollView({ x_fill: true, y_fill: false, y_align: St.Align.START, style_class: 'vfade gnomenu-favorites-scrollbox' });
+        if (gsVersion[1] < 10) {
+            this.favoritesScrollBox = new St.ScrollView({ x_fill: true, y_fill: false, y_align: St.Align.START, style_class: 'vfade gnomenu-favorites-scrollbox' });
+        } else {
+            this.favoritesScrollBox = new St.ScrollView({ x_fill: true, y_fill: false, y_align: St.Align.START, style_class: 'gnomenu-favorites-scrollbox' });
+        }
         this.favoritesScrollBox.add_actor(this.favoritesBox);
         this.favoritesScrollBox.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER);
         this.favoritesScrollBox.set_mouse_scrolling(true);
