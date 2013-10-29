@@ -2324,7 +2324,7 @@ const PanelMenuButton = new Lang.Class({
         // bottomPane packs horizontally
         let bottomPaneSpacer1 = new St.Label({text: ''});
         bottomPane.add(this.powerGroupBox, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
-        bottomPane.add(topPaneSpacer1, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
+        bottomPane.add(bottomPaneSpacer1, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         bottomPane.add(this.selectedAppBox, {expand: true, x_align:St.Align.END, y_align:St.Align.MIDDLE});
         bottomPane.add(extensionPreferences.actor, {x_fill:false, y_fill: false, x_align:St.Align.END, y_align:St.Align.MIDDLE});
 
