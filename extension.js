@@ -704,42 +704,55 @@ const PanelMenuButton = new Lang.Class({
             this.thumbnailsBox._createThumbnails();
             this.thumbnailsBox.actor.set_position(1, 0); // position inside wrapper
 
-            if (_DEBUG_) {let cfw = (this.categoriesBox.width * 1) + (this.favoritesScrollBox.width * 1); global.log("_onOpenStateToggled - powerGroup width = "+this.powerGroupBox.width+" categories+favorites width = "+cfw+" (category = "+this.categoriesBox.width+" favorites = "+this.favoritesScrollBox.width+" )");}
-            if (this.powerGroupBox.width > (this.categoriesBox.width + this.favoritesScrollBox.width)) {
-                if (_DEBUG_) global.log("onOpenStateToggled - powerGroup width > categories-favorites");
-                this.userGroupBox.width = this.powerGroupBox.width;
-                let categoryWidth = this.powerGroupBox.width - this.favoritesScrollBox.width;
-                this.categoriesBox.width = categoryWidth;
-                this._widthCategoriesBox = categoryWidth;
-                this.thumbnailsBox.actor.width = categoryWidth;
-                this.thumbnailsBox._actualThumbnailWidth = categoryWidth;
-            } else {
-                if (_DEBUG_) global.log("onOpenStateToggled - powerGroup width < categories-favorites");
-                this._widthCategoriesBox = this.categoriesBox.width;
-                let groupWidth = this.categoriesBox.width + this.favoritesScrollBox.width;
-                this.powerGroupBox.width = groupWidth;
-                this.userGroupBox.width = groupWidth;
-                this.thumbnailsBox.actor.width = this.categoriesBox.width;
-                this.thumbnailsBox._actualThumbnailWidth = this.categoriesBox.width;
-            }
 
             // Set Category or Workspace Mode
             // Currently we force category mode when menu is toggled
             this._categoryWorkspaceMode = CategoryWorkspaceMode.CATEGORY;
-            if (this._categoryWorkspaceMode == CategoryWorkspaceMode.CATEGORY) {
-                this.thumbnailsBox.actor.hide();
-                this.thumbnailsBoxFiller.width = 0;
-                this.thumbnailsBoxFiller.height = 0;
-                this.categoriesBox.width = this._widthCategoriesBox;
-                this.categoriesBox.show();
-            } else {
-                this.categoriesBox.hide();
-                this.categoriesBox.width = 0;
-                this.thumbnailsBox.actor.show();
-                this.thumbnailsBoxFiller.width = this.categoriesBox.width;
-                this.thumbnailsBoxFiller.height = this.thumbnailsBox.actor.height;
-            }
+            this.thumbnailsBox.actor.hide();
+            this.thumbnailsBoxFiller.width = 0;
+            this.thumbnailsBoxFiller.height = 0;
+            this.categoriesBox.show();
+            this._widthCategoriesBox = 0;
 
+			// Adjust width of categories box and thumbnails box depending on if favorites shown
+			// Determine width based on user/power group button widths
+            if (settings.get_boolean('hide-favorites')) {
+                if (this.userGroupBox.width > this.groupCategoriesWorkspacesScrollBox.width) {
+                    let categoryWidth = this.userGroupBox.width;
+                    this.groupCategoriesWorkspacesScrollBox.width = categoryWidth;
+                    this.categoriesBox.width = categoryWidth;
+                    this._widthCategoriesBox = categoryWidth;
+                    this.thumbnailsBox.actor.width = categoryWidth;
+                    this.thumbnailsBox._actualThumbnailWidth = categoryWidth;
+                } else {
+                    let groupWidth = this.groupCategoriesWorkspacesScrollBox.width;
+                    this.userGroupBox.width = groupWidth;
+                    this.categoriesBox.width = this.groupCategoriesWorkspacesScrollBox.width;
+                    this._widthCategoriesBox = this.groupCategoriesWorkspacesScrollBox.width;
+                    this.thumbnailsBox.actor.width = this.groupCategoriesWorkspacesScrollBox.width;
+                    this.thumbnailsBox._actualThumbnailWidth = this.groupCategoriesWorkspacesScrollBox.width;
+                }
+            } else {
+                if (this.powerGroupBox.width > (this.groupCategoriesWorkspacesScrollBox.width + this.favoritesScrollBox.width)) {
+                    if (_DEBUG_) global.log("onOpenStateToggled - powerGroup width > categories-favorites");
+                    this.userGroupBox.width = this.powerGroupBox.width;
+                    let categoryWidth = this.powerGroupBox.width - this.favoritesScrollBox.width;
+                    this.groupCategoriesWorkspacesScrollBox.width = categoryWidth;
+                    this.categoriesBox.width = categoryWidth;
+                    this._widthCategoriesBox = categoryWidth;
+                    this.thumbnailsBox.actor.width = categoryWidth;
+                    this.thumbnailsBox._actualThumbnailWidth = categoryWidth;
+                } else {
+                    if (_DEBUG_) global.log("onOpenStateToggled - powerGroup width < categories-favorites");
+                    let groupWidth = this.groupCategoriesWorkspacesScrollBox.width + this.favoritesScrollBox.width;
+                    this.powerGroupBox.width = groupWidth;
+                    this.userGroupBox.width = groupWidth;
+                    this.categoriesBox.width = this.groupCategoriesWorkspacesScrollBox.width;
+                    this._widthCategoriesBox = this.groupCategoriesWorkspacesScrollBox.width;
+                    this.thumbnailsBox.actor.width = this.groupCategoriesWorkspacesScrollBox.width;
+                    this.thumbnailsBox._actualThumbnailWidth = this.groupCategoriesWorkspacesScrollBox.width;
+                }
+            }
         } else {
             this.resetSearch();
             this._clearCategorySelections(this.categoriesBox);
@@ -2370,7 +2383,7 @@ const PanelMenuButton = new Lang.Class({
         this.applicationsScrollBox.add_constraint(new Clutter.BindConstraint({name: 'constraint', source: this.groupCategoriesWorkspacesScrollBox, coordinate: Clutter.BindCoordinate.HEIGHT, offset: 0}));
         this.favoritesScrollBox.add_constraint(new Clutter.BindConstraint({name: 'constraint', source: this.groupCategoriesWorkspacesScrollBox, coordinate: Clutter.BindCoordinate.HEIGHT, offset: 0}));
 
-        this._widthCategoriesBox = this.categoriesBox.width;
+        //this._widthCategoriesBox = this.categoriesBox.width;
         this.thumbnailsBox.actor.width = this.categoriesBox.width;
         this.thumbnailsBox._actualThumbnailWidth = this.categoriesBox.width;
     }
