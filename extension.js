@@ -2515,31 +2515,51 @@ const GnoMenuButton = new Lang.Class({
         // Add appsMenuButton hotspot
         if (this._hotspot) this.actor.add_actor(this._hotspot);
 
-        // Enable Hot Corner if desired
-        if (!settings.get_boolean('hide-panel-view') && !settings.get_boolean('disable-panel-view-hotcorner')) {
+        // Disable or Enable Hot Corner
+        if (settings.get_boolean('disable-panel-view-hotcorner')) {
+            if (_DEBUG_) global.log("GnoMenu: _display disabled hot corner");
             if (gsVersion[1] > 6) {
                 let primary = Main.layoutManager.primaryIndex;
                 let corner = Main.layoutManager.hotCorners[primary];
                 if (corner && corner.actor) {
+                    // This is GS 3.8+ fallback corner. Need to hide actor
+                    // to keep from triggering overview
+                    corner.actor.hide();
+                } else {
+                    // Need to destroy corner to remove pressure barrier
+                    // to keep from triggering overview
+                    if (corner && corner._pressureBarrier) {
+                        Main.layoutManager.hotCorners.splice(primary, 1);
+                        corner.destroy();
+                    }
+                }
+            } else {
+                // Do nothing. GS34-GS36 hot corner is disabled when activities button is hidden
+            }
+        } else {
+            if (_DEBUG_) global.log("GnoMenu: _display enabled hot corner");
+            if (gsVersion[1] > 6) {
+                let primary = Main.layoutManager.primaryIndex;
+                let corner = Main.layoutManager.hotCorners[primary];
+                if (corner && corner.actor) {
+                    // This is Gs 3.8+ fallback corner. Need to show actor
+                    // to trigger overview
                     corner.actor.show();
+                } else {
+                    // Need to create corner to setup pressure barrier
+                    // to trigger overview
+                    if (corner && corner._pressureBarrier) {
+                        if (_DEBUG_) global.log("corner & pressureBarrier exist ");
+                    } else {
+                        if (_DEBUG_) global.log("corner & pressureBarrier don't exist - updateHotCorners");
+                        Main.layoutManager._updateHotCorners();
+                    }
                 }
             } else {
                 this._hotCorner = new Layout.HotCorner;
                 this._positionHotCorner();
                 this.actor.add_actor(this._hotCorner.actor);
             }
-            if (_DEBUG_) global.log("GnoMenu: _display enabled hot corner in GS34-GS36");
-        } else {
-            if (gsVersion[1] > 6) {
-                let primary = Main.layoutManager.primaryIndex;
-                let corner = Main.layoutManager.hotCorners[primary];
-                if (corner && corner.actor) {
-                    corner.actor.hide();
-                }
-            } else {
-                // Do nothing. GS34-GS36 hot corner is disabled when activities button is hidden
-            }
-            if (_DEBUG_) global.log("GnoMenu: _display disabled hot corner in GS38");
         }
 
         // Add menu to panel menu manager
@@ -2640,7 +2660,7 @@ const GnoMenuButton = new Lang.Class({
         }
     },
 
-    // function called during init to position hot corner
+    // function called during init to position hot corner for GS 3.4-GS3.6
     _positionHotCorner: function() {
         if (_DEBUG_) global.log("_positionHotCorner");
         // The hot corner needs to be outside any padding/alignment

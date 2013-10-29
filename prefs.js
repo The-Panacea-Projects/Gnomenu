@@ -45,13 +45,41 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             margin_bottom: 5
         });
 
+
+        let disableHotCornerBox = new Gtk.Box({
+            spacing: 20,
+            orientation: Gtk.Orientation.HORIZONTAL,
+            homogeneous: false,
+            margin_left: 20,
+            margin_top: 5,
+            margin_bottom: 5,
+            margin_right: 10
+        });
+        let disableHotCornerLabel = new Gtk.Label({
+            label: _("Disable activities hot corner"),
+            use_markup: true,
+            xalign: 0,
+            hexpand: true
+        });
+        let disableHotCornerSwitch = new Gtk.Switch ({
+            halign: Gtk.Align.END
+        });
+        disableHotCornerSwitch.set_active(this.settings.get_boolean('disable-panel-view-hotcorner'));
+        disableHotCornerSwitch.connect("notify::active", Lang.bind(this, function(check) {
+            this.settings.set_boolean('disable-panel-view-hotcorner', check.get_active());
+        }));
+
+        disableHotCornerBox.add(disableHotCornerLabel);
+        disableHotCornerBox.add(disableHotCornerSwitch);
+
+
         let hidePanelViewBox = new Gtk.Box({
             spacing: 20,
             orientation: Gtk.Orientation.HORIZONTAL,
             homogeneous: false,
             margin_left: 20,
             margin_top: 5,
-            margin_bottom: 0,
+            margin_bottom: 5,
             margin_right: 10
         });
         let hidePanelViewLabel = new Gtk.Label({
@@ -75,26 +103,6 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             orientation: Gtk.Orientation.VERTICAL
         });
 
-        let disableHotCornerBox = new Gtk.Box({
-            spacing: 20,
-            orientation: Gtk.Orientation.HORIZONTAL,
-            homogeneous: false,
-            margin_left: 20,
-            margin_top: 0,
-            margin_bottom: 5,
-            margin_right: 10
-        });
-        let disableHotCorner = new Gtk.CheckButton({
-            label: _("Disable View button hot corner"),
-            margin_left: 20
-        });
-        disableHotCorner.set_active(this.settings.get_boolean('disable-panel-view-hotcorner'));
-        disableHotCorner.connect('toggled', Lang.bind(this, function(check) {
-            this.settings.set_boolean('disable-panel-view-hotcorner', check.get_active());
-        }));
-
-        //this.settings.bind('hide-panel-view', disableHotCornerBox, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
-        disableHotCornerBox.add(disableHotCorner);
 
         let customViewLabelBox = new Gtk.Box({
             spacing: 20,
@@ -115,7 +123,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         }));
 
         let customViewLabelEntry = new Gtk.Entry();
-        customViewLabelEntry.set_width_chars(20);
+        customViewLabelEntry.set_width_chars(15);
         customViewLabelEntry.set_text(this.settings.get_strv('custom-panel-view-label-text')[0]);
         customViewLabelEntry.connect('changed', Lang.bind(this, function(entry) {
             let iconName = entry.get_text();
@@ -127,7 +135,6 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         customViewLabelBox.add(customViewLabelEntry);
 
         this.settings.bind('hide-panel-view', panelViewBox, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
-        panelViewBox.add(disableHotCornerBox);
         panelViewBox.add(customViewLabelBox);
 
 
@@ -180,7 +187,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         }));
 
         let customAppsLabelEntry = new Gtk.Entry();
-        customAppsLabelEntry.set_width_chars(20);
+        customAppsLabelEntry.set_width_chars(15);
         customAppsLabelEntry.set_text(this.settings.get_strv('custom-panel-apps-label-text')[0]);
         customAppsLabelEntry.connect('changed', Lang.bind(this, function(entry) {
             let iconName = entry.get_text();
@@ -264,7 +271,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         }));
 
         let keyboardAccelEntry = new Gtk.Entry();
-        keyboardAccelEntry.set_width_chars(20);
+        keyboardAccelEntry.set_width_chars(15);
         keyboardAccelEntry.set_text(this.settings.get_strv('panel-menu-keyboard-accelerator')[0]);
         keyboardAccelEntry.connect('changed', Lang.bind(this, function(entry) {
             let [key, mods] = Gtk.accelerator_parse(entry.get_text());
@@ -302,7 +309,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         }));
 
         let customMenuLabelEntry = new Gtk.Entry();
-        customMenuLabelEntry.set_width_chars(20);
+        customMenuLabelEntry.set_width_chars(15);
         customMenuLabelEntry.set_text(this.settings.get_strv('custom-panel-menu-label-text')[0]);
         customMenuLabelEntry.connect('changed', Lang.bind(this, function(entry) {
             let iconName = entry.get_text();
@@ -351,6 +358,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
 
 
         panelSettings.add(panelSettingsTitle);
+        panelSettings.add(disableHotCornerBox);
         panelSettings.add(hidePanelViewBox);
         panelSettings.add(panelViewBox);
         panelSettings.add(hidePanelAppsBox);
