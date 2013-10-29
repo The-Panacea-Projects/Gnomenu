@@ -504,7 +504,7 @@ const GroupButton = new Lang.Class({
     Name: 'GnoMenu.GroupButton',
 
     _init: function(iconName, iconSize, labelText, params) {
-
+        this._opened = false;
         let style = (gsVersion[1] > 4) ? 'popup-menu-item popup-submenu-menu-item' : '';
         this.actor = new St.Button({ reactive: true, style_class: style, x_align: St.Align.MIDDLE, y_align: St.Align.MIDDLE });
         this.actor.add_style_class_name(params.style_class);
@@ -1713,12 +1713,28 @@ const PanelMenuButton = new Lang.Class({
         }));
         this.recentCategory.actor.connect('button-release-event', Lang.bind(this, function() {
             this.recentCategory.actor.remove_style_pseudo_class('pressed');
-            this.recentCategory.actor.add_style_pseudo_class('open');
-            this.webBookmarksCategory.actor.remove_style_pseudo_class('open');
-            this.placesCategory.actor.remove_style_pseudo_class('open');
-            this._selectRecent(this.recentCategory);
-            this.selectedAppTitle.set_text(this.recentCategory.label.get_text());
-            this.selectedAppDescription.set_text('');
+            if (this.recentCategory._opened) {
+                this.recentCategory._opened = false;
+                this.webBookmarksCategory._opened = false;
+                this.placesCategory._opened = false;
+                this.recentCategory.actor.remove_style_pseudo_class('open');
+                this.webBookmarksCategory.actor.remove_style_pseudo_class('open');
+                this.placesCategory.actor.remove_style_pseudo_class('open');
+                this.toggleCategoryWorkspaceMode(CategoryWorkspaceMode.CATEGORY);
+                let allApplicationsCategory = this.categoriesBox.get_first_child()._delegate;
+                this._clearApplicationsBox(allApplicationsCategory);
+                this._displayApplications(this._listApplications(null));
+            } else {
+                this.recentCategory._opened = true;
+                this.webBookmarksCategory._opened = false;
+                this.placesCategory._opened = false;
+                this.recentCategory.actor.add_style_pseudo_class('open');
+                this.webBookmarksCategory.actor.remove_style_pseudo_class('open');
+                this.placesCategory.actor.remove_style_pseudo_class('open');
+                this._selectRecent(this.recentCategory);
+                this.selectedAppTitle.set_text(this.recentCategory.label.get_text());
+                this.selectedAppDescription.set_text('');
+            }
         }));
 
         // Load 'webBookmarks' category
@@ -1738,12 +1754,28 @@ const PanelMenuButton = new Lang.Class({
         }));
         this.webBookmarksCategory.actor.connect('button-release-event', Lang.bind(this, function() {
             this.webBookmarksCategory.actor.remove_style_pseudo_class('pressed');
-            this.webBookmarksCategory.actor.add_style_pseudo_class('open');
-            this.recentCategory.actor.remove_style_pseudo_class('open');
-            this.placesCategory.actor.remove_style_pseudo_class('open');
-            this._selectWebBookmarks(this.webBookmarksCategory);
-            this.selectedAppTitle.set_text(this.webBookmarksCategory.label.get_text());
-            this.selectedAppDescription.set_text('');
+            if (this.webBookmarksCategory._opened) {
+                this.webBookmarksCategory._opened = false;
+                this.recentCategory._opened = false;
+                this.placesCategory._opened = false;
+                this.webBookmarksCategory.actor.remove_style_pseudo_class('open');
+                this.recentCategory.actor.remove_style_pseudo_class('open');
+                this.placesCategory.actor.remove_style_pseudo_class('open');
+                this.toggleCategoryWorkspaceMode(CategoryWorkspaceMode.CATEGORY);
+                let allApplicationsCategory = this.categoriesBox.get_first_child()._delegate;
+                this._clearApplicationsBox(allApplicationsCategory);
+                this._displayApplications(this._listApplications(null));
+            } else {
+                this.webBookmarksCategory._opened = true;
+                this.recentCategory._opened = false;
+                this.placesCategory._opened = false;
+                this.webBookmarksCategory.actor.add_style_pseudo_class('open');
+                this.recentCategory.actor.remove_style_pseudo_class('open');
+                this.placesCategory.actor.remove_style_pseudo_class('open');
+                this._selectWebBookmarks(this.webBookmarksCategory);
+                this.selectedAppTitle.set_text(this.webBookmarksCategory.label.get_text());
+                this.selectedAppDescription.set_text('');
+            }
         }));
 
         // Load 'all places' category
@@ -1763,12 +1795,28 @@ const PanelMenuButton = new Lang.Class({
         }));
         this.placesCategory.actor.connect('button-release-event', Lang.bind(this, function() {
             this.placesCategory.actor.remove_style_pseudo_class('pressed');
-            this.placesCategory.actor.add_style_pseudo_class('open');
-            this.webBookmarksCategory.actor.remove_style_pseudo_class('open');
-            this.recentCategory.actor.remove_style_pseudo_class('open');
-            this._selectAllPlaces(this.placesCategory);
-            this.selectedAppTitle.set_text(this.placesCategory.label.get_text());
-            this.selectedAppDescription.set_text('');
+            if (this.placesCategory._opened) {
+                this.placesCategory._opened = false;
+                this.webBookmarksCategory._opened = false;
+                this.recentCategory._opened = false;
+                this.placesCategory.actor.remove_style_pseudo_class('open');
+                this.webBookmarksCategory.actor.remove_style_pseudo_class('open');
+                this.recentCategory.actor.remove_style_pseudo_class('open');
+                this.toggleCategoryWorkspaceMode(CategoryWorkspaceMode.CATEGORY);
+                let allApplicationsCategory = this.categoriesBox.get_first_child()._delegate;
+                this._clearApplicationsBox(allApplicationsCategory);
+                this._displayApplications(this._listApplications(null));
+            } else {
+                this.placesCategory._opened = true;
+                this.webBookmarksCategory._opened = false;
+                this.recentCategory._opened = false;
+                this.placesCategory.actor.add_style_pseudo_class('open');
+                this.webBookmarksCategory.actor.remove_style_pseudo_class('open');
+                this.recentCategory.actor.remove_style_pseudo_class('open');
+                this._selectAllPlaces(this.placesCategory);
+                this.selectedAppTitle.set_text(this.placesCategory.label.get_text());
+                this.selectedAppDescription.set_text('');
+            }
         }));
 
 
