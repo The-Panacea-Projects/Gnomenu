@@ -1857,9 +1857,16 @@ const PanelMenuButton = new Lang.Class({
 
 
         // ViewModeBox
+        let viewModButtonIconSize = 20;
+        if (settings.get_enum('menu-layout') == MenuLayout.MEDIUM) {
+            viewModButtonIconSize = 18;
+        } else if (settings.get_enum('menu-layout') == MenuLayout.SMALL) {
+            viewModButtonIconSize = 16;
+        }
+
         this.viewModeBoxWrapper = new St.BoxLayout({ style_class: 'gnomenu-view-mode-box-wrapper' });
         this.viewModeBox = new St.BoxLayout({ style_class: 'gnomenu-view-mode-box' });
-        let listView = new GroupButton('list-symbolic', 24, null, {style_class: 'gnomenu-view-mode-button'});
+        let listView = new GroupButton('view-list-symbolic', viewModButtonIconSize, null, {style_class: 'gnomenu-view-mode-button'});
         listView.actor.connect('enter-event', Lang.bind(this, function() {
             listView.actor.add_style_pseudo_class('active');
             this.selectedAppTitle.set_text(_('List View'));
@@ -1881,7 +1888,7 @@ const PanelMenuButton = new Lang.Class({
             this.selectedAppDescription.set_text('');
             this._switchApplicationsView(ApplicationsViewMode.LIST);
         }));
-        let gridView = new GroupButton( 'grid-symbolic', 24, null, {style_class: 'gnomenu-view-mode-button'});
+        let gridView = new GroupButton( 'view-grid-symbolic', viewModButtonIconSize, null, {style_class: 'gnomenu-view-mode-button'});
         gridView.actor.connect('enter-event', Lang.bind(this, function() {
             gridView.actor.add_style_pseudo_class('active');
             this.selectedAppTitle.set_text(_('Grid View'));
@@ -2085,11 +2092,11 @@ const PanelMenuButton = new Lang.Class({
 
         // PowerGroupBox
         this.powerGroupBox = new St.BoxLayout({ style_class: 'gnomenu-power-group-box'});
-        let powerGroupButtonIconSize = 24;
+        let powerGroupButtonIconSize = 20;
         if (settings.get_enum('menu-layout') == MenuLayout.MEDIUM) {
-            powerGroupButtonIconSize = 22;
+            powerGroupButtonIconSize = 18;
         } else if (settings.get_enum('menu-layout') == MenuLayout.SMALL) {
-            powerGroupButtonIconSize = 20;
+            powerGroupButtonIconSize = 16;
         }
         let systemRestart = new GroupButton('refresh-symbolic', powerGroupButtonIconSize, null, {style_class: 'gnomenu-power-group-button'});
         systemRestart.actor.connect('enter-event', Lang.bind(this, function() {
@@ -3005,9 +3012,5 @@ function init() {
     // TODO: move this to enable/disable?
     // GS patch https://bugzilla.gnome.org/show_bug.cgi?id=675561
     let theme = IconTheme.get_default();
-    if (gsVersion[1] > 4) {
-        theme.append_search_path(Me.path + "/icons/24");
-    } else {
-        theme.append_search_path(Me.path + "/icons/16");
-    }
+    theme.append_search_path(Me.path + "/icons");
 }

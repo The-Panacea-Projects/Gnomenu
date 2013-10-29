@@ -14,7 +14,7 @@
    width="16"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="user-logout-symbolic.svg">
+   sodipodi:docname="suspend-symbolic.svg">
   <defs
      id="defs10" />
   <sodipodi:namedview
@@ -26,15 +26,15 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="793"
-     inkscape:window-height="447"
+     inkscape:window-width="949"
+     inkscape:window-height="792"
      id="namedview8"
      showgrid="false"
      inkscape:zoom="14.75"
-     inkscape:cx="4.759322"
+     inkscape:cx="-3.2881356"
      inkscape:cy="8"
-     inkscape:window-x="98"
-     inkscape:window-y="69"
+     inkscape:window-x="115"
+     inkscape:window-y="95"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg7384" />
   <metadata
@@ -52,27 +52,21 @@
   <title
      id="title9167">Gnome Symbolic Icon Theme</title>
   <g
-     transform="matrix(1.2362,0,0,1.0813077,-53.4158,-365.54031)"
-     id="layer9">
+     id="layer12"
+     transform="matrix(0.98575771,0,0,0.98570305,-216.75212,-597.22147)">
     <path
-       d="m 47,345 c -1.5545,0.11593 -3,1.4148 -3,3 v 4 h 10 v -4 c 0,-1.5852 -1.4455,-2.8841 -3,-3 v 1 h -4 z"
-       style="color:#bebebe;fill:#bebebe"
-       id="rect20599"
-       inkscape:connector-curvature="0" />
-    <path
-       transform="matrix(1.2,0,0,1.2,-10.4,-69)"
-       d="m 52,342.5 a 2.5,2.5 0 1 1 -5,0 2.5,2.5 0 1 1 5,0 z"
-       style="color:#bebebe;fill:#bebebe"
-       id="path20580"
+       id="path4222"
+       style="text-indent:0;text-transform:none;block-progression:tb;color:#000000;fill:#bebebe"
+       d="m 228.01,607.02 c -3.86,0 -7.0073,3.166 -7.0073,7.0103 0,3.8443 3.1472,6.9787 7.0073,6.9787 3.86,0 7.0073,-3.1344 7.0073,-6.9787 0,-3.8443 -3.1472,-7.0103 -7.0073,-7.0103 z m 0,2.021 c 2.7769,0 5.0097,2.2237 5.0097,4.9893 0,2.7656 -2.2328,4.9577 -5.0097,4.9577 -2.777,0 -5.0097,-2.1921 -5.0097,-4.9577 0,-2.7656 2.2328,-4.9893 5.0097,-4.9893 z"
        inkscape:connector-curvature="0" />
   </g>
   <g
-     transform="matrix(0.50610314,0,0,0.45146129,-51.100876,-281.37128)"
-     id="layer12">
+     transform="matrix(0,1,-0.91482386,0,638.73296,-99.968292)"
+     id="layer12-3">
     <path
-       d="m 125.03,628 h 1 c 0.0104,-1.2e-4 0.0208,-4.6e-4 0.0313,0 0.25495,0.0112 0.50987,0.12858 0.6875,0.3125 l 5.2812,5.2188 -5.2812,5.1875 c -0.19,0.19 -0.45,0.28 -0.72,0.28 h -1 v -1 c 0,-0.26529 0.0931,-0.53058 0.28125,-0.71875 l 3.8125,-3.75 -3.8125,-3.7812 c -0.21074,-0.19463 -0.30316,-0.46925 -0.28125,-0.75 v -1 z"
-       style="text-indent:0;text-transform:none;block-progression:tb;color:#bebebe;fill:#bebebe;enable-background:new"
-       id="path10839-9-9"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       d="m 107.78,686 a 1.0001,1.0001 0 0 0 -0.78,1 v 5 a 1.0001,1.0001 0 1 0 2,0 v -5 a 1.0001,1.0001 0 0 0 -1.2188,-1 z"
+       style="text-indent:0;text-transform:none;block-progression:tb;color:#000000;fill:#bebebe"
+       id="path4710" />
   </g>
 </svg>
