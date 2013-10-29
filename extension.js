@@ -766,24 +766,38 @@ const PanelMenuButton = new Lang.Class({
     },
 
     toggleCategoryWorkspaceMode: function(mode) {
-        if (this._categoryWorkspaceMode == CategoryWorkspaceMode.CATEGORY || mode == CategoryWorkspaceMode.WORKSPACE) {
-            this._categoryWorkspaceMode = CategoryWorkspaceMode.WORKSPACE;
-            this.categoriesBox.hide();
-            this.categoriesBox.width = 0;
-            this.thumbnailsBox.actor.show();
-            this.thumbnailsBoxFiller.width = this.categoriesBox.width;
-            this.thumbnailsBoxFiller.height = this.thumbnailsBox.actor.height;
-            if (_DEBUG_) global.log("toggleCategoryWorkspaceMode - thumbnailsBox height = "+this.thumbnailsBox.actor.height+" scrollbox height = "+this.groupCategoriesWorkspacesScrollBox.height);
-        } else if (this._categoryWorkspaceMode == CategoryWorkspaceMode.WORKSPACE || mode == CategoryWorkspaceMode.CATEGORY){
+        let toMode = null;
+        if (mode != undefined) {
+            toMode = mode;
+        } else {
+            if (this._categoryWorkspaceMode == CategoryWorkspaceMode.CATEGORY) {
+                toMode = CategoryWorkspaceMode.WORKSPACE;
+            } else {
+                toMode = CategoryWorkspaceMode.CATEGORY;
+            }
+        }
+        if (toMode == CategoryWorkspaceMode.CATEGORY){
             this._categoryWorkspaceMode = CategoryWorkspaceMode.CATEGORY;
             this.thumbnailsBox.actor.hide();
-            this.thumbnailsBoxFiller.width = 0;
+            //this.thumbnailsBoxFiller.width = 0;
             this.thumbnailsBoxFiller.height = 0;
             this.categoriesBox.width = this._widthCategoriesBox;
             this.categoriesBox.show();
             if (_DEBUG_) global.log("toggleCategoryWorkspaceMode - categoryPlaces height = "+this.categoriesBox.height+" scrollbox height = "+this.groupCategoriesWorkspacesScrollBox.height);
+        } else if (toMode == CategoryWorkspaceMode.WORKSPACE) {
+            this._categoryWorkspaceMode = CategoryWorkspaceMode.WORKSPACE;
+            if (this._widthCategoriesBox == 0) {
+                this._widthCategoriesBox = this.categoriesBox.width;
+            }
+            this.categoriesBox.hide();
+            if (gsVersion[1] > 8) {
+                this.categoriesBox.width = 0;
+            }
+            this.thumbnailsBox.actor.show();
+            //this.thumbnailsBoxFiller.width = this.categoriesBox.width;
+            this.thumbnailsBoxFiller.height = this.thumbnailsBox.actor.height;
+            if (_DEBUG_) global.log("toggleCategoryWorkspaceMode - thumbnailsBox height = "+this.thumbnailsBox.actor.height+" scrollbox height = "+this.groupCategoriesWorkspacesScrollBox.height);
         }
-
     },
 
     _loadCategories: function(dir, root) {
