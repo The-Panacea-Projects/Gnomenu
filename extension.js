@@ -112,19 +112,6 @@ const SearchWebBookmarks = new Lang.Class({
     Name: 'Gnomenu.SearchWebBookmarks',
 
     _init: function() {
-        if (!Firefox.Gda) {
-            Main.notify(
-                _("Gno-Menu: Search Firefox bookmarks disabled"),
-                _("The library 'Gda-5.0.typelib' could not be imported. If you want to search in Firefox bookmarks, you must install the package that contains the file 'Gda-5.0.typelib'.")
-            );
-        }
-        if (!Midori.Gda) {
-            Main.notify(
-                _("Gno-Menu: Search Midori bookmarks disabled"),
-                _("The library 'Gda-5.0.typelib' could not be imported. If you want to search in Midori bookmarks, you must install the package that contains the file 'Gda-5.0.typelib'.")
-            );
-        }
-
         Chromium.init();
         Epiphany.init();
         Firefox.init();
@@ -631,6 +618,7 @@ const PanelMenuButton = new Lang.Class({
         this._categoryWorkspaceMode = CategoryWorkspaceMode.CATEGORY;
 
         this._searchWebBookmarks = new SearchWebBookmarks();
+        this._searchWebErrorsShown = false;
         this._session = new GnomeSession.SessionManager();
         this.recentManager = Gtk.RecentManager.get_default();
         if (PlaceDisplay) {
@@ -1021,6 +1009,22 @@ const PanelMenuButton = new Lang.Class({
 
     _listWebBookmarks: function(pattern) {
         if (_DEBUG_) global.log("_listWebBookmarks");
+        if (!this._searchWebErrorsShown) {
+            if (!Firefox.Gda) {
+                Main.notify(
+                    _("Gno-Menu: Search Firefox bookmarks disabled"),
+                    _("The library 'Gda-5.0.typelib' could not be imported. If you want to search in Firefox bookmarks, you must install the package that contains the file 'Gda-5.0.typelib'.")
+                );
+            }
+            if (!Midori.Gda) {
+                Main.notify(
+                    _("Gno-Menu: Search Midori bookmarks disabled"),
+                    _("The library 'Gda-5.0.typelib' could not be imported. If you want to search in Midori bookmarks, you must install the package that contains the file 'Gda-5.0.typelib'.")
+                );
+            }
+        }
+        this._searchWebErrorsShown = true;
+
         let res = [];
         let searchResults = [];
         let bookmarks = [];
