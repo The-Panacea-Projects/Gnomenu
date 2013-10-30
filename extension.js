@@ -715,7 +715,7 @@ const PanelMenuButton = new Lang.Class({
             this._widthCategoriesBox = 0;
 
 			// Adjust width of categories box and thumbnails box depending on if favorites shown
-			// Determine width based on user/power group button widths
+			// Determine width based on user-power group button widths
             if (settings.get_boolean('hide-favorites')) {
                 if (this.userGroupBox.width > this.groupCategoriesWorkspacesScrollBox.width) {
                     let categoryWidth = this.userGroupBox.width;
@@ -1048,13 +1048,13 @@ const PanelMenuButton = new Lang.Class({
             if (!Firefox.Gda) {
                 Main.notify(
                     _("Gno-Menu: Search Firefox bookmarks disabled"),
-                    _("The library 'Gda-5.0.typelib' could not be imported. If you want to search in Firefox bookmarks, you must install the package that contains the file 'Gda-5.0.typelib'.")
+                    _("If you want to search Firefox bookmarks, you must install the required pacakages: libgir1.2-gda-5.0 (Ubuntu) or libgda-sqlite (Fedora)")
                 );
             }
             if (!Midori.Gda) {
                 Main.notify(
                     _("Gno-Menu: Search Midori bookmarks disabled"),
-                    _("The library 'Gda-5.0.typelib' could not be imported. If you want to search in Midori bookmarks, you must install the package that contains the file 'Gda-5.0.typelib'.")
+                    _("If you want to search Midori bookmarks, you must install the required pacakages: libgir1.2-gda-5.0 (Ubuntu) or libgda-sqlite (Fedora)")
                 );
             }
         }
