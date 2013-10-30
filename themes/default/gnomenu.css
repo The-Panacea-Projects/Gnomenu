@@ -6,9 +6,21 @@
     padding: 0px 12px;
 }
 
+.gnomenu-panel-label {
+    padding-top: 2px;
+}
+
 .gnomenu-panel-menu-button {
     margin: 0px;
     padding: 0px 12px;
+}
+
+.gnomenu-panel-menu-label {
+    padding-top: 3px;
+}
+
+.gnomenu-panel-menu-icon {
+    padding: 0px;
 }
 
 .gnomenu-panel-menu-button:active {
@@ -33,14 +45,13 @@
 .gnomenu-user-group-box {
     background-gradient-direction: vertical;
     background-gradient-start: rgba(255,255,255,0.1);
-    background-gradient-end: rgba(255,255,255,0.2);
-    box-shadow: inset 0px 0px 1px 1px rgba(255,255,255,0.06);
+    background-gradient-end: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
     border-radius: 20px;
-    border: 2px solid #888a85;
 }
 
 .gnomenu-user-group-button {
-    border-radius: 18px;
+    border-radius: 20px;
     border-width: 1px;
     padding: 4px 17px 5px 17px;
 }
@@ -50,6 +61,7 @@
 }
 
 .gnomenu-user-group-button-label {
+    font-size: 11pt;
     font-weight: bold;
 }
 
@@ -60,15 +72,13 @@
     background-gradient-direction: vertical;
     background-gradient-start: rgba(255,255,255,0.1);
     background-gradient-end: rgba(255,255,255,0.1);
-    box-shadow: inset 0px 0px 1px 1px rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.3);
+    border: 1px solid rgba(255,255,255,0.2);
 }
 
 .gnomenu-user-group-button:pressed {
     background-gradient-direction: vertical;
-    background-gradient-start: rgba(255,255,255,0.2);
-    background-gradient-end: rgba(255,255,255,0.3);
-    box-shadow: inset 0px 0px 1px 1px rgba(255,255,255,0.06);
+    background-gradient-start: rgba(255,255,255,0.1);
+    background-gradient-end: rgba(255,255,255,0.1);
     border: 1px solid rgba(255,255,255,0.3);
 }
 
@@ -78,16 +88,16 @@
 .gnomenu-view-mode-box {
     background-gradient-direction: vertical;
     background-gradient-start: rgba(255,255,255,0.1);
-    background-gradient-end: rgba(255,255,255,0.2);
-    box-shadow: inset 0px 0px 1px 1px rgba(255,255,255,0.06);
+    background-gradient-end: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
     border-radius: 20px;
-    border: 2px solid #888a85;
+    spacing: 4px;
 }
 
 .gnomenu-view-mode-button {
-    border-radius: 18px;
+    border-radius: 20px;
     border-width: 1px;
-    padding: 4px 15px;
+    padding: 5px 13px;
 }
 
 .gnomenu-view-mode-button:active {
@@ -97,15 +107,13 @@
     background-gradient-direction: vertical;
     background-gradient-start: rgba(255,255,255,0.1);
     background-gradient-end: rgba(255,255,255,0.1);
-    box-shadow: inset 0px 0px 1px 1px rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.3);
+    border: 1px solid rgba(255,255,255,0.2);
 }
 
 .gnomenu-view-mode-button:pressed {
     background-gradient-direction: vertical;
-    background-gradient-start: rgba(255,255,255,0.2);
-    background-gradient-end: rgba(255,255,255,0.3);
-    box-shadow: inset 0px 0px 1px 1px rgba(255,255,255,0.06);
+    background-gradient-start: rgba(255,255,255,0.1);
+    background-gradient-end: rgba(255,255,255,0.1);
     border: 1px solid rgba(255,255,255,0.3);
 }
 
@@ -113,26 +121,33 @@
 }
 
 #gnomenuMenuMainbox #searchEntry {
+    background-gradient-start: rgb(200,200,200);
+    background-gradient-end: white;
+    background-gradient-direction: vertical;
+    box-shadow: inset 0px 2px 4px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.3);
+    height: 16px;
+    width: 230px;
 }
 
 .gnomenu-favorites-scrollbox {
     background-gradient-direction: vertical;
     background-gradient-start: rgba(255,255,255,0.1);
-    background-gradient-end: rgba(255,255,255,0.2);
-    box-shadow: inset 0px 0px 1px 1px rgba(255,255,255,0.06);
+    background-gradient-end: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
     border-radius: 8px 0px 0px 8px;
-    border: 2px solid #888a85;
-    padding: 2px;
+    padding: 4px;
 }
 
 .gnomenu-favorites-box {
-    padding: 4px;
+    padding: 0px;
+    spacing: 3px;
 }
 
 .gnomenu-favorite-button {
     border-radius: 4px;
     border-width: 1px;
-    padding: 4px 6px;
+    padding: 4px;
 }
 
 .gnomenu-favorite-button:active {
@@ -142,15 +157,13 @@
     background-gradient-direction: vertical;
     background-gradient-start: rgba(255,255,255,0.1);
     background-gradient-end: rgba(255,255,255,0.1);
-    box-shadow: inset 0px 0px 1px 1px rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.3);
+    border: 1px solid rgba(255,255,255,0.2);
 }
 
 .gnomenu-favorite-button:pressed {
     background-gradient-direction: vertical;
-    background-gradient-start: rgba(255,255,255,0.2);
-    background-gradient-end: rgba(255,255,255,0.3);
-    box-shadow: inset 0px 0px 1px 1px rgba(255,255,255,0.06);
+    background-gradient-start: rgba(255,255,255,0.1);
+    background-gradient-end: rgba(255,255,255,0.1);
     border: 1px solid rgba(255,255,255,0.3);
 }
 
@@ -160,8 +173,12 @@
 
 .gnomenu-categories-workspaces-scrollbox {
     border-image: url("sepa-right.png") 12 12 12 12;
-    height: 464px;
+    height: 540px;
     padding: 9px 2px 9px 0px;
+}
+
+.gnomenu-workspace-thumbnails {
+    spacing: 11px;
 }
 
 .gnomenu-workspaces-background {
@@ -171,7 +188,7 @@
 .gnomenu-categories-box {
     padding-left: 6px;
     padding-right: 6px;
-    spacing: 2px;
+    spacing: 11px;
 }
 
 .gnomenu-category-button {
@@ -181,8 +198,9 @@
 }
 
 .gnomenu-category-button-label {
+    font-size: 11pt;
     font-weight: bold;
-    padding: 4px 10px 5px 10px;
+    padding: 5px 10px 6px 10px;
 }
 
 .gnomenu-category-button:active {
@@ -190,29 +208,28 @@
 
 .gnomenu-category-button:open {
     background-gradient-direction: vertical;
-    background-gradient-start: rgba(255,255,255,0.2);
-    background-gradient-end: rgba(255,255,255,0.2);
-    box-shadow: inset 0px 0px 1px 1px rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.3);
+    background-gradient-start: rgba(255,255,255,0.1);
+    background-gradient-end: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
 }
 
 .gnomenu-category-button:pressed {
     background-gradient-direction: vertical;
-    background-gradient-start: rgba(255,255,255,0.2);
-    background-gradient-end: rgba(255,255,255,0.3);
-    box-shadow: inset 0px 0px 1px 1px rgba(255,255,255,0.06);
+    background-gradient-start: rgba(255,255,255,0.1);
+    background-gradient-end: rgba(255,255,255,0.1);
     border: 1px solid rgba(255,255,255,0.3);
 }
 
 .gnomenu-power-group-box {
-    border-width: 2px;
+    border-width: 1px;
     padding: 10px 0px 0px 0px;
+    spacing: 4px;
 }
 
 .gnomenu-power-group-button {
-    border-radius: 4px;
+    border-radius: 20px;
     border-width: 1px;
-    padding: 4px 11px;
+    padding: 6px 14px;
 }
 
 .gnomenu-power-group-button:active {
@@ -222,15 +239,13 @@
     background-gradient-direction: vertical;
     background-gradient-start: rgba(255,255,255,0.1);
     background-gradient-end: rgba(255,255,255,0.1);
-    box-shadow: inset 0px 0px 1px 1px rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.3);
+    border: 1px solid rgba(255,255,255,0.2);
 }
 
 .gnomenu-power-group-button:pressed {
     background-gradient-direction: vertical;
-    background-gradient-start: rgba(255,255,255,0.2);
-    background-gradient-end: rgba(255,255,255,0.3);
-    box-shadow: inset 0px 0px 1px 1px rgba(255,255,255,0.06);
+    background-gradient-start: rgba(255,255,255,0.1);
+    background-gradient-end: rgba(255,255,255,0.1);
     border: 1px solid rgba(255,255,255,0.3);
 }
 
@@ -245,20 +260,22 @@
 
 .gnomenu-applications-list-box {
     padding-bottom: 0px;
-    padding-left: 48px;
+    padding-left: 78px;
     padding-right: 0px;
-    padding-top: 9px;
+    padding-top: 8px;
+    spacing: 11px;
 }
 
 .gnomenu-application-list-button {
-    padding: 0px 10px;
+    border-radius: 4px;
     border-width: 1px;
-    border-radius: 17px 4px 4px 17px;
-    width: 512px;
+    padding: 0px 10px;
 }
 
 .gnomenu-application-list-button-label {
-    padding: 5px 24px 6px 24px
+    font-size: 10pt;
+    font-weight: bold;
+    padding: 5px 0px 6px 24px
 }
 
 .gnomenu-application-list-button:active {
@@ -268,15 +285,13 @@
     background-gradient-direction: vertical;
     background-gradient-start: rgba(255,255,255,0.1);
     background-gradient-end: rgba(255,255,255,0.1);
-    box-shadow: inset 0px 0px 1px 1px rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.3);
+    border: 1px solid rgba(255,255,255,0.2);
 }
 
 .gnomenu-application-list-button:pressed {
     background-gradient-direction: vertical;
-    background-gradient-start: rgba(255,255,255,0.2);
-    background-gradient-end: rgba(255,255,255,0.3);
-    box-shadow: inset 0px 0px 1px 1px rgba(255,255,255,0.06);
+    background-gradient-start: rgba(255,255,255,0.1);
+    background-gradient-end: rgba(255,255,255,0.1);
     border: 1px solid rgba(255,255,255,0.3);
 }
 
@@ -290,12 +305,14 @@
 .gnomenu-application-grid-button {
     border-width: 1px;
     border-radius: 5px;
+    height: 94px;
     padding: 7px;
     width: 100px;
-    height: 80px;
 }
 
 .gnomenu-application-grid-button-label {
+    font-size: 10pt;
+    font-weight: bold;
     text-align: center;
     width: 64px;
 }
@@ -307,15 +324,13 @@
     background-gradient-direction: vertical;
     background-gradient-start: rgba(255,255,255,0.1);
     background-gradient-end: rgba(255,255,255,0.1);
-    box-shadow: inset 0px 0px 1px 1px rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.3);
+    border: 1px solid rgba(255,255,255,0.2);
 }
 
 .gnomenu-application-grid-button:pressed {
     background-gradient-direction: vertical;
-    background-gradient-start: rgba(255,255,255,0.2);
-    background-gradient-end: rgba(255,255,255,0.3);
-    box-shadow: inset 0px 0px 1px 1px rgba(255,255,255,0.06);
+    background-gradient-start: rgba(255,255,255,0.1);
+    background-gradient-end: rgba(255,255,255,0.1);
     border: 1px solid rgba(255,255,255,0.3);
 }
 
@@ -326,12 +341,12 @@
 }
 
 .gnomenu-selected-app-title {
-    height: 28px;
     font-weight: bold;
     font-size: 16px;
+    height: 28px;
 }
 
 .gnomenu-selected-app-description {
-    height: 20px;
     font-size: 14px;
+    height: 20px;
 }
