@@ -13,6 +13,7 @@ Gno-Menu is a traditional styled full featured Gnome-Shell apps menu, that aims 
 
       a) Recent >  Offers immediate access to all your recently used files and apps.
       b) Web >  Offers all your internet browsing bookmarks in one place.
+      NOTE: Requires installation of this package (gir1.2-gda-5.0)sudo apt-get install gir1.2-gda-5.0.
       c) Places > Offers access to your home directory, bookmarks and external drives.
       NOTE: Workspace thumbnails appear in the application categories area anticipating drag-n-drop action.
 
