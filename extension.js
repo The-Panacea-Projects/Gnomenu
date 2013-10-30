@@ -713,9 +713,12 @@ const PanelMenuButton = new Lang.Class({
             this.thumbnailsBoxFiller.height = 0;
             this.categoriesBox.show();
             this._widthCategoriesBox = 0;
+            this.recentCategory._opened = false;
+            this.webBookmarksCategory._opened = false;
+            this.placesCategory._opened = false;
 
-			// Adjust width of categories box and thumbnails box depending on if favorites shown
-			// Determine width based on user-power group button widths
+            // Adjust width of categories box and thumbnails box depending on if favorites shown
+            // Determine width based on user-power group button widths
             if (settings.get_boolean('hide-favorites')) {
                 if (this.userGroupBox.width > this.groupCategoriesWorkspacesScrollBox.width) {
                     let categoryWidth = this.userGroupBox.width;
