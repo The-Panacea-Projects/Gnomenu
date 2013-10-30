@@ -186,6 +186,10 @@
     padding: 8px 2px 8px 0px;
 }
 
+.gnomenu-workspace-thumbnails {
+    spacing: 11px;
+}
+
 .gnomenu-workspaces-background {
     padding: 5px 12px 5px 11px;
 }
