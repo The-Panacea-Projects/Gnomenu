@@ -137,31 +137,37 @@ const myThumbnailsBox = new Lang.Class({
         this._actualThumbnailWidth = 0;
         if (this._gsCurrentVersion[1] < 7) {
             this.parent();
+            this.actor.remove_style_class_name('workspace-thumbnails');
+            this.actor.add_style_class_name('gnomenu-workspace-thumbnails');
             this._background.remove_style_class_name('workspace-thumbnails-background');
             this._background.add_style_class_name('gnomenu-workspaces-background');
         } else {
             // override GS38 _init to remove create/destroy thumbnails when showing/hiding overview
             this.actor = new Shell.GenericContainer({ reactive: true,
-                                                      style_class: 'workspace-thumbnails',
+                                                      style_class: 'gnomenu-workspace-thumbnails',
                                                       request_mode: Clutter.RequestMode.WIDTH_FOR_HEIGHT });
             this.actor.connect('get-preferred-width', Lang.bind(this, this._getPreferredWidth));
             this.actor.connect('get-preferred-height', Lang.bind(this, this._getPreferredHeight));
             this.actor.connect('allocate', Lang.bind(this, this._allocate));
             this.actor._delegate = this;
 
-            // When we animate the scale, we don't animate the requested size of the thumbnails, rather
-            // we ask for our final size and then animate within that size. This slightly simplifies the
-            // interaction with the main workspace windows (instead of constantly reallocating them
-            // to a new size, they get a new size once, then use the standard window animation code
-            // allocate the windows to their new positions), however it causes problems for drawing
-            // the background and border wrapped around the thumbnail as we animate - we can't just pack
-            // the container into a box and set style properties on the box since that box would wrap
-            // around the final size not the animating size. So instead we fake the background with
-            // an actor underneath the content and adjust the allocation of our children to leave space
-            // for the border and padding of the background actor.
-            this._background = new St.Bin({ style_class: 'gnomenu-workspaces-background' });
-
-            this.actor.add_actor(this._background);
+            if (this._gsCurrentVersion[1] < 10 || (this._gsCurrentVersion[1] == 10 && this._gsCurrentVersion[2] && this._gsCurrentVersion[2] == 0)) {
+                // When we animate the scale, we don't animate the requested size of the thumbnails, rather
+                // we ask for our final size and then animate within that size. This slightly simplifies the
+                // interaction with the main workspace windows (instead of constantly reallocating them
+                // to a new size, they get a new size once, then use the standard window animation code
+                // allocate the windows to their new positions), however it causes problems for drawing
+                // the background and border wrapped around the thumbnail as we animate - we can't just pack
+                // the container into a box and set style properties on the box since that box would wrap
+                // around the final size not the animating size. So instead we fake the background with
+                // an actor underneath the content and adjust the allocation of our children to leave space
+                // for the border and padding of the background actor.
+                //this._background = new St.Bin({ style_class: 'workspace-thumbnails-background' });
+                this._background = new St.Bin({ style_class: 'gnomenu-workspaces-background' });
+                this.actor.add_actor(this._background);
+            } else {
+                this.actor.add_style_class_name('gnomenu-workspaces-background');
+            }
 
             let indicator = new St.Bin({ style_class: 'workspace-thumbnail-indicator' });
 
@@ -399,8 +405,13 @@ const myThumbnailsBox = new Lang.Class({
     },
 
     _getPreferredWidth: function(actor, forHeight, alloc) {
-        // See comment about this._background in _init()
-        let themeNode = this._background.get_theme_node();
+        let themeNode;
+        if (this._gsCurrentVersion[1] < 10 || (this._gsCurrentVersion[1] == 10 && this._gsCurrentVersion[2] && this._gsCurrentVersion[2] == 0)) {
+            // See comment about this._background in _init()
+            themeNode = this._background.get_theme_node();
+        } else {
+            themeNode = this.actor.get_theme_node();
+        }
 
         if (this._thumbnails.length == 0)
             return;
@@ -421,8 +432,13 @@ const myThumbnailsBox = new Lang.Class({
     },
 
     _getPreferredHeight: function(actor, forWidth, alloc) {
-        // See comment about this._background in _init()
-        let themeNode = this._background.get_theme_node();
+        let themeNode;
+        if (this._gsCurrentVersion[1] < 10 || (this._gsCurrentVersion[1] == 10 && this._gsCurrentVersion[2] && this._gsCurrentVersion[2] == 0)) {
+            // See comment about this._background in _init()
+            themeNode = this._background.get_theme_node();
+        } else {
+            themeNode = this.actor.get_theme_node();
+        }
 
         // Note that for getPreferredWidth/Height we cheat a bit and skip propagating
         // the size request to our children because we know how big they are and know
@@ -459,27 +475,40 @@ const myThumbnailsBox = new Lang.Class({
     _allocate: function(actor, box, flags) {
         let rtl = (Clutter.get_default_text_direction () == Clutter.TextDirection.RTL);
 
-        // See comment about this._background in _init()
-        let themeNode = this._background.get_theme_node();
-        let contentBox = themeNode.get_content_box(box);
-
-        if (_DEBUG_) global.log("myThumbnailsBox: _allocate - backgroundNode contentBox h ="+(contentBox.y2-contentBox.y1)+" w = "+(contentBox.x2-contentBox.x1));
-        //this._thumbnailsBoxFiller.height = contentBox.y2 - contentBox.y1;
-        this._actualThumbnailWidth = contentBox.x2 - contentBox.x1;
-
         if (this._thumbnails.length == 0) // not visible
             return;
 
+        let themeNode, contentBox;
+        if (this._gsCurrentVersion[1] < 10 || (this._gsCurrentVersion[1] == 10 && this._gsCurrentVersion[2] && this._gsCurrentVersion[2] == 0)) {
+            // See comment about this._background in _init()
+            themeNode = this._background.get_theme_node();
+            contentBox = themeNode.get_content_box(box);
+        } else {
+            themeNode = this.actor.get_theme_node();
+        }
+
+        if (this._gsCurrentVersion[1] < 10 || (this._gsCurrentVersion[1] == 10 && this._gsCurrentVersion[2] && this._gsCurrentVersion[2] == 0)) {
+            this._actualThumbnailWidth = contentBox.x2 - contentBox.x1;
+        } else {
+            this._actualThumbnailWidth = box.x2 - box.x1;
+        }
+
         let portholeWidth = this._porthole.width;
         let portholeHeight = this._porthole.height;
-        let spacing = this.actor.get_theme_node().get_length('spacing');
 
-//        // Compute the scale we'll need once everything is updated
-//        let nWorkspaces = global.screen.n_workspaces;
-//        let totalSpacing = (nWorkspaces - 1) * spacing;
-//        let avail = (contentBox.y2 - contentBox.y1) - totalSpacing;
+        let spacing;
+        if (this._gsCurrentVersion[1] < 10 || (this._gsCurrentVersion[1] == 10 && this._gsCurrentVersion[2] && this._gsCurrentVersion[2] == 0)) {
+            spacing = this.actor.get_theme_node().get_length('spacing');
+        } else {
+            spacing = themeNode.get_length('spacing');
+        }
 
-        let newScale = (contentBox.x2 - contentBox.x1) / portholeWidth;
+        let newScale;
+        if (this._gsCurrentVersion[1] < 10 || (this._gsCurrentVersion[1] == 10 && this._gsCurrentVersion[2] && this._gsCurrentVersion[2] == 0)) {
+            newScale = (contentBox.x2 - contentBox.x1) / portholeWidth;
+        } else {
+            newScale = (box.x2 - box.x1) / portholeWidth;
+        }
         newScale = Math.min(newScale, MAX_THUMBNAIL_SCALE);
 
         if (newScale != this._targetScale) {
@@ -508,36 +537,28 @@ const myThumbnailsBox = new Lang.Class({
 
         let childBox = new Clutter.ActorBox();
 
-        // The background is horizontally restricted to correspond to the current thumbnail size
-        // but otherwise covers the entire allocation
-        if (rtl) {
-            childBox.x1 = box.x1;
-            childBox.x2 = box.x2 - ((contentBox.x2 - contentBox.x1) - thumbnailWidth);
-        } else {
-            childBox.x1 = box.x1 + ((contentBox.x2 - contentBox.x1) - thumbnailWidth);
-            childBox.x2 = box.x2;
+        if (this._gsCurrentVersion[1] < 10 || (this._gsCurrentVersion[1] == 10 && this._gsCurrentVersion[2] && this._gsCurrentVersion[2] == 0)) {
+            // The background is horizontally restricted to correspond to the current thumbnail size
+            // but otherwise covers the entire allocation
+            if (rtl) {
+                childBox.x1 = box.x1;
+                childBox.x2 = box.x2 - ((contentBox.x2 - contentBox.x1) - thumbnailWidth);
+            } else {
+                childBox.x1 = box.x1 + ((contentBox.x2 - contentBox.x1) - thumbnailWidth);
+                childBox.x2 = box.x2;
+            }
+            childBox.y1 = box.y1;
+            childBox.y2 = box.y2;
+            this._background.allocate(childBox, flags);
         }
-        childBox.y1 = box.y1;
-        childBox.y2 = box.y2;
-        if (_DEBUG_) global.log("myThumbnailsBox: _allocate - childBox height = "+(childBox.y2 - childBox.y1));
-        this._background.allocate(childBox, flags);
-
-        // passingthru67 - moved here from below
-        // when not animating, the workspace position overrides this._indicatorY
-        let indicatorWorkspace = !this._animatingIndicator ? global.screen.get_active_workspace() : null;
-
-        // passingthru67 - move here from below
-        let y = contentBox.y1;
 
         // passingthru67 - conditional for gnome shell 3.4/3.6/# differences
         if (this._gsCurrentVersion[1] < 6) {
             let indicatorY = this._indicatorY;
             // when not animating, the workspace position overrides this._indicatorY
-            // passingthru67 - moved above
-            //let indicatorWorkspace = !this._animatingIndicator ? global.screen.get_active_workspace() : null;
+            let indicatorWorkspace = !this._animatingIndicator ? global.screen.get_active_workspace() : null;
 
-            // passingthru67 - moved above
-            //let y = contentBox.y1;
+            let y = contentBox.y1;
 
             if (this._dropPlaceholderPos == -1) {
                 Meta.later_add(Meta.LaterType.BEFORE_REDRAW, Lang.bind(this, function() {
@@ -616,8 +637,7 @@ const myThumbnailsBox = new Lang.Class({
             let indicatorY1 = this._indicatorY;
             let indicatorY2;
             // when not animating, the workspace position overrides this._indicatorY
-            // passingthru67 - moved above
-            //let indicatorWorkspace = !this._animatingIndicator ? global.screen.get_active_workspace() : null;
+            let indicatorWorkspace = !this._animatingIndicator ? global.screen.get_active_workspace() : null;
             let indicatorThemeNode = this._indicator.get_theme_node();
 
             let indicatorTopFullBorder = indicatorThemeNode.get_padding(St.Side.TOP) + indicatorThemeNode.get_border_width(St.Side.TOP);
@@ -625,8 +645,12 @@ const myThumbnailsBox = new Lang.Class({
             let indicatorLeftFullBorder = indicatorThemeNode.get_padding(St.Side.LEFT) + indicatorThemeNode.get_border_width(St.Side.LEFT);
             let indicatorRightFullBorder = indicatorThemeNode.get_padding(St.Side.RIGHT) + indicatorThemeNode.get_border_width(St.Side.RIGHT);
 
-            // passingthru67 - moved above
-            //let y = contentBox.y1;
+            let y;
+            if (this._gsCurrentVersion[1] < 10 || (this._gsCurrentVersion[1] == 10 && this._gsCurrentVersion[2] && this._gsCurrentVersion[2] == 0)) {
+                y = contentBox.y1;
+            } else {
+                y = box.y1;
+            }
 
             if (this._dropPlaceholderPos == -1) {
                 Meta.later_add(Meta.LaterType.BEFORE_REDRAW, Lang.bind(this, function() {
@@ -641,12 +665,22 @@ const myThumbnailsBox = new Lang.Class({
                     y += spacing - Math.round(thumbnail.collapseFraction * spacing);
 
                 let x1, x2;
-                if (rtl) {
-                    x1 = contentBox.x1 + slideOffset * thumbnail.slidePosition;
-                    x2 = x1 + thumbnailWidth;
+                if (this._gsCurrentVersion[1] < 10 || (this._gsCurrentVersion[1] == 10 && this._gsCurrentVersion[2] && this._gsCurrentVersion[2] == 0)) {
+                    if (rtl) {
+                        x1 = contentBox.x1 + slideOffset * thumbnail.slidePosition;
+                        x2 = x1 + thumbnailWidth;
+                    } else {
+                        x1 = contentBox.x2 - thumbnailWidth + slideOffset * thumbnail.slidePosition;
+                        x2 = x1 + thumbnailWidth;
+                    }
                 } else {
-                    x1 = contentBox.x2 - thumbnailWidth + slideOffset * thumbnail.slidePosition;
-                    x2 = x1 + thumbnailWidth;
+                    if (rtl) {
+                        x1 = box.x1 + slideOffset * thumbnail.slidePosition;
+                        x2 = x1 + thumbnailWidth;
+                    } else {
+                        x1 = box.x2 - thumbnailWidth + slideOffset * thumbnail.slidePosition;
+                        x2 = x1 + thumbnailWidth;
+                    }
                 }
 
                 if (i == this._dropPlaceholderPos) {
@@ -691,12 +725,22 @@ const myThumbnailsBox = new Lang.Class({
                 y += thumbnailHeight - Math.round(thumbnailHeight * thumbnail.collapseFraction);
             }
 
-            if (rtl) {
-                childBox.x1 = contentBox.x1;
-                childBox.x2 = contentBox.x1 + thumbnailWidth;
+            if (this._gsCurrentVersion[1] < 10 || (this._gsCurrentVersion[1] == 10 && this._gsCurrentVersion[2] && this._gsCurrentVersion[2] == 0)) {
+                if (rtl) {
+                    childBox.x1 = contentBox.x1;
+                    childBox.x2 = contentBox.x1 + thumbnailWidth;
+                } else {
+                    childBox.x1 = contentBox.x2 - thumbnailWidth;
+                    childBox.x2 = contentBox.x2;
+                }
             } else {
-                childBox.x1 = contentBox.x2 - thumbnailWidth;
-                childBox.x2 = contentBox.x2;
+                if (rtl) {
+                    childBox.x1 = box.x1;
+                    childBox.x2 = box.x1 + thumbnailWidth;
+                } else {
+                    childBox.x1 = box.x2 - thumbnailWidth;
+                    childBox.x2 = box.x2;
+                }
             }
             childBox.x1 -= indicatorLeftFullBorder;
             childBox.x2 += indicatorRightFullBorder;
