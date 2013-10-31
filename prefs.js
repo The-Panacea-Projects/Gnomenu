@@ -403,11 +403,11 @@ const GnoMenuPreferencesWidget = new GObject.Class({
                     let selected = widget.get_active();
                     if (selected == 2) {
                         favoritesIconSizeCombo.set_active(iconSizes.indexOf(24));
-                        appsListIconSizeCombo.set_active(iconSizes.indexOf(22));
+                        appsListIconSizeCombo.set_active(iconSizes.indexOf(16));
                         appsGridIconSizeCombo.set_active(iconSizes.indexOf(32));
                     } else if (selected == 1) {
                         favoritesIconSizeCombo.set_active(iconSizes.indexOf(32));
-                        appsListIconSizeCombo.set_active(iconSizes.indexOf(32));
+                        appsListIconSizeCombo.set_active(iconSizes.indexOf(24));
                         appsGridIconSizeCombo.set_active(iconSizes.indexOf(48));
                     } else {
                         favoritesIconSizeCombo.set_active(iconSizes.indexOf(48));
