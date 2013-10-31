@@ -3,12 +3,12 @@
 
 .gnomenu-panel-button {
     margin: 0px;
-    padding: 0px 12px;
+    padding: 0px 10px;
 }
 
 .gnomenu-panel-menu-button {
     margin: 0px;
-    padding: 0px 12px;
+    padding: 0px 10px;
 }
 
 .gnomenu-panel-menu-button:active {
@@ -35,13 +35,13 @@
     background-gradient-start: rgba(255,255,255,0.1);
     background-gradient-end: rgba(255,255,255,0.1);
     border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 20px;
+    border-radius: 22px;
 }
 
 .gnomenu-user-group-button {
     border-radius: 20px;
     border-width: 1px;
-    padding: 4px 17px 5px 17px;
+    padding: 5px 17px;
 }
 
 .gnomenu-user-group-button:insensitive {
@@ -81,7 +81,7 @@
     background-gradient-start: rgba(255,255,255,0.1);
     background-gradient-end: rgba(255,255,255,0.1);
     border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 20px;
+    border-radius: 22px;
     spacing: 4px;
 }
 
@@ -111,19 +111,6 @@
     border: 1px solid rgba(255,255,255,0.3);
 }
 
-.gnomenu-search-box {
-}
-
-#gnomenuMenuMainbox #searchEntry {
-    background-gradient-start: rgb(200,200,200);
-    background-gradient-end: white;
-    background-gradient-direction: vertical;
-    box-shadow: inset 0px 2px 4px rgba(0,0,0,0.6);
-    border: 1px solid rgba(255,255,255,0.3);
-    height: 16px;
-    width: 230px;
-}
-
 .gnomenu-favorites-scrollbox {
     background-gradient-direction: vertical;
     background-gradient-start: rgba(255,255,255,0.1);
@@ -148,6 +135,7 @@
     background-gradient-direction: vertical;
     background-gradient-start: rgba(255,255,255,0.2);
     background-gradient-end: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.2);
 }
 
 .gnomenu-favorite-button:open {
@@ -204,6 +192,7 @@
     background-gradient-direction: vertical;
     background-gradient-start: rgba(255,255,255,0.2);
     background-gradient-end: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.2);
 }
 
 .gnomenu-category-button:open {
@@ -236,6 +225,7 @@
     background-gradient-direction: vertical;
     background-gradient-start: rgba(255,255,255,0.2);
     background-gradient-end: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.2);
 }
 
 .gnomenu-power-group-button:open {
@@ -255,7 +245,7 @@
 .gnomenu-applications-scrollbox {
     border-image: url("b-panel-r.png") 12 12 12 12;
     padding: 0px 2px 4px 2px;
-    width: 602px;
+    width: 606px;
 }
 
 .gnomenu-applications-box-wrapper {
@@ -285,6 +275,7 @@
     background-gradient-direction: vertical;
     background-gradient-start: rgba(255,255,255,0.2);
     background-gradient-end: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.2);
 }
 
 .gnomenu-application-list-button:open {
@@ -310,7 +301,7 @@
 
 .gnomenu-application-grid-button {
     border-width: 1px;
-    border-radius: 5px;
+    border-radius: 7px;
     height: 94px;
     padding: 7px;
     width: 100px;
@@ -327,6 +318,7 @@
     background-gradient-direction: vertical;
     background-gradient-start: rgba(255,255,255,0.2);
     background-gradient-end: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.2);
 }
 
 .gnomenu-application-grid-button:open {
