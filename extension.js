@@ -553,10 +553,9 @@ const PanelButton = new Lang.Class({
 
         // Add label to button
         let label = new St.Label({ text: nameText});
-        if (gsVersion[1] > 8) {
-            label.add_style_class_name('gnomenu-panel-label');
-        }
-        this._box.add_actor(label);
+        let labelWrapper = new St.Bin();
+        labelWrapper.set_child(label);
+        this._box.add(labelWrapper, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
     },
 
     // Override _onStyleChanged function
@@ -586,11 +585,8 @@ const PanelMenuButton = new Lang.Class({
         this.actor.add_actor(this._box);
 
         // Add icon to button
-        let icon = new St.Icon({ gicon: null, style_class: 'system-status-icon' });
-        if (gsVersion[1] > 8) {
-            icon.add_style_class_name('gnomenu-panel-menu-icon');
-        }
-        this._box.add_actor(icon);
+        let icon = new St.Icon({ gicon: null, style_class: 'system-status-icon gnomenu-panel-menu-icon' });
+        this._box.add(icon, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         if (settings.get_boolean('custom-panel-menu-icon')) {
             icon.icon_name = settings.get_strv('custom-panel-menu-icon-name')[0];
         } else {
@@ -603,10 +599,9 @@ const PanelMenuButton = new Lang.Class({
             labelText = settings.get_strv('custom-panel-menu-label-text')[0];
         }
         let label = new St.Label({ text: ' '+labelText});
-        if (gsVersion[1] > 8) {
-            label.add_style_class_name('gnomenu-panel-menu-label');
-        }
-        this._box.add_actor(label);
+        let labelWrapper = new St.Bin();
+        labelWrapper.set_child(label);
+        this._box.add(labelWrapper, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
 
         this.menu.connect('open-state-changed', Lang.bind(this, this._onOpenStateToggled));
 
