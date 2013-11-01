@@ -49,13 +49,16 @@ msgstr ""
 msgid "Web"
 msgstr ""
 
-msgid "Search Firefox bookmarks disabled"
+msgid "Gno-Menu: Search Firefox bookmarks disabled"
 msgstr ""
 
-msgid "Search Midori bookmarks disabled"
+msgid "If you want to search Firefox bookmarks, you must install the required pacakages: libgir1.2-gda-5.0 (Ubuntu) or libgda-sqlite (Fedora)"
 msgstr ""
 
-msgid "The library 'Gda-5.0.typelib' could not be imported. If you want to search in Firefox bookmarks, you must install the package that contains the file 'Gda-5.0.typelib'."
+msgid "Gno-Menu: Search Midori bookmarks disabled"
+msgstr ""
+
+msgid "If you want to search Midori bookmarks, you must install the required pacakages: libgir1.2-gda-5.0 (Ubuntu) or libgda-sqlite (Fedora)"
 msgstr ""
 
 msgid "Logout User"
@@ -109,10 +112,10 @@ msgstr ""
 msgid "<b>Panel Settings</b>"
 msgstr ""
 
-msgid "Remove View button from panel"
+msgid "Disable activities hot corner"
 msgstr ""
 
-msgid "Disable View button hot corner"
+msgid "Remove View button from panel"
 msgstr ""
 
 msgid "Use custom label for View button"
@@ -160,3 +163,5 @@ msgstr ""
 msgid "Size of Application Grid icons"
 msgstr ""
 
+msgid "Hide favorites section of menu"
+msgstr ""
