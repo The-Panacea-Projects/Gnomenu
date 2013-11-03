@@ -115,14 +115,17 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         });
         let customViewLabel = new Gtk.CheckButton({
             label: _("Use custom label for View button"),
-            margin_left: 20
+            margin_left: 20,
+            hexpand: true
         });
         customViewLabel.set_active(this.settings.get_boolean('custom-panel-view-label'));
         customViewLabel.connect('toggled', Lang.bind(this, function(check) {
             this.settings.set_boolean('custom-panel-view-label', check.get_active());
         }));
 
-        let customViewLabelEntry = new Gtk.Entry();
+        let customViewLabelEntry = new Gtk.Entry({
+            halign: Gtk.Align.END
+        });
         customViewLabelEntry.set_width_chars(15);
         customViewLabelEntry.set_text(this.settings.get_strv('custom-panel-view-label-text')[0]);
         customViewLabelEntry.connect('changed', Lang.bind(this, function(entry) {
@@ -179,14 +182,17 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         });
         let customAppsLabel = new Gtk.CheckButton({
             label: _("Use custom label for Apps button"),
-            margin_left: 20
+            margin_left: 20,
+            hexpand: true
         });
         customAppsLabel.set_active(this.settings.get_boolean('custom-panel-apps-label'));
         customAppsLabel.connect('toggled', Lang.bind(this, function(check) {
             this.settings.set_boolean('custom-panel-apps-label', check.get_active());
         }));
 
-        let customAppsLabelEntry = new Gtk.Entry();
+        let customAppsLabelEntry = new Gtk.Entry({
+            halign: Gtk.Align.END
+        });
         customAppsLabelEntry.set_width_chars(15);
         customAppsLabelEntry.set_text(this.settings.get_strv('custom-panel-apps-label-text')[0]);
         customAppsLabelEntry.connect('changed', Lang.bind(this, function(entry) {
@@ -263,14 +269,17 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         });
         let disableMenuKeyboardAccel = new Gtk.CheckButton({
             label: _("Disable Menu button keyboard shortcut"),
-            margin_left: 20
+            margin_left: 20,
+            hexpand: true
         });
         disableMenuKeyboardAccel.set_active(this.settings.get_boolean('disable-panel-menu-keyboard'));
         disableMenuKeyboardAccel.connect('toggled', Lang.bind(this, function(check) {
             this.settings.set_boolean('disable-panel-menu-keyboard', check.get_active());
         }));
 
-        let keyboardAccelEntry = new Gtk.Entry();
+        let keyboardAccelEntry = new Gtk.Entry({
+            halign: Gtk.Align.END
+        });
         keyboardAccelEntry.set_width_chars(15);
         keyboardAccelEntry.set_text(this.settings.get_strv('panel-menu-keyboard-accelerator')[0]);
         keyboardAccelEntry.connect('changed', Lang.bind(this, function(entry) {
@@ -301,14 +310,17 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         });
         let customMenuLabel = new Gtk.CheckButton({
             label: _("Use custom label for Menu button"),
-            margin_left: 20
+            margin_left: 20,
+            hexpand: true
         });
         customMenuLabel.set_active(this.settings.get_boolean('custom-panel-menu-label'));
         customMenuLabel.connect('toggled', Lang.bind(this, function(check) {
             this.settings.set_boolean('custom-panel-menu-label', check.get_active());
         }));
 
-        let customMenuLabelEntry = new Gtk.Entry();
+        let customMenuLabelEntry = new Gtk.Entry({
+            halign: Gtk.Align.END
+        });
         customMenuLabelEntry.set_width_chars(15);
         customMenuLabelEntry.set_text(this.settings.get_strv('custom-panel-menu-label-text')[0]);
         customMenuLabelEntry.connect('changed', Lang.bind(this, function(entry) {
@@ -331,14 +343,17 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         });
         let customMenuIcon = new Gtk.CheckButton({
             label: _("Use custom icon for Menu button"),
-            margin_left: 20
+            margin_left: 20,
+            hexpand: true
         });
         customMenuIcon.set_active(this.settings.get_boolean('custom-panel-menu-icon'));
         customMenuIcon.connect('toggled', Lang.bind(this, function(check) {
             this.settings.set_boolean('custom-panel-menu-icon', check.get_active());
         }));
 
-        let customMenuIconEntry = new Gtk.Entry();
+        let customMenuIconEntry = new Gtk.Entry({
+            halign: Gtk.Align.END
+        });
         customMenuIconEntry.set_width_chars(20);
         customMenuIconEntry.set_text(this.settings.get_strv('custom-panel-menu-icon-name')[0]);
         customMenuIconEntry.connect('changed', Lang.bind(this, function(entry) {
