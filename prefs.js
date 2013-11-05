@@ -354,7 +354,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         let customMenuIconEntry = new Gtk.Entry({
             halign: Gtk.Align.END
         });
-        customMenuIconEntry.set_width_chars(20);
+        customMenuIconEntry.set_width_chars(15);
         customMenuIconEntry.set_text(this.settings.get_strv('custom-panel-menu-icon-name')[0]);
         customMenuIconEntry.connect('changed', Lang.bind(this, function(entry) {
             let iconName = entry.get_text();
@@ -408,7 +408,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         });
         let menuLayoutLabel = new Gtk.Label({label: _("Menu layout style"), hexpand:true, xalign:0});
         let menuLayoutCombo = new Gtk.ComboBoxText({halign:Gtk.Align.END});
-            menuLayoutCombo.set_size_request(180, -1);
+            menuLayoutCombo.set_size_request(120, -1);
             menuLayoutCombo.append_text(_('Large'));
             menuLayoutCombo.append_text(_('Medium'));
             menuLayoutCombo.append_text(_('Small'));
@@ -445,7 +445,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         });
         let startupAppsDisplayLabel = new Gtk.Label({label: _("Startup applications to display"), hexpand:true, xalign:0});
         let startupAppsDisplayCombo = new Gtk.ComboBoxText({halign:Gtk.Align.END});
-            startupAppsDisplayCombo.set_size_request(180, -1);
+            startupAppsDisplayCombo.set_size_request(120, -1);
             startupAppsDisplayCombo.append_text(_('All'));
             startupAppsDisplayCombo.append_text(_('Favorites'));
             //startupAppsDisplayCombo.append_text(_('Places'));
