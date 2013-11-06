@@ -183,14 +183,14 @@
 .gnomenu-category-button {
     border-radius: 4px;
     border-width: 1px;
+    height: 26px;
     padding: 0px;
 }
 
 .gnomenu-category-button-label {
     font-size: 10pt;
     font-weight: bold;
-    height: 21px;
-    padding: 2px 10px 3px 10px;
+    padding: 3px 10px;
 }
 
 .gnomenu-category-button:active {
@@ -267,13 +267,14 @@
 .gnomenu-application-list-button {
     border-radius: 4px;
     border-width: 1px;
+    height: 26px;
     padding: 0px 10px;
 }
 
 .gnomenu-application-list-button-label {
-    font-size: 9pt;
+    font-size: 10pt;
     font-weight: bold;
-    padding: 4px 0px 5px 24px
+    padding: 3px 0px 3px 24px
 }
 
 .gnomenu-application-list-button:active {
