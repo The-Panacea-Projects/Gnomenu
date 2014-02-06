@@ -26,6 +26,15 @@ const Gettext = imports.gettext.domain('gnomenu');
 const _ = Gettext.gettext;
 const N_ = function(x) { return x; }
 
+const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Convenience = Me.imports.convenience;
+let settings = Convenience.getSettings('org.gnome.shell.extensions.gnomenu');
+
+const ShortcutsDisplay = {
+    FAVORITES: 0,
+    PLACES: 1
+};
+
 const PlaceInfo = new Lang.Class({
     Name: 'PlaceInfo',
 
@@ -65,10 +74,14 @@ const PlaceInfo = new Lang.Class({
     getIcon: function() {
         if (_DEBUG_) global.log("PlacesInfo: getIcon");
         try {
-            //let info = this.file.query_info('standard::symbolic-icon', 0, null);
-            //return info.get_symbolic_icon();
-            let info = this.file.query_info("standard::icon", 0, null);
-            return info.get_icon();
+            let info;
+            if (settings.get_enum('shortcuts-display') == ShortcutsDisplay.PLACES) {
+                info = this.file.query_info('standard::symbolic-icon', 0, null);
+                return info.get_symbolic_icon();
+            } else {
+                info = this.file.query_info("standard::icon", 0, null);
+                return info.get_icon();
+            }
         } catch(e if e instanceof Gio.IOErrorEnum) {
             // return a generic icon for this kind
             if (_DEBUG_) global.log("PlacesInfo: getIcon error - returning generic icon");
@@ -110,9 +123,11 @@ const PlaceDeviceInfo = new Lang.Class({
     },
 
     getIcon: function() {
-        //return this._mount.get_symbolic_icon();
-        return this._mount.get_icon();
-        
+        if (settings.get_enum('shortcuts-display') == ShortcutsDisplay.PLACES)
+            return this._mount.get_symbolic_icon();
+        else
+            return this._mount.get_icon();
+
     }
 });
 
@@ -154,7 +169,7 @@ const PlacesManager = new Lang.Class({
             }
         }
         if (_DEBUG_) global.log("PlacesManager: _init - default directories added to special places");
-        
+
         /*
         * Show devices, code more or less ported from nautilus-places-sidebar.c
         */
@@ -216,14 +231,18 @@ const PlacesManager = new Lang.Class({
         this._places.network = [];
 
         /* Add standard places */
+        let symbolic = "";
+        if (settings.get_enum('shortcuts-display') == ShortcutsDisplay.PLACES) {
+            symbolic = "-symbolic";
+        }
         this._places.devices.push(new PlaceInfo('devices',
                                                 Gio.File.new_for_path('/'),
-                                                _("File System"),
-                                                'drive-harddisk'));
+                                                _("Computer"),
+                                                'drive-harddisk'+symbolic));
         this._places.network.push(new PlaceInfo('network',
                                                 Gio.File.new_for_uri('network:///'),
                                                 _("Browse network"),
-                                                'network-workgroup'));
+                                                'network-workgroup'+symbolic));
 
         if (_DEBUG_) global.log("PlacesManager: _updateMounts - standard places added");
 
@@ -261,7 +280,7 @@ const PlacesManager = new Lang.Class({
         }
 
         if (_DEBUG_) global.log("PlacesManager: _updateMounts - volumes assiated with drives added");
-        
+
         /* add mounts that have no volume (/etc/mtab mounts, ftp, sftp,...) */
         let mounts = this._volumeMonitor.get_mounts();
         for(let i = 0; i < mounts.length; i++) {
@@ -364,19 +383,19 @@ const PlacesManager = new Lang.Class({
     getPlace: function (kind) {
         return this._places[kind];
     },
-    
+
     getAllPlaces: function() {
         return this._places['special'].concat(this._places['bookmarks'], this._places['devices']);
     },
-    
+
     getDefaultPlaces: function() {
         return this._places['special'];
     },
-    
+
     getBookmarks: function() {
         return this._places['bookmarks'];
     },
-    
+
     getMounts: function() {
         return this._places['devices'];
     }
