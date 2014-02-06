@@ -641,10 +641,12 @@ const PanelMenuButton = new Lang.Class({
         this.actor.add_actor(this._box);
 
         // Add icon to button
-        let icon = new St.Icon({ gicon: null, style_class: 'system-status-icon gnomenu-panel-menu-icon' });
-        this._box.add(icon, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         if (settings.get_boolean('use-panel-menu-icon')) {
-            icon.icon_name = settings.get_strv('panel-menu-icon-name')[0];
+            let icon = new St.Icon({ gicon: null, style_class: 'system-status-icon gnomenu-panel-menu-icon' });
+            this._box.add(icon, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
+            if (settings.get_boolean('use-panel-menu-icon')) {
+                icon.icon_name = settings.get_strv('panel-menu-icon-name')[0];
+            }
         }
 
         // Add label to button
@@ -676,14 +678,7 @@ const PanelMenuButton = new Lang.Class({
         this._searchWebErrorsShown = false;
         this._session = new GnomeSession.SessionManager();
         this.recentManager = Gtk.RecentManager.get_default();
-        if (PlaceDisplay) {
-            this.placesManager = new PlaceDisplay.PlacesManager();
-            if (_DEBUG_) global.log("PanelMenuButton: _init - initialized PlacesManager")
-        } else {
-            this.placesManager = null;
-            if (_DEBUG_) global.log("PanelMenuButton: _init - no PlacesManager")
-        }
-
+        this.placesManager = null;
         this._display();
     },
 
@@ -899,7 +894,17 @@ const PanelMenuButton = new Lang.Class({
         }
     },
 
-    _selectAllPlaces : function(button) {
+    _selectFavorites: function(button) {
+        this.resetSearch();
+        this._clearApplicationsBox(button);
+
+        let favorites = this.favorites;
+        this._displayApplications(favorites);
+
+        this.toggleCategoryWorkspaceMode(CategoryWorkspaceMode.WORKSPACE);
+    },
+
+    _selectAllPlaces: function(button) {
         this.resetSearch();
         this._clearApplicationsBox(button);
 
@@ -1798,7 +1803,7 @@ const PanelMenuButton = new Lang.Class({
         // UserGroupBox
         this.userGroupBox = new St.BoxLayout({ style_class: 'gnomenu-user-group-box' });
 
-        // Load recent category
+        // Create 'recent' category button
         this.recentCategory = new GroupButton( null, null, _('Recent'), {style_class: 'gnomenu-user-group-button'});
         this.recentCategory.actor.connect('enter-event', Lang.bind(this, function() {
             this.recentCategory.actor.add_style_pseudo_class('active');
@@ -1823,9 +1828,10 @@ const PanelMenuButton = new Lang.Class({
                 this.webBookmarksCategory.actor.remove_style_pseudo_class('open');
                 this.placesCategory.actor.remove_style_pseudo_class('open');
                 this.toggleCategoryWorkspaceMode(CategoryWorkspaceMode.CATEGORY);
-                let allApplicationsCategory = this.categoriesBox.get_first_child()._delegate;
-                this._clearApplicationsBox(allApplicationsCategory);
-                this._displayApplications(this._listApplications(null));
+                this._resetDisplayApplicationsToStartup();
+                //let allApplicationsCategory = this.categoriesBox.get_first_child()._delegate;
+                //this._clearApplicationsBox(allApplicationsCategory);
+                //this._displayApplications(this._listApplications(null));
             } else {
                 this.recentCategory._opened = true;
                 this.webBookmarksCategory._opened = false;
@@ -1839,7 +1845,7 @@ const PanelMenuButton = new Lang.Class({
             }
         }));
 
-        // Load 'webBookmarks' category
+        // Create 'webBookmarks' category button
         this.webBookmarksCategory = new GroupButton( null, null, _('Web'), {style_class: 'gnomenu-user-group-button'});
         this.webBookmarksCategory.actor.connect('enter-event', Lang.bind(this, function() {
             this.webBookmarksCategory.actor.add_style_pseudo_class('active');
@@ -1864,9 +1870,10 @@ const PanelMenuButton = new Lang.Class({
                 this.recentCategory.actor.remove_style_pseudo_class('open');
                 this.placesCategory.actor.remove_style_pseudo_class('open');
                 this.toggleCategoryWorkspaceMode(CategoryWorkspaceMode.CATEGORY);
-                let allApplicationsCategory = this.categoriesBox.get_first_child()._delegate;
-                this._clearApplicationsBox(allApplicationsCategory);
-                this._displayApplications(this._listApplications(null));
+                this._resetDisplayApplicationsToStartup();
+                //let allApplicationsCategory = this.categoriesBox.get_first_child()._delegate;
+                //this._clearApplicationsBox(allApplicationsCategory);
+                //this._displayApplications(this._listApplications(null));
             } else {
                 this.webBookmarksCategory._opened = true;
                 this.recentCategory._opened = false;
@@ -1880,8 +1887,12 @@ const PanelMenuButton = new Lang.Class({
             }
         }));
 
-        // Load 'all places' category
-        this.placesCategory = new GroupButton( null, null, _('Places'), {style_class: 'gnomenu-user-group-button'});
+        // Create 'places-favorites' category button
+        if (settings.get_enum('shortcuts-display') == ShortcutsDisplay.PLACES) {
+            this.placesCategory = new GroupButton( null, null, _('Favorites'), {style_class: 'gnomenu-user-group-button'});
+        } else {
+            this.placesCategory = new GroupButton( null, null, _('Places'), {style_class: 'gnomenu-user-group-button'});
+        }
         this.placesCategory.actor.connect('enter-event', Lang.bind(this, function() {
             this.placesCategory.actor.add_style_pseudo_class('active');
             this.selectedAppTitle.set_text(this.placesCategory.label.get_text());
@@ -1905,9 +1916,10 @@ const PanelMenuButton = new Lang.Class({
                 this.webBookmarksCategory.actor.remove_style_pseudo_class('open');
                 this.recentCategory.actor.remove_style_pseudo_class('open');
                 this.toggleCategoryWorkspaceMode(CategoryWorkspaceMode.CATEGORY);
-                let allApplicationsCategory = this.categoriesBox.get_first_child()._delegate;
-                this._clearApplicationsBox(allApplicationsCategory);
-                this._displayApplications(this._listApplications(null));
+                this._resetDisplayApplicationsToStartup();
+                //let allApplicationsCategory = this.categoriesBox.get_first_child()._delegate;
+                //this._clearApplicationsBox(allApplicationsCategory);
+                //this._displayApplications(this._listApplications(null));
             } else {
                 this.placesCategory._opened = true;
                 this.webBookmarksCategory._opened = false;
@@ -1915,7 +1927,11 @@ const PanelMenuButton = new Lang.Class({
                 this.placesCategory.actor.add_style_pseudo_class('open');
                 this.webBookmarksCategory.actor.remove_style_pseudo_class('open');
                 this.recentCategory.actor.remove_style_pseudo_class('open');
-                this._selectAllPlaces(this.placesCategory);
+                if (settings.get_enum('shortcuts-display') == ShortcutsDisplay.PLACES) {
+                    this._selectFavorites(this.placesCategory);
+                } else {
+                    this._selectAllPlaces(this.placesCategory);
+                }
                 this.selectedAppTitle.set_text(this.placesCategory.label.get_text());
                 this.selectedAppDescription.set_text('');
             }
@@ -2028,7 +2044,7 @@ const PanelMenuButton = new Lang.Class({
             this.favoritesScrollBox.hide();
         }
 
-        //Load favorites
+        //Load Favorites
         if (_DEBUG_) global.log("PanelMenuButton: _display - start loading favorites");
         this.favorites = [];
         let launchers = global.settings.get_strv('favorite-apps');
@@ -2044,6 +2060,15 @@ const PanelMenuButton = new Lang.Class({
         for (let i=0; i<mostUsed.length; i++) {
             if (mostUsed[i].get_app_info().should_show())
                 this.frequentApps.push(mostUsed[i]);
+        }
+
+        // Load Places
+        if (PlaceDisplay) {
+            this.placesManager = new PlaceDisplay.PlacesManager();
+            if (_DEBUG_) global.log("PanelMenuButton: _display - initialized PlacesManager")
+        } else {
+            this.placesManager = null;
+            if (_DEBUG_) global.log("PanelMenuButton: _display - no PlacesManager")
         }
 
         // Load Shortcuts Panel
