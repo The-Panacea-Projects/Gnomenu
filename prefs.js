@@ -562,7 +562,6 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             startupAppsDisplayCombo.set_size_request(120, -1);
             startupAppsDisplayCombo.append_text(_('All'));
             startupAppsDisplayCombo.append_text(_('Frequent'));
-            startupAppsDisplayCombo.append_text(_('Favorites'));
             startupAppsDisplayCombo.set_active(this.settings.get_enum('startup-apps-display'));
             startupAppsDisplayCombo.connect('changed', Lang.bind (this, function(widget) {
                     this.settings.set_enum('startup-apps-display', widget.get_active());

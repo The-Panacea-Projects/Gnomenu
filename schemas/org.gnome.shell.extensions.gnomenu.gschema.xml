@@ -16,7 +16,6 @@
   <enum id='org.gnome.shell.extensions.gnomenu.appsDisplay'>
     <value value='0' nick='All'/>
     <value value='1' nick='Frequent'/>
-    <value value='2' nick='Favorites'/>
   </enum>
   <enum id='org.gnome.shell.extensions.gnomenu.selectMethod'>
     <value value='0' nick='Hover'/>
@@ -104,7 +103,7 @@
       <description>Disable the menu button keyboard shortcut</description>
     </key>
     <key enum="org.gnome.shell.extensions.gnomenu.menuLayout" name="menu-layout">
-      <default>'Large'</default>
+      <default>'Medium'</default>
       <summary>Size and layout of the applications menu</summary>
       <description>Size and layout of the applications menu</description>
     </key>
@@ -124,7 +123,7 @@
       <description>Startup applications view mode</description>
     </key>
     <key enum="org.gnome.shell.extensions.gnomenu.appsDisplay" name="startup-apps-display">
-      <default>'All'</default>
+      <default>'Frequent'</default>
       <summary>Startup applications to display</summary>
       <description>Startup applications to display</description>
     </key>
