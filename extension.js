@@ -55,16 +55,9 @@ const Gettext = imports.gettext.domain(Me.metadata['gettext-domain']);
 const _ = Gettext.gettext;
 
 const gsVersion = Config.PACKAGE_VERSION.split('.');
-let PlaceDisplay;
-if (gsVersion[1] > 4) {
-    PlaceDisplay = Me.imports.placeDisplay;
-} else {
-    PlaceDisplay = imports.ui.placeDisplay;
-}
+const PlaceDisplay = Me.imports.placeDisplay;
+const LoginManager = imports.misc.loginManager;
 
-if (gsVersion[1] > 6) {
-    const LoginManager = imports.misc.loginManager;
-}
 
 const PREFS_DIALOG = "gnome-shell-extension-prefs gnomenu@panacier.gmail.com";
 
@@ -154,7 +147,7 @@ const CategoryListButton = new Lang.Class({
     Name: 'GnoMenu.CategoryListButton',
 
     _init: function (dir, altNameText, altIconName) {
-        let style = (gsVersion[1] > 4) ? 'popup-menu-item popup-submenu-menu-item gnomenu-category-button' : 'gnomenu-category-button';
+        let style = "popup-menu-item popup-submenu-menu-item gnomenu-category-button";
         this.actor = new St.Button({ reactive: true, style_class: style, x_align: St.Align.START, y_align: St.Align.START });
         this.actor._delegate = this;
         this.buttonbox = new St.BoxLayout();
@@ -195,7 +188,7 @@ const FavoriteButton = new Lang.Class({
     _init: function (app, appType) {
         this._app = app;
         this._type = appType;
-        let style = (gsVersion[1] > 4) ? 'popup-menu-item gnomenu-favorite-button' : 'gnomenu-favorite-button';
+        let style = "popup-menu-item gnomenu-favorite-button";
         this.actor = new St.Button({ reactive: true, style_class: style, x_align: St.Align.MIDDLE, y_align: St.Align.START });
         this.actor._delegate = this;
         this._iconSize = (settings.get_int('shortcuts-icon-size') > 0) ? settings.get_int('shortcuts-icon-size') : 32;
@@ -205,16 +198,8 @@ const FavoriteButton = new Lang.Class({
             this.icon = app.create_icon_texture(this._iconSize);
             this.label = new St.Label({ text: app.get_name(), style_class: 'gnomenu-application-grid-button-label' });
         } else if (appType == ApplicationType.PLACE) {
-            if (gsVersion[1] > 4) {
-                this.icon = new St.Icon({gicon: app.icon, icon_size: this._iconSize});
-                if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: this._iconSize, icon_type: St.IconType.FULLCOLOR});
-            } else {
-                if (app.uri)
-                    this.icon = St.TextureCache.get_default().load_gicon(null, app.icon, this._iconSize);
-                else
-                    this.icon = app.iconFactory(this._iconSize);
-                if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: this._iconSize, icon_type: St.IconType.FULLCOLOR});
-            }
+            this.icon = new St.Icon({gicon: app.icon, icon_size: this._iconSize});
+            if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: this._iconSize, icon_type: St.IconType.FULLCOLOR});
             this.label = new St.Label({ text: app.name, style_class: 'gnomenu-application-grid-button-label' });
         } else if (appType == ApplicationType.RECENT) {
             let gicon = Gio.content_type_get_icon(app.mime);
@@ -255,14 +240,7 @@ const FavoriteButton = new Lang.Class({
         if (this._type == ApplicationType.APPLICATION) {
             appIcon = this._app.create_icon_texture(this._iconSize);
         } else if (this._type == ApplicationType.PLACE) {
-            if (gsVersion[1] > 4) {
-                appIcon = new St.Icon({gicon: this._app.icon, icon_size: this._iconSize});
-            } else {
-                if (this._app.uri)
-                    appIcon = St.TextureCache.get_default().load_gicon(null, this._app.icon, this._iconSize);
-                else
-                    appIcon = this._app.iconFactory(this._iconSize);
-            }
+            appIcon = new St.Icon({gicon: this._app.icon, icon_size: this._iconSize});
         } else if (this._type == ApplicationType.RECENT) {
             let gicon = Gio.content_type_get_icon(this._app.mime);
             appIcon = new St.Icon({gicon: gicon, icon_size: this._iconSize});
@@ -315,7 +293,7 @@ const AppListButton = new Lang.Class({
     _init: function (app, appType) {
         this._app = app;
         this._type = appType;
-        let style = (gsVersion[1] > 4) ? 'popup-menu-item gnomenu-application-list-button' : 'gnomenu-application-list-button';
+        let style = "popup-menu-item gnomenu-application-list-button";
         this.actor = new St.Button({ reactive: true, style_class: style, x_align: St.Align.START, y_align: St.Align.MIDDLE});
         this.actor._delegate = this;
         this._iconSize = (settings.get_int('apps-list-icon-size') > 0) ? settings.get_int('apps-list-icon-size') : 28;
@@ -325,16 +303,8 @@ const AppListButton = new Lang.Class({
             this.icon = app.create_icon_texture(this._iconSize);
             this.label = new St.Label({ text: app.get_name(), style_class: 'gnomenu-application-list-button-label' });
         } else if (appType == ApplicationType.PLACE) {
-            if (gsVersion[1] > 4) {
-                this.icon = new St.Icon({gicon: app.icon, icon_size: this._iconSize});
-                if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: this._iconSize, icon_type: St.IconType.FULLCOLOR});
-            } else {
-                if (app.uri)
-                    this.icon = St.TextureCache.get_default().load_gicon(null, app.icon, this._iconSize);
-                else
-                    this.icon = app.iconFactory(this._iconSize);
-                if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: this._iconSize, icon_type: St.IconType.FULLCOLOR});
-            }
+            this.icon = new St.Icon({gicon: app.icon, icon_size: this._iconSize});
+            if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: this._iconSize, icon_type: St.IconType.FULLCOLOR});
             this.label = new St.Label({ text: app.name, style_class: 'gnomenu-application-list-button-label' });
         } else if (appType == ApplicationType.RECENT) {
             let gicon = Gio.content_type_get_icon(app.mime);
@@ -374,14 +344,7 @@ const AppListButton = new Lang.Class({
         if (this._type == ApplicationType.APPLICATION) {
             appIcon = this._app.create_icon_texture(this._iconSize);
         } else if (this._type == ApplicationType.PLACE) {
-            if (gsVersion[1] > 4) {
-                appIcon = new St.Icon({gicon: this._app.icon, icon_size: this._iconSize});
-            } else {
-                if (this._app.uri)
-                    appIcon = St.TextureCache.get_default().load_gicon(null, this._app.icon, this._iconSize);
-                else
-                    appIcon = this._app.iconFactory(this._iconSize);
-            }
+            appIcon = new St.Icon({gicon: this._app.icon, icon_size: this._iconSize});
         } else if (this._type == ApplicationType.RECENT) {
             let gicon = Gio.content_type_get_icon(this._app.mime);
             appIcon = new St.Icon({gicon: gicon, icon_size: this._iconSize});
@@ -435,7 +398,7 @@ const AppGridButton = new Lang.Class({
     _init: function(app, appType, includeText) {
         this._app = app;
         this._type = appType;
-        let style = (gsVersion[1] > 4) ? 'popup-menu-item gnomenu-application-grid-button' : 'gnomenu-application-grid-button';
+        let style = "popup-menu-item gnomenu-application-grid-button";
         this.actor = new St.Button({ reactive: true, style_class: style, x_align: St.Align.MIDDLE, y_align: St.Align.MIDDLE});
         this.actor._delegate = this;
         this._iconSize = (settings.get_int('apps-grid-icon-size') > 0) ? settings.get_int('apps-grid-icon-size') : 64;
@@ -445,16 +408,8 @@ const AppGridButton = new Lang.Class({
             this.icon = app.create_icon_texture(this._iconSize);
             this.label = new St.Label({ text: app.get_name(), style_class: 'gnomenu-application-grid-button-label' });
         } else if (appType == ApplicationType.PLACE) {
-            if (gsVersion[1] > 4) {
-                this.icon = new St.Icon({gicon: app.icon, icon_size: this._iconSize});
-                if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: this._iconSize, icon_type: St.IconType.FULLCOLOR});
-            } else {
-                if (app.uri)
-                    this.icon = St.TextureCache.get_default().load_gicon(null, app.icon, this._iconSize);
-                else
-                    this.icon = app.iconFactory(this._iconSize);
-                if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: this._iconSize, icon_type: St.IconType.FULLCOLOR});
-            }
+            this.icon = new St.Icon({gicon: app.icon, icon_size: this._iconSize});
+            if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: this._iconSize, icon_type: St.IconType.FULLCOLOR});
             this.label = new St.Label({ text: app.name, style_class: 'gnomenu-application-grid-button-label' });
         } else if (appType == ApplicationType.RECENT) {
             let gicon = Gio.content_type_get_icon(app.mime);
@@ -498,14 +453,7 @@ const AppGridButton = new Lang.Class({
         if (this._type == ApplicationType.APPLICATION) {
             appIcon = this._app.create_icon_texture(this._iconSize);
         } else if (this._type == ApplicationType.PLACE) {
-            if (gsVersion[1] > 4) {
-                appIcon = new St.Icon({gicon: this._app.icon, icon_size: this._iconSize});
-            } else {
-                if (this._app.uri)
-                    appIcon = St.TextureCache.get_default().load_gicon(null, this._app.icon, this._iconSize);
-                else
-                    appIcon = this._app.iconFactory(this._iconSize);
-            }
+            appIcon = new St.Icon({gicon: this._app.icon, icon_size: this._iconSize});
         } else if (this._type == ApplicationType.RECENT) {
             let gicon = Gio.content_type_get_icon(this._app.mime);
             appIcon = new St.Icon({gicon: gicon, icon_size: this._iconSize});
@@ -558,7 +506,7 @@ const GroupButton = new Lang.Class({
 
     _init: function(iconName, iconSize, labelText, params) {
         this._opened = false;
-        let style = (gsVersion[1] > 4) ? 'popup-menu-item popup-submenu-menu-item' : '';
+        let style = "popup-menu-item popup-submenu-menu-item";
         this.actor = new St.Button({ reactive: true, style_class: style, x_align: St.Align.MIDDLE, y_align: St.Align.MIDDLE });
         this.actor.add_style_class_name(params.style_class);
 
@@ -716,12 +664,10 @@ const PanelMenuButton = new Lang.Class({
 
             // Fixes issue in GS 3.8 where search entry is not focused
             // for some reason, GS 3.8 steals the focus back
-            if (gsVersion[1] > 6) {
-                if (this._menuToggleTimeoutId > 0)
-                    Mainloop.source_remove(this._menuToggleTimeoutId);
+            if (this._menuToggleTimeoutId > 0)
+                Mainloop.source_remove(this._menuToggleTimeoutId);
 
-                this._menuToggleTimeoutId = Mainloop.timeout_add(100, Lang.bind(this, this.resetSearch));
-            }
+            this._menuToggleTimeoutId = Mainloop.timeout_add(100, Lang.bind(this, this.resetSearch));
 
             // Load Startup Applications category
             this._selectedItemIndex = null;
@@ -796,10 +742,9 @@ const PanelMenuButton = new Lang.Class({
             this._clearApplicationSelections();
             this._clearApplicationsBox();
             global.stage.set_key_focus(null);
-            if (gsVersion[1] > 6) {
-                if (this._menuToggleTimeoutId > 0)
-                    Mainloop.source_remove(this._menuToggleTimeoutId);
-            }
+
+            if (this._menuToggleTimeoutId > 0)
+                Mainloop.source_remove(this._menuToggleTimeoutId);
 
             this.thumbnailsBox._destroyThumbnails();
         }
@@ -839,9 +784,8 @@ const PanelMenuButton = new Lang.Class({
                 this._widthCategoriesBox = this.categoriesBox.width;
             }
             this.categoriesBox.hide();
-            if (gsVersion[1] > 8) {
-                this.categoriesBox.width = 0;
-            }
+            this.categoriesBox.width = 0;
+
             this.thumbnailsBox.actor.show();
             //this.thumbnailsBoxFiller.width = this.categoriesBox.width;
             this.thumbnailsBoxFiller.height = this.thumbnailsBox.actor.height;
@@ -1667,11 +1611,7 @@ const PanelMenuButton = new Lang.Class({
                 this.searchEntry.disconnect(this._searchIconClickedId);
 
             this._searchIconClickedId = 0;
-            if (gsVersion[1] > 6) {
-                this.searchEntry.set_secondary_icon(null);
-            } else {
-                this.searchEntry.set_secondary_icon(this._searchInactiveIcon);
-            }
+            this.searchEntry.set_secondary_icon(null);
         }
         if (!this.searchActive) {
             if (this._searchTimeoutId > 0) {
@@ -2020,11 +1960,8 @@ const PanelMenuButton = new Lang.Class({
                                      hint_text: _("Type to search..."),
                                      track_hover: true,
                                      can_focus: true });
-        if (gsVersion[1] > 6) {
-            this.searchEntry.set_primary_icon(this._searchInactiveIcon);
-        } else {
-            this.searchEntry.set_secondary_icon(this._searchInactiveIcon);
-        }
+
+        this.searchEntry.set_primary_icon(this._searchInactiveIcon);
         this.searchBox.add(this.searchEntry, {expand: true, x_align:St.Align.START, y_align:St.Align.START});
         this.searchActive = false;
         this.searchEntryText = this.searchEntry.clutter_text;
@@ -2064,7 +2001,11 @@ const PanelMenuButton = new Lang.Class({
 
         // Load Places
         if (PlaceDisplay) {
-            this.placesManager = new PlaceDisplay.PlacesManager();
+            if (settings.get_enum('shortcuts-display') == ShortcutsDisplay.PLACES) {
+                this.placesManager = new PlaceDisplay.PlacesManager(true);
+            } else {
+                this.placesManager = new PlaceDisplay.PlacesManager(false);
+            }
             if (_DEBUG_) global.log("PanelMenuButton: _display - initialized PlacesManager")
         } else {
             this.placesManager = null;
@@ -2311,40 +2252,16 @@ const PanelMenuButton = new Lang.Class({
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
             this.menu.close();
-            if (gsVersion[1] > 6) {
-                //NOTE: alternate is to check if (Main.panel.statusArea.userMenu._haveSuspend) is true
-                let loginManager = LoginManager.getLoginManager();
-                loginManager.canSuspend(Lang.bind(this,
-                    function(result) {
-                        if (result) {
-                            Main.overview.hide();
-                            loginManager.suspend();
-                        }
-                }));
-            } else if (gsVersion[1] > 4) {
-                let statusMenu = Main.panel.statusArea.userMenu;
-                if (statusMenu._upClient.get_can_suspend()) {
-                    Main.overview.hide();
-                    let LOCK_ENABLED_KEY = 'lock-enabled';
-                    if (statusMenu._screenSaverSettings.get_boolean(LOCK_ENABLED_KEY)) {
-                        let tmpId = Main.screenShield.connect('lock-screen-shown', Lang.bind(this, function() {
-                            Main.screenShield.disconnect(tmpId);
-                            statusMenu._upClient.suspend_sync(null);
-                        }));
-                        Main.screenShield.lock(true);
-                    } else {
-                        statusMenu._upClient.suspend_sync(null);
+
+            //NOTE: alternate is to check if (Main.panel.statusArea.userMenu._haveSuspend) is true
+            let loginManager = LoginManager.getLoginManager();
+            loginManager.canSuspend(Lang.bind(this,
+                function(result) {
+                    if (result) {
+                        Main.overview.hide();
+                        loginManager.suspend();
                     }
-                }
-            } else {
-                let statusMenu = Main.panel._statusArea.userMenu;
-                if (statusMenu._upClient.get_can_suspend()) {
-                    Main.overview.hide();
-                    statusMenu._screenSaverProxy.LockRemote(Lang.bind(this, function() {
-                        statusMenu._upClient.suspend_sync(null);
-                    }));
-                }
-            }
+            }));
         }));
         let systemShutdown = new GroupButton('shutdown-symbolic', powerGroupButtonIconSize, null, {style_class: 'gnomenu-power-group-button'});
         systemShutdown.actor.connect('enter-event', Lang.bind(this, function() {
@@ -2415,14 +2332,8 @@ const PanelMenuButton = new Lang.Class({
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
             this.menu.close();
-            if (gsVersion[1] > 4) {
-                Main.overview.hide();
-                Main.screenShield.lock(true);
-            } else {
-                Main.overview.hide();
-                let statusMenu = Main.panel._statusArea.userMenu;
-                statusMenu._screenSaverProxy.LockRemote();
-            }
+            Main.overview.hide();
+            Main.screenShield.lock(true);
         }));
 
         let powerGroupBoxSpacer1 = new St.Label({text: ''});
@@ -2600,15 +2511,10 @@ const GnoMenuButton = new Lang.Class({
         this._hotspotId = null;
         if (_DEBUG_) global.log("GnoMenu: _clearAll removed and destroyed hotspot from gnomenu actor");
 
-        if (gsVersion[1] > 4) {
-            if (this.viewButton) this.actor.remove_actor(this.viewButton.container);
-            if (this.appsButton) this.actor.remove_actor(this.appsButton.container);
-            if (this.appsMenuButton) this.actor.remove_actor(this.appsMenuButton.container);
-        } else {
-            if (this.viewButton) this.actor.remove_actor(this.viewButton.actor);
-            if (this.appsButton) this.actor.remove_actor(this.appsButton.actor);
-            if (this.appsMenuButton) this.actor.remove_actor(this.appsMenuButton.actor);
-        }
+        if (this.viewButton) this.actor.remove_actor(this.viewButton.container);
+        if (this.appsButton) this.actor.remove_actor(this.appsButton.container);
+        if (this.appsMenuButton) this.actor.remove_actor(this.appsMenuButton.container);
+
         if (_DEBUG_) global.log("GnoMenu: _clearAll removed panel buttons from gnomenu actor");
 
         if (this.viewButton) this.viewButton.actor.destroy();
@@ -2621,11 +2527,7 @@ const GnoMenuButton = new Lang.Class({
 
         if (this.appsMenuButton) {
             // Unbind menu accelerator key
-            if (gsVersion[1] > 6) {
-                Main.wm.removeKeybinding('panel-menu-keyboard-accelerator');
-            } else {
-                global.display.remove_keybinding('panel-menu-keyboard-accelerator');
-            }
+            Main.wm.removeKeybinding('panel-menu-keyboard-accelerator');
             this.appsMenuButton.destroy();
         }
         this.appsMenuButton = null;
@@ -2675,93 +2577,62 @@ const GnoMenuButton = new Lang.Class({
 
             // Bind menu accelerator key
             if (!settings.get_boolean('disable-panel-menu-keyboard')) {
-                if (gsVersion[1] > 6) {
-                    Main.wm.addKeybinding('panel-menu-keyboard-accelerator', settings, Meta.KeyBindingFlags.NONE, Shell.KeyBindingMode.NORMAL,
-                        Lang.bind(this, function() {
-                            if (this.appsMenuButton) {
-                                if (!this.appsMenuButton.menu.isOpen)
-                                    this.appsMenuButton.menu.toggle();
-                            }
-                        })
-                    );
-                } else {
-                    global.display.add_keybinding('panel-menu-keyboard-accelerator', settings, Meta.KeyBindingFlags.NONE,
-                        Lang.bind(this, function() {
-                            if (this.appsMenuButton) {
-                                if (!this.appsMenuButton.menu.isOpen)
-                                    this.appsMenuButton.menu.toggle();
-                            }
-                        })
-                    );
-                }
+                Main.wm.addKeybinding('panel-menu-keyboard-accelerator', settings, Meta.KeyBindingFlags.NONE, Shell.KeyBindingMode.NORMAL,
+                    Lang.bind(this, function() {
+                        if (this.appsMenuButton) {
+                            if (!this.appsMenuButton.menu.isOpen)
+                                this.appsMenuButton.menu.toggle();
+                        }
+                    })
+                );
             }
         }
 
         // Add buttons to GnoMenu actor
-        if (gsVersion[1] > 4) {
-            if (this.viewButton) this.actor.add(this.viewButton.container);
-            if (this.appsButton) this.actor.add(this.appsButton.container);
-            if (this.appsMenuButton) this.actor.add(this.appsMenuButton.container);
-        } else {
-            if (this.viewButton) this.actor.add(this.viewButton.actor);
-            if (this.appsButton) this.actor.add(this.appsButton.actor);
-            if (this.appsMenuButton) this.actor.add(this.appsMenuButton.actor);
-        }
+        if (this.viewButton) this.actor.add(this.viewButton.container);
+        if (this.appsButton) this.actor.add(this.appsButton.container);
+        if (this.appsMenuButton) this.actor.add(this.appsMenuButton.container);
         if (_DEBUG_) global.log("GnoMenu: _display added buttons to gnomenu actor");
 
         // Disable or Enable Hot Corner
         if (settings.get_boolean('disable-activities-hotcorner')) {
             if (_DEBUG_) global.log("GnoMenu: _display disabled hot corner");
-            if (gsVersion[1] > 6) {
-                let primary = Main.layoutManager.primaryIndex;
-                let corner = Main.layoutManager.hotCorners[primary];
-                if (corner && corner.actor) {
-                    // This is GS 3.8+ fallback corner. Need to hide actor
-                    // to keep from triggering overview
-                    corner.actor.hide();
-                } else {
-                    // Need to destroy corner to remove pressure barrier
-                    // to keep from triggering overview
-                    if (corner && corner._pressureBarrier) {
-                        Main.layoutManager.hotCorners.splice(primary, 1);
-                        corner.destroy();
-                    }
-                }
+            let primary = Main.layoutManager.primaryIndex;
+            let corner = Main.layoutManager.hotCorners[primary];
+            if (corner && corner.actor) {
+                // This is GS 3.8+ fallback corner. Need to hide actor
+                // to keep from triggering overview
+                corner.actor.hide();
             } else {
-                // Do nothing. GS34-GS36 hot corner is disabled when activities button is hidden
+                // Need to destroy corner to remove pressure barrier
+                // to keep from triggering overview
+                if (corner && corner._pressureBarrier) {
+                    Main.layoutManager.hotCorners.splice(primary, 1);
+                    corner.destroy();
+                }
             }
         } else {
             if (_DEBUG_) global.log("GnoMenu: _display enabled hot corner");
-            if (gsVersion[1] > 6) {
-                let primary = Main.layoutManager.primaryIndex;
-                let corner = Main.layoutManager.hotCorners[primary];
-                if (corner && corner.actor) {
-                    // This is Gs 3.8+ fallback corner. Need to show actor
-                    // to trigger overview
-                    corner.actor.show();
-                } else {
-                    // Need to create corner to setup pressure barrier
-                    // to trigger overview
-                    if (corner && corner._pressureBarrier) {
-                        if (_DEBUG_) global.log("corner & pressureBarrier exist ");
-                    } else {
-                        if (_DEBUG_) global.log("corner & pressureBarrier don't exist - updateHotCorners");
-                        Main.layoutManager._updateHotCorners();
-                    }
-                }
+            let primary = Main.layoutManager.primaryIndex;
+            let corner = Main.layoutManager.hotCorners[primary];
+            if (corner && corner.actor) {
+                // This is Gs 3.8+ fallback corner. Need to show actor
+                // to trigger overview
+                corner.actor.show();
             } else {
-                this._hotCorner = new Layout.HotCorner;
-                this._positionHotCorner();
-                this.actor.add_actor(this._hotCorner.actor);
+                // Need to create corner to setup pressure barrier
+                // to trigger overview
+                if (corner && corner._pressureBarrier) {
+                    if (_DEBUG_) global.log("corner & pressureBarrier exist ");
+                } else {
+                    if (_DEBUG_) global.log("corner & pressureBarrier don't exist - updateHotCorners");
+                    Main.layoutManager._updateHotCorners();
+                }
             }
         }
 
         // Add menu to panel menu manager
-        if (gsVersion[1] > 4) {
-            if (this.appsMenuButton) Main.panel.menuManager.addMenu(this.appsMenuButton.menu);
-        } else {
-            if (this.appsMenuButton) Main.panel._menus.addMenu(this.appsMenuButton.menu);
-        }
+        if (this.appsMenuButton) Main.panel.menuManager.addMenu(this.appsMenuButton.menu);
     },
 
     _setHotSpotPosition: function() {
@@ -2803,21 +2674,12 @@ const GnoMenuButton = new Lang.Class({
     // handler for when view panel button clicked
     _onViewButtonRelease: function() {
         if (_DEBUG_) global.log("_onViewButtonRelease");
-        let viewSelector = gsVersion[1] < 10 ? Main.overview._viewSelector : Main.overview.viewSelector;
         if (Main.overview.visible) {
-            if (gsVersion[1] > 4) { // GS 3.6+
-                if (!viewSelector._showAppsButton.checked) {
-                    Main.overview.hide();
-                    viewSelector._showAppsButton.checked = false;
-                } else {
-                    viewSelector._showAppsButton.checked = false;
-                }
-            } else { // GS 3.4
-                if (viewSelector._activeTab.id == "windows") {
-                    Main.overview.hide();
-                } else {
-                    viewSelector.switchTab("windows");
-                }
+            if (!Main.overview.viewSelector._showAppsButton.checked) {
+                Main.overview.hide();
+                Main.overview.viewSelector._showAppsButton.checked = false;
+            } else {
+                Main.overview.viewSelector._showAppsButton.checked = false;
             }
         } else {
             Main.overview.show();
@@ -2827,29 +2689,16 @@ const GnoMenuButton = new Lang.Class({
     // handler for when apps panel button clicked
     _onAppsButtonRelease: function() {
         if (_DEBUG_) global.log("_onAppsButtonRelease");
-        let viewSelector = gsVersion[1] < 10 ? Main.overview._viewSelector : Main.overview.viewSelector;
         if (Main.overview.visible) {
-            if (gsVersion[1] > 4) { // GS 3.6+
-                if (viewSelector._showAppsButton.checked) {
-                    Main.overview.hide();
-                    viewSelector._showAppsButton.checked = false;
-                } else {
-                    viewSelector._showAppsButton.checked = true;
-                }
-            } else { // GS 3.4
-                if (viewSelector._activeTab.id == "applications") {
-                    Main.overview.hide();
-                } else {
-                    viewSelector.switchTab("applications");
-                }
+            if (Main.overview.viewSelector._showAppsButton.checked) {
+                Main.overview.hide();
+                Main.overview.viewSelector._showAppsButton.checked = false;
+            } else {
+                Main.overview.viewSelector._showAppsButton.checked = true;
             }
         } else {
             Main.overview.show();
-            if (gsVersion[1] > 4) {
-                viewSelector._showAppsButton.checked = true;
-            } else {
-                viewSelector.switchTab("applications");
-            }
+            Main.overview.viewSelector._showAppsButton.checked = true;
         }
     },
 
@@ -2912,8 +2761,6 @@ const GnoMenuButton = new Lang.Class({
 
         // Get css filename
         let filename = "gnomenu" + ml + ".css";
-        if (gsVersion[1] < 6)
-            filename = "gnomenu-gs34" + ml + ".css";
 
         // Get new theme stylesheet
         let themeStylesheet = Main._defaultCssStylesheet;
@@ -3038,11 +2885,7 @@ const GnoMenuButton = new Lang.Class({
         St.ThemeContext.get_for_stage(global.stage).disconnect(this._themeChangedId);
 
         // Unbind menu accelerator key
-        if (gsVersion[1] > 6) {
-            Main.wm.removeKeybinding('panel-menu-keyboard-accelerator');
-        } else {
-            global.display.remove_keybinding('panel-menu-keyboard-accelerator');
-        }
+        Main.wm.removeKeybinding('panel-menu-keyboard-accelerator');
 
         // Destroy main clutter actor: this should be sufficient
         // From clutter documentation:
@@ -3067,8 +2910,6 @@ function loadStylesheet() {
 
     // Get css filename
     let filename = "gnomenu" + ml + ".css";
-    if (gsVersion[1] < 6)
-        filename = "gnomenu-gs34" + ml + ".css";
 
     // Get current theme stylesheet
     let themeStylesheet = Main._defaultCssStylesheet;
@@ -3138,26 +2979,15 @@ function enable() {
 
     // Remove default Activities Button
     if (hideDefaultActivitiesButton) {
-        if (gsVersion[1] > 4) {
-            let button = Main.panel.statusArea['activities'];
-            if (button != null) {
-                button.actor.hide();
-            }
-        } else {
-            let button = Main.panel._activitiesButton;
-            if (button != null) {
-                button.actor.hide();
-            }
+        let button = Main.panel.statusArea['activities'];
+        if (button != null) {
+            button.actor.hide();
         }
     }
 
     // Add GnoMenu to panel
     GnoMenu = new GnoMenuButton();
-    if (gsVersion[1] > 4) {
-        Main.panel._leftBox.insert_child_at_index(GnoMenu.actor, 0);
-    } else {
-        Main.panel._leftBox.insert_child_at_index(GnoMenu.actor, 0);
-    }
+    Main.panel._leftBox.insert_child_at_index(GnoMenu.actor, 0);
 }
 
 function disable() {
@@ -3168,16 +2998,9 @@ function disable() {
 
     //Restore default Activities Button
     if (hideDefaultActivitiesButton) {
-        if (gsVersion[1] > 4) {
-            let button = Main.panel.statusArea['activities'];
-            if (button) {
-                button.actor.show();
-            }
-        } else {
-            let button = Main.panel._activitiesButton;
-            if (button) {
-                button.actor.show();
-            }
+        let button = Main.panel.statusArea['activities'];
+        if (button) {
+            button.actor.show();
         }
     }
 
