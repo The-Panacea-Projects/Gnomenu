@@ -249,7 +249,8 @@ const PlacesManager = new Lang.Class({
             for(let j = 0; j < volumes.length; j++) {
                 let mount = volumes[j].get_mount();
                 let kind = 'devices';
-                if (volumes[j].get_identifier('class').indexOf('network') >= 0)
+                let identifier = volumes[j].get_identifier('class');
+                if (identifier && identifier.indexOf('network') >= 0)
                     kind = 'network';
 
                 if(mount != null)
@@ -266,7 +267,8 @@ const PlacesManager = new Lang.Class({
                 continue;
 
             let kind = 'devices';
-            if (volumes[i].get_identifier('class').indexOf('network') >= 0)
+            let identifier = volumes[i].get_identifier('class');
+            if (identifier && identifier.indexOf('network') >= 0)
                 kind = 'network';
 
             let mount = volumes[i].get_mount();
