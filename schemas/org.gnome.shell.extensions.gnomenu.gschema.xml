@@ -38,7 +38,7 @@
       <description>Set the custom view button label</description>
     </key>
     <key type="b" name="use-panel-view-icon">
-      <default>false</default>
+      <default>true</default>
       <summary>Use custom view button icon</summary>
       <description>Use custom view button icon</description>
     </key>
@@ -58,7 +58,7 @@
       <description>Set the custom apps button label</description>
     </key>
     <key type="b" name="use-panel-apps-icon">
-      <default>false</default>
+      <default>true</default>
       <summary>Use custom apps button icon</summary>
       <description>Use custom apps button icon</description>
     </key>
@@ -78,7 +78,7 @@
       <description>Set the custom menu button icon name</description>
     </key>
     <key type="b" name="use-panel-menu-icon">
-      <default>false</default>
+      <default>true</default>
       <summary>Use custom menu button icon</summary>
       <description>Use custom menu button icon</description>
     </key>
