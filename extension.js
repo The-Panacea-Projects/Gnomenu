@@ -2578,6 +2578,7 @@ const GnoMenuButton = new Lang.Class({
         this.actor = new St.BoxLayout({ name: 'gnomenuPanelBox', style_class: 'gnomenu-panel-box' });
         this.actor.connect('notify::allocation', Lang.bind(this, this._onGnoMenuPanelButtonAllocate));
 
+        this._setHotSpotTimeoutId = 0;
         this._display();
     },
 
@@ -2763,32 +2764,40 @@ const GnoMenuButton = new Lang.Class({
         }
     },
 
-    // function called when allocating GnoMenuButton .. to position appsMenuButton hotspot
-    // ISSUE: provides a safety net just in case the allocation cycle below isn't ready
-    _onGnoMenuPanelButtonAllocate: function() {
+    _setHotSpotPosition: function() {
         if (this._hotspotId && this.appsMenuButton) {
             let [x, y] = this.appsMenuButton.actor.get_transformed_position();
             let [w, h] = this.appsMenuButton.actor.get_size();
             x = Math.floor(x);
             w = Math.floor(w);
-            if (_DEBUG_) global.log("_onGnoMenuPanelButtonAllocate x="+x+"  w="+w);
+            if (_DEBUG_) global.log("_setHotSpotPosition x="+x+"  w="+w);
+            global.log("_setHotSpotPosition x="+x+"  w="+w);
             this._hotspot.set_position(x, 0);
             this._hotspot.set_size(w, 1);
         }
+
+        if (this._setHotSpotTimeoutId > 0)
+            Mainloop.source_remove(this._setHotSpotTimeoutId);
+
+        this._setHotSpotTimeoutId = 0;
+    },
+
+    // function called when allocating GnoMenuButton .. to position appsMenuButton hotspot
+    // ISSUE: provides a safety net just in case the allocation cycle below isn't ready
+    _onGnoMenuPanelButtonAllocate: function() {
+        //if (this._setHotSpotTimeoutId > 0)
+            //Mainloop.source_remove(this._setHotSpotTimeoutId);
+
+        //this._setHotSpotTimeoutId = Mainloop.timeout_add(500, Lang.bind(this, this._setHotSpotPosition));
     },
 
     // function called when allocating appsMenuButton .. to position appsMenuButton hotspot
     // ISSUE: provides a safety net just in case the allocation cycle above isn't ready
     _onAppsMenuButtonAllocate: function() {
-        if (this._hotspotId && this.appsMenuButton) {
-            let [x, y] = this.appsMenuButton.actor.get_transformed_position();
-            let [w, h] = this.appsMenuButton.actor.get_size();
-            x = Math.floor(x);
-            w = Math.floor(w);
-            if (_DEBUG_) global.log("_onAppsMenuButtonAllocate x="+x+"  w="+w);
-            this._hotspot.set_position(x, 0);
-            this._hotspot.set_size(w, 1);
-        }
+        if (this._setHotSpotTimeoutId > 0)
+            Mainloop.source_remove(this._setHotSpotTimeoutId);
+
+        this._setHotSpotTimeoutId = Mainloop.timeout_add(500, Lang.bind(this, this._setHotSpotPosition));
     },
 
     // handler for when view panel button clicked
