@@ -26,14 +26,7 @@ const Gettext = imports.gettext.domain('gnomenu');
 const _ = Gettext.gettext;
 const N_ = function(x) { return x; }
 
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Convenience = Me.imports.convenience;
-let settings = Convenience.getSettings('org.gnome.shell.extensions.gnomenu');
-
-const ShortcutsDisplay = {
-    FAVORITES: 0,
-    PLACES: 1
-};
+let UseSymbolicIcons = false;
 
 const PlaceInfo = new Lang.Class({
     Name: 'PlaceInfo',
@@ -75,7 +68,7 @@ const PlaceInfo = new Lang.Class({
         if (_DEBUG_) global.log("PlacesInfo: getIcon");
         try {
             let info;
-            if (settings.get_enum('shortcuts-display') == ShortcutsDisplay.PLACES) {
+            if (UseSymbolicIcons) {
                 info = this.file.query_info('standard::symbolic-icon', 0, null);
                 return info.get_symbolic_icon();
             } else {
@@ -123,7 +116,7 @@ const PlaceDeviceInfo = new Lang.Class({
     },
 
     getIcon: function() {
-        if (settings.get_enum('shortcuts-display') == ShortcutsDisplay.PLACES)
+        if (UseSymbolicIcons)
             return this._mount.get_symbolic_icon();
         else
             return this._mount.get_icon();
@@ -142,7 +135,9 @@ const DEFAULT_DIRECTORIES = [
 const PlacesManager = new Lang.Class({
     Name: 'PlacesManager',
 
-    _init: function() {
+    _init: function(useSymbolic) {
+        UseSymbolicIcons = useSymbolic;
+
         this._places = {
             special: [],
             devices: [],
@@ -232,7 +227,7 @@ const PlacesManager = new Lang.Class({
 
         /* Add standard places */
         let symbolic = "";
-        if (settings.get_enum('shortcuts-display') == ShortcutsDisplay.PLACES) {
+        if (UseSymbolicIcons) {
             symbolic = "-symbolic";
         }
         this._places.devices.push(new PlaceInfo('devices',
