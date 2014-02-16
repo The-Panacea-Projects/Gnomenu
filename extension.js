@@ -2659,7 +2659,7 @@ const GnoMenuButton = new Lang.Class({
         //if (this._setHotSpotTimeoutId > 0)
             //Mainloop.source_remove(this._setHotSpotTimeoutId);
 
-        //this._setHotSpotTimeoutId = Mainloop.timeout_add(500, Lang.bind(this, this._setHotSpotPosition));
+        //this._setHotSpotTimeoutId = Mainloop.timeout_add(1000, Lang.bind(this, this._setHotSpotPosition));
     },
 
     // function called when allocating appsMenuButton .. to position appsMenuButton hotspot
@@ -2668,7 +2668,7 @@ const GnoMenuButton = new Lang.Class({
         if (this._setHotSpotTimeoutId > 0)
             Mainloop.source_remove(this._setHotSpotTimeoutId);
 
-        this._setHotSpotTimeoutId = Mainloop.timeout_add(500, Lang.bind(this, this._setHotSpotPosition));
+        this._setHotSpotTimeoutId = Mainloop.timeout_add(1000, Lang.bind(this, this._setHotSpotPosition));
     },
 
     // handler for when view panel button clicked
