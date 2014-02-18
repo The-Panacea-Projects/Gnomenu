@@ -2656,15 +2656,17 @@ const GnoMenuButton = new Lang.Class({
     // function called when allocating GnoMenuButton .. to position appsMenuButton hotspot
     // ISSUE: provides a safety net just in case the allocation cycle below isn't ready
     _onGnoMenuPanelButtonAllocate: function() {
-        //if (this._setHotSpotTimeoutId > 0)
-            //Mainloop.source_remove(this._setHotSpotTimeoutId);
+        global.log("_onGnoMenuPanelButtonAllocate");
+        if (this._setHotSpotTimeoutId > 0)
+            Mainloop.source_remove(this._setHotSpotTimeoutId);
 
-        //this._setHotSpotTimeoutId = Mainloop.timeout_add(1000, Lang.bind(this, this._setHotSpotPosition));
+        this._setHotSpotTimeoutId = Mainloop.timeout_add(1000, Lang.bind(this, this._setHotSpotPosition));
     },
 
     // function called when allocating appsMenuButton .. to position appsMenuButton hotspot
     // ISSUE: provides a safety net just in case the allocation cycle above isn't ready
     _onAppsMenuButtonAllocate: function() {
+        global.log("_onAppsMenuButtonAllocate");
         if (this._setHotSpotTimeoutId > 0)
             Mainloop.source_remove(this._setHotSpotTimeoutId);
 
