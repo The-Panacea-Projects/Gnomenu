@@ -178,17 +178,17 @@ const CategoryListButton = new Lang.Class({
 
 
 /* =========================================================================
-/* name:    FavoriteButton
+/* name:    ShortcutButton
  * @desc    A button with an icon that holds app info
  * ========================================================================= */
 
-const FavoriteButton = new Lang.Class({
-    Name: 'GnoMenu.FavoriteButton',
+const ShortcutButton = new Lang.Class({
+    Name: 'GnoMenu.ShortcutButton',
 
     _init: function (app, appType) {
         this._app = app;
         this._type = appType;
-        let style = "popup-menu-item gnomenu-favorite-button";
+        let style = "popup-menu-item gnomenu-shortcut-button";
         this.actor = new St.Button({ reactive: true, style_class: style, x_align: St.Align.MIDDLE, y_align: St.Align.START });
         this.actor._delegate = this;
         this._iconSize = (settings.get_int('shortcuts-icon-size') > 0) ? settings.get_int('shortcuts-icon-size') : 32;
@@ -198,6 +198,10 @@ const FavoriteButton = new Lang.Class({
             this.icon = app.create_icon_texture(this._iconSize);
             this.label = new St.Label({ text: app.get_name(), style_class: 'gnomenu-application-grid-button-label' });
         } else if (appType == ApplicationType.PLACE) {
+            // Adjust 'places' symbolic icons by reducing their size
+            // and setting a special class for button padding
+            this._iconSize -= 4;
+            this.actor.add_style_class_name('gnomenu-shortcut-symbolic-button');
             this.icon = new St.Icon({gicon: app.icon, icon_size: this._iconSize});
             if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: this._iconSize, icon_type: St.IconType.FULLCOLOR});
             this.label = new St.Label({ text: app.name, style_class: 'gnomenu-application-grid-button-label' });
@@ -207,7 +211,7 @@ const FavoriteButton = new Lang.Class({
             if(!this.icon) this.icon = new St.Icon({icon_name: 'error', icon_size: this._iconSize, icon_type: St.IconType.FULLCOLOR});
             this.label = new St.Label({ text: app.name, style_class: 'gnomenu-application-grid-button-label' });
         }
-        //this.label = new St.Label({ text: app.get_name(), style_class: 'favorite-button-label' });
+        //this.label = new St.Label({ text: app.get_name(), style_class: 'gnomenu-shortcut-button-label' });
 
         this.buttonbox = new St.BoxLayout();
         this.buttonbox.add(this.icon, {x_fill: false, y_fill: false, x_align: St.Align.START, y_align: St.Align.MIDDLE});
@@ -679,7 +683,7 @@ const PanelMenuButton = new Lang.Class({
             // ISSUE: If height isn't set, then popup menu height will expand when application buttons are added
             let height = this.groupCategoriesWorkspacesScrollBox.height;
             this.applicationsScrollBox.height = height;
-            this.favoritesScrollBox.height = height;
+            this.shortcutsScrollBox.height = height;
             this.thumbnailsBox._createThumbnails();
             this.thumbnailsBox.actor.set_position(1, 0); // position inside wrapper
 
@@ -696,7 +700,7 @@ const PanelMenuButton = new Lang.Class({
             this.webBookmarksCategory._opened = false;
             this.placesCategory._opened = false;
 
-            // Adjust width of categories box and thumbnails box depending on if favorites shown
+            // Adjust width of categories box and thumbnails box depending on if shortcuts are shown
             // Determine width based on user-power group button widths
             if (settings.get_boolean('hide-shortcuts')) {
                 if (this.userGroupBox.width > this.groupCategoriesWorkspacesScrollBox.width) {
@@ -715,18 +719,18 @@ const PanelMenuButton = new Lang.Class({
                     this.thumbnailsBox._actualThumbnailWidth = this.groupCategoriesWorkspacesScrollBox.width;
                 }
             } else {
-                if (this.powerGroupBox.width > (this.groupCategoriesWorkspacesScrollBox.width + this.favoritesScrollBox.width)) {
-                    if (_DEBUG_) global.log("PanelMenuButton: _onOpenStateToggled - powerGroup width > categories-favorites");
+                if (this.powerGroupBox.width > (this.groupCategoriesWorkspacesScrollBox.width + this.shortcutsScrollBox.width)) {
+                    if (_DEBUG_) global.log("PanelMenuButton: _onOpenStateToggled - powerGroup width > categories-shortcuts");
                     this.userGroupBox.width = this.powerGroupBox.width;
-                    let categoryWidth = this.powerGroupBox.width - this.favoritesScrollBox.width;
+                    let categoryWidth = this.powerGroupBox.width - this.shortcutsScrollBox.width;
                     this.groupCategoriesWorkspacesScrollBox.width = categoryWidth;
                     this.categoriesBox.width = categoryWidth;
                     this._widthCategoriesBox = categoryWidth;
                     this.thumbnailsBox.actor.width = categoryWidth;
                     this.thumbnailsBox._actualThumbnailWidth = categoryWidth;
                 } else {
-                    if (_DEBUG_) global.log("PanelMenuButton: _onOpenStateToggled - powerGroup width < categories-favorites");
-                    let groupWidth = this.groupCategoriesWorkspacesScrollBox.width + this.favoritesScrollBox.width;
+                    if (_DEBUG_) global.log("PanelMenuButton: _onOpenStateToggled - powerGroup width < categories-shortcuts");
+                    let groupWidth = this.groupCategoriesWorkspacesScrollBox.width + this.shortcutsScrollBox.width;
                     this.powerGroupBox.width = groupWidth;
                     this.userGroupBox.width = groupWidth;
                     this.categoriesBox.width = this.groupCategoriesWorkspacesScrollBox.width;
@@ -1711,7 +1715,7 @@ const PanelMenuButton = new Lang.Class({
         // Top pane holds user group, view mode, and search (packed horizonally)
         let topPane = new St.BoxLayout({ style_class: 'gnomenu-menu-top-pane' });
 
-        // Middle pane holds favorites, categories/places/power, applications, workspaces (packed horizontally)
+        // Middle pane holds shortcuts, categories/places/power, applications, workspaces (packed horizontally)
         let middlePane = new St.BoxLayout({ style_class: 'gnomenu-menu-middle-pane' });
 
         // Bottom pane holds power group and selected app description (packed horizontally)
@@ -1970,15 +1974,15 @@ const PanelMenuButton = new Lang.Class({
         this._previousSearchPattern = "";
 
 
-        // FavoritesBox
-        this.favoritesBox = new St.BoxLayout({ style_class: 'gnomenu-favorites-box', vertical: true });
-        this.favoritesScrollBox = new St.ScrollView({ x_fill: true, y_fill: false, y_align: St.Align.START, style_class: 'gnomenu-favorites-scrollbox' });
-        this.favoritesScrollBox.add_actor(this.favoritesBox);
-        this.favoritesScrollBox.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER);
-        this.favoritesScrollBox.set_mouse_scrolling(true);
+        // ShortcutsBox
+        this.shortcutsBox = new St.BoxLayout({ style_class: 'gnomenu-shortcuts-box', vertical: true });
+        this.shortcutsScrollBox = new St.ScrollView({ x_fill: true, y_fill: false, y_align: St.Align.START, style_class: 'gnomenu-shortcuts-scrollbox' });
+        this.shortcutsScrollBox.add_actor(this.shortcutsBox);
+        this.shortcutsScrollBox.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER);
+        this.shortcutsScrollBox.set_mouse_scrolling(true);
 
         if (settings.get_boolean('hide-shortcuts')) {
-            this.favoritesScrollBox.hide();
+            this.shortcutsScrollBox.hide();
         }
 
         //Load Favorites
@@ -2028,40 +2032,40 @@ const PanelMenuButton = new Lang.Class({
         }
         for (let i = 0; i < shortcuts.length; ++i) {
             let app = shortcuts[i];
-            let favoriteButton = new FavoriteButton(app, shortcutType);
-            this.favoritesBox.add_actor(favoriteButton.actor);
-            favoriteButton.actor.connect('enter-event', Lang.bind(this, function() {
-                favoriteButton.actor.add_style_pseudo_class('active');
+            let shortcutButton = new ShortcutButton(app, shortcutType);
+            this.shortcutsBox.add_actor(shortcutButton.actor);
+            shortcutButton.actor.connect('enter-event', Lang.bind(this, function() {
+                shortcutButton.actor.add_style_pseudo_class('active');
                 if (settings.get_enum('shortcuts-display') == ShortcutsDisplay.PLACES) {
-                    this.selectedAppTitle.set_text(favoriteButton._app.name);
+                    this.selectedAppTitle.set_text(shortcutButton._app.name);
                     this.selectedAppDescription.set_text("");
                 } else {
-                    this.selectedAppTitle.set_text(favoriteButton._app.get_name());
-                    if (favoriteButton._app.get_description()) this.selectedAppDescription.set_text(favoriteButton._app.get_description());
+                    this.selectedAppTitle.set_text(shortcutButton._app.get_name());
+                    if (shortcutButton._app.get_description()) this.selectedAppDescription.set_text(shortcutButton._app.get_description());
                     else this.selectedAppDescription.set_text("");
                 }
             }));
-            favoriteButton.actor.connect('leave-event', Lang.bind(this, function() {
-                favoriteButton.actor.remove_style_pseudo_class('active');
+            shortcutButton.actor.connect('leave-event', Lang.bind(this, function() {
+                shortcutButton.actor.remove_style_pseudo_class('active');
                 this.selectedAppTitle.set_text("");
                 this.selectedAppDescription.set_text("");
             }));
-            favoriteButton.actor.connect('button-press-event', Lang.bind(this, function() {
-                favoriteButton.actor.add_style_pseudo_class('pressed');
+            shortcutButton.actor.connect('button-press-event', Lang.bind(this, function() {
+                shortcutButton.actor.add_style_pseudo_class('pressed');
             }));
-            favoriteButton.actor.connect('button-release-event', Lang.bind(this, function() {
-                favoriteButton.actor.remove_style_pseudo_class('pressed');
-                favoriteButton.actor.remove_style_pseudo_class('active');
+            shortcutButton.actor.connect('button-release-event', Lang.bind(this, function() {
+                shortcutButton.actor.remove_style_pseudo_class('pressed');
+                shortcutButton.actor.remove_style_pseudo_class('active');
                 this.selectedAppTitle.set_text("");
                 this.selectedAppDescription.set_text("");
                 if (settings.get_enum('shortcuts-display') == ShortcutsDisplay.PLACES) {
                     if (app.uri) {
-                        favoriteButton._app.app.launch_uris([app.uri], null);
+                        shortcutButton._app.app.launch_uris([app.uri], null);
                     } else {
-                        favoriteButton._app.launch();
+                        shortcutButton._app.launch();
                     }
                 } else {
-                    favoriteButton._app.open_new_window(-1);
+                    shortcutButton._app.open_new_window(-1);
                 }
                 this.menu.close();
             }));
@@ -2422,7 +2426,7 @@ const PanelMenuButton = new Lang.Class({
         this.groupCategoriesWorkspacesScrollBox.add_actor(this.groupCategoriesWorkspacesWrapper);
 
         // middlePane packs horizontally
-        middlePane.add(this.favoritesScrollBox, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
+        middlePane.add(this.shortcutsScrollBox, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
         middlePane.add(this.groupCategoriesWorkspacesScrollBox, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
         middlePane.add(this.applicationsScrollBox, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
 
@@ -2448,7 +2452,7 @@ const PanelMenuButton = new Lang.Class({
 
         // Set height constraints on scrollboxes (we also set height when menu toggle)
         this.applicationsScrollBox.add_constraint(new Clutter.BindConstraint({name: 'constraint', source: this.groupCategoriesWorkspacesScrollBox, coordinate: Clutter.BindCoordinate.HEIGHT, offset: 0}));
-        this.favoritesScrollBox.add_constraint(new Clutter.BindConstraint({name: 'constraint', source: this.groupCategoriesWorkspacesScrollBox, coordinate: Clutter.BindCoordinate.HEIGHT, offset: 0}));
+        this.shortcutsScrollBox.add_constraint(new Clutter.BindConstraint({name: 'constraint', source: this.groupCategoriesWorkspacesScrollBox, coordinate: Clutter.BindCoordinate.HEIGHT, offset: 0}));
 
         //this._widthCategoriesBox = this.categoriesBox.width;
         this.thumbnailsBox.actor.width = this.categoriesBox.width;
