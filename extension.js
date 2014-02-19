@@ -2888,6 +2888,10 @@ const GnoMenuButton = new Lang.Class({
         // Unbind menu accelerator key
         Main.wm.removeKeybinding('panel-menu-keyboard-accelerator');
 
+        // We have to destroy the hotspot manually.
+        // It is no longer a child of the GnoMenuButton actor
+        if (this._hotspot) this._hotspot.destroy();
+
         // Destroy main clutter actor: this should be sufficient
         // From clutter documentation:
         // If the actor is inside a container, the actor will be removed.
