@@ -113,7 +113,7 @@
       <description>Hide the Shortcuts Panel of the menu</description>
     </key>
     <key enum="org.gnome.shell.extensions.gnomenu.shortcutsDisplay" name="shortcuts-display">
-      <default>'Favorites'</default>
+      <default>'Places'</default>
       <summary>Icons to display on Shortcuts Panel</summary>
       <description>Icons to display on Shortcuts Panel</description>
     </key>
@@ -133,17 +133,17 @@
       <description>Method of selecting categories</description>
     </key>
     <key type="i" name="shortcuts-icon-size">
-      <default>48</default>
+      <default>32</default>
       <summary>Shortcuts Panel icon size</summary>
       <description>Shortcuts Panel icon size</description>
     </key>
     <key type="i" name="apps-list-icon-size">
-      <default>32</default>
+      <default>24</default>
       <summary>Applications list icon size</summary>
       <description>Applications list icon size</description>
     </key>
     <key type="i" name="apps-grid-icon-size">
-      <default>64</default>
+      <default>48</default>
       <summary>Applications grid icon size</summary>
       <description>Applications grid icon size</description>
     </key>
