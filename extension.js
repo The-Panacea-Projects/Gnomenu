@@ -45,7 +45,7 @@ const Convenience = Me.imports.convenience;
 let settings = Convenience.getSettings('org.gnome.shell.extensions.gnomenu');
 
 const Chromium = Me.imports.webChromium;
-const Epiphany = Me.imports.webEpiphany;
+//const Epiphany = Me.imports.webEpiphany;
 const Firefox = Me.imports.webFirefox;
 const GoogleChrome = Me.imports.webGoogleChrome;
 const Midori = Me.imports.webMidori;
@@ -112,7 +112,7 @@ const SearchWebBookmarks = new Lang.Class({
 
     _init: function() {
         Chromium.init();
-        Epiphany.init();
+        //Epiphany.init();
         Firefox.init();
         GoogleChrome.init();
         Midori.init();
@@ -129,7 +129,7 @@ const SearchWebBookmarks = new Lang.Class({
 
     destroy: function() {
         Chromium.deinit();
-        Epiphany.deinit();
+        //Epiphany.deinit();
         Firefox.deinit();
         GoogleChrome.deinit();
         Midori.deinit();
@@ -1063,7 +1063,7 @@ const PanelMenuButton = new Lang.Class({
         let bookmarks = [];
 
         bookmarks = bookmarks.concat(Chromium.bookmarks);
-        bookmarks = bookmarks.concat(Epiphany.bookmarks);
+        //bookmarks = bookmarks.concat(Epiphany.bookmarks);
         bookmarks = bookmarks.concat(Firefox.bookmarks);
         bookmarks = bookmarks.concat(GoogleChrome.bookmarks);
         bookmarks = bookmarks.concat(Midori.bookmarks);
