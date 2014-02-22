@@ -5,60 +5,87 @@
     <value value='1' nick='Medium'/>
     <value value='2' nick='Small'/>
   </enum>
+  <enum id='org.gnome.shell.extensions.gnomenu.shortcutsDisplay'>
+    <value value='0' nick='Favorites'/>
+    <value value='1' nick='Places'/>
+  </enum>
   <enum id='org.gnome.shell.extensions.gnomenu.viewMode'>
     <value value='0' nick='List'/>
     <value value='1' nick='Grid'/>
   </enum>
   <enum id='org.gnome.shell.extensions.gnomenu.appsDisplay'>
     <value value='0' nick='All'/>
-    <value value='1' nick='Favorites'/>
-    <value value='2' nick='Places'/>
-    <value value='3' nick='Recent'/>
+    <value value='1' nick='Frequent'/>
   </enum>
   <enum id='org.gnome.shell.extensions.gnomenu.selectMethod'>
     <value value='0' nick='Hover'/>
     <value value='1' nick='Click'/>
   </enum>
   <schema path="/org/gnome/shell/extensions/gnomenu/" id="org.gnome.shell.extensions.gnomenu">
+    <key type="b" name="disable-activities-hotcorner">
+      <default>false</default>
+      <summary>Disable the view button hot corner</summary>
+      <description>Disable the view button hot corner</description>
+    </key>
     <key type="b" name="hide-panel-view">
       <default>false</default>
       <summary>Remove the view button from the panel</summary>
       <description>Remove the view button from the panel</description>
     </key>
-    <key type="b" name="disable-panel-view-hotcorner">
-      <default>false</default>
-      <summary>Disable the view button hot corner</summary>
-      <description>Disable the view button hot corner</description>
-    </key>
-    <key type="b" name="custom-panel-view-label">
-      <default>false</default>
-      <summary>Use custom view button label</summary>
-      <description>Use custom view button label</description>
-    </key>
-    <key type="as" name="custom-panel-view-label-text">
+    <key type="as" name="panel-view-label-text">
         <default><![CDATA[['View']]]></default>
       <summary>Set the custom view button label</summary>
       <description>Set the custom view button label</description>
+    </key>
+    <key type="b" name="use-panel-view-icon">
+      <default>true</default>
+      <summary>Use custom view button icon</summary>
+      <description>Use custom view button icon</description>
+    </key>
+    <key type="as" name="panel-view-icon-name">
+        <default><![CDATA[['emblem-photos-symbolic']]]></default>
+      <summary>Set the custom view button icon name</summary>
+      <description>Set the custom view button icon name</description>
     </key>
     <key type="b" name="hide-panel-apps">
       <default>false</default>
       <summary>Remove the apps button from the panel</summary>
       <description>Remove the apps button from the panel</description>
     </key>
-    <key type="b" name="custom-panel-apps-label">
-      <default>false</default>
-      <summary>Use custom apps button label</summary>
-      <description>Use custom apps button label</description>
-    </key>
-    <key type="as" name="custom-panel-apps-label-text">
+    <key type="as" name="panel-apps-label-text">
         <default><![CDATA[['Apps']]]></default>
       <summary>Set the custom apps button label</summary>
       <description>Set the custom apps button label</description>
+    </key>
+    <key type="b" name="use-panel-apps-icon">
+      <default>true</default>
+      <summary>Use custom apps button icon</summary>
+      <description>Use custom apps button icon</description>
+    </key>
+    <key type="as" name="panel-apps-icon-name">
+        <default><![CDATA[['view-grid-symbolic']]]></default>
+      <summary>Set the custom apps button icon name</summary>
+      <description>Set the custom apps button icon name</description>
     </key>
     <key type="b" name="hide-panel-menu">
       <default>false</default>
       <summary>Remove the menu button from the panel</summary>
       <description>Remove the menu button from the panel</description>
+    </key>
+    <key type="as" name="panel-menu-label-text">
+        <default><![CDATA[['Menu']]]></default>
+      <summary>Set the custom menu button icon name</summary>
+      <description>Set the custom menu button icon name</description>
+    </key>
+    <key type="b" name="use-panel-menu-icon">
+      <default>true</default>
+      <summary>Use custom menu button icon</summary>
+      <description>Use custom menu button icon</description>
+    </key>
+    <key type="as" name="panel-menu-icon-name">
+        <default><![CDATA[['start-here-symbolic']]]></default>
+      <summary>Set the custom menu button icon name</summary>
+      <description>Set the custom menu button icon name</description>
     </key>
     <key type="b" name="disable-panel-menu-hotspot">
       <default>false</default>
@@ -75,35 +102,20 @@
       <summary>Disable the menu button keyboard shortcut</summary>
       <description>Disable the menu button keyboard shortcut</description>
     </key>
-    <key type="b" name="custom-panel-menu-label">
-      <default>false</default>
-      <summary>Use custom menu button icon</summary>
-      <description>Use custom menu button icon</description>
-    </key>
-    <key type="as" name="custom-panel-menu-label-text">
-        <default><![CDATA[['Menu']]]></default>
-      <summary>Set the custom menu button icon name</summary>
-      <description>Set the custom menu button icon name</description>
-    </key>
-    <key type="b" name="custom-panel-menu-icon">
-      <default>false</default>
-      <summary>Use custom menu button icon</summary>
-      <description>Use custom menu button icon</description>
-    </key>
-    <key type="as" name="custom-panel-menu-icon-name">
-        <default><![CDATA[['start-here-symbolic']]]></default>
-      <summary>Set the custom menu button icon name</summary>
-      <description>Set the custom menu button icon name</description>
-    </key>
     <key enum="org.gnome.shell.extensions.gnomenu.menuLayout" name="menu-layout">
-      <default>'Large'</default>
+      <default>'Medium'</default>
       <summary>Size and layout of the applications menu</summary>
       <description>Size and layout of the applications menu</description>
     </key>
-    <key type="b" name="hide-favorites">
+    <key type="b" name="hide-shortcuts">
       <default>false</default>
-      <summary>Hide the favorites section of the menu</summary>
-      <description>Hide the favorites section of the menu</description>
+      <summary>Hide the Shortcuts Panel of the menu</summary>
+      <description>Hide the Shortcuts Panel of the menu</description>
+    </key>
+    <key enum="org.gnome.shell.extensions.gnomenu.shortcutsDisplay" name="shortcuts-display">
+      <default>'Places'</default>
+      <summary>Icons to display on Shortcuts Panel</summary>
+      <description>Icons to display on Shortcuts Panel</description>
     </key>
     <key enum="org.gnome.shell.extensions.gnomenu.viewMode" name="startup-view-mode">
       <default>'Grid'</default>
@@ -111,7 +123,7 @@
       <description>Startup applications view mode</description>
     </key>
     <key enum="org.gnome.shell.extensions.gnomenu.appsDisplay" name="startup-apps-display">
-      <default>'All'</default>
+      <default>'Frequent'</default>
       <summary>Startup applications to display</summary>
       <description>Startup applications to display</description>
     </key>
@@ -120,18 +132,18 @@
       <summary>Method of selecting categories</summary>
       <description>Method of selecting categories</description>
     </key>
-    <key type="i" name="favorites-icon-size">
-      <default>48</default>
-      <summary>Favorites menu panel icon size</summary>
-      <description>Favorites menu panel icon size</description>
+    <key type="i" name="shortcuts-icon-size">
+      <default>32</default>
+      <summary>Shortcuts Panel icon size</summary>
+      <description>Shortcuts Panel icon size</description>
     </key>
     <key type="i" name="apps-list-icon-size">
-      <default>32</default>
+      <default>24</default>
       <summary>Applications list icon size</summary>
       <description>Applications list icon size</description>
     </key>
     <key type="i" name="apps-grid-icon-size">
-      <default>64</default>
+      <default>48</default>
       <summary>Applications grid icon size</summary>
       <description>Applications grid icon size</description>
     </key>
