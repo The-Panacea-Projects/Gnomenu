@@ -35,7 +35,9 @@ const Lang = imports.lang;
 const Main = imports.ui.main;
 
 const _appSystem = Shell.AppSystem.get_default();
-const _foundApps = _appSystem.initial_search(['epiphany']);
+//const _foundApps = _appSystem.initial_search(['epiphany']);
+const _foundApps = _appSystem.lookup_desktop_wmclass('epiphany');
+
 
 var _appInfo = null;
 var _bookmarksFile = null;
@@ -89,11 +91,12 @@ function _reset() {
 }
 
 function init() {
-    if (_foundApps.length == 0) {
+    if (_foundApps == null || _foundApps.length == 0) {
         return;
     }
 
-    _appInfo = _foundApps[0].get_app_info();
+    // _appInfo = _foundApps[0].get_app_info();
+    _appInfo = _foundApps.get_app_info();
 
     _bookmarksFile = Gio.File.new_for_path(GLib.build_filenamev(
         [GLib.get_user_config_dir(), 'epiphany', 'bookmarks.rdf']));
