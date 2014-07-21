@@ -1,0 +1,169 @@
+# Livedevelop Live User <mortaromarcello@gmail.com>, 2014.
+msgid ""
+msgstr ""
+"Project-Id-Version: Gnomenu\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2014-01-25 13:10+0200\n"
+"Last-Translator: Livedevelop Live User <mortaromarcello@gmail.com>\n"
+"Language-Team: \n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Virtaal 0.7.1\n"
+"X-Project-Style: gnome\n"
+
+#: extension.js
+msgid "View"
+msgstr "Mostra"
+
+msgid "Apps"
+msgstr "Applicazioni"
+
+msgid "Menu"
+msgstr "Menu"
+
+msgid "Type to search..."
+msgstr "Ricerca..."
+
+msgid "All Applications"
+msgstr "Tutte le applicazioni"
+
+#msgid "All Places"
+#msgstr ""
+msgid "Places"
+msgstr "Posizioni"
+
+msgid "Computer"
+msgstr "Computer"
+
+msgid "Bookmarks"
+msgstr "Segnalibri"
+
+msgid "Devices"
+msgstr "Dispositivi"
+
+msgid "Recent"
+msgstr "Recenti"
+
+msgid "Web"
+msgstr "Web"
+
+msgid "Gno-Menu: Search Firefox bookmarks disabled"
+msgstr "Gno-Menu: Ricerca segnalibri Firefox disabilitata"
+
+msgid "If you want to search Firefox bookmarks, you must install the required pacakages: libgir1.2-gda-5.0 (Ubuntu) or libgda-sqlite (Fedora)"
+msgstr ""
+"Se vuoi ricercare i segnalibi di Firefox, devi installare i seguenti "
+"pacchetti: libgir1.2-gda-5.0 (Ubuntu) or libgda-sqlite (Fedora)"
+
+msgid "Gno-Menu: Search Midori bookmarks disabled"
+msgstr "Gno-Menu: Ricerca segnalibri Midori disabilitata"
+
+msgid "If you want to search Midori bookmarks, you must install the required pacakages: libgir1.2-gda-5.0 (Ubuntu) or libgda-sqlite (Fedora)"
+msgstr ""
+"Se vuoi ricercare i segnalibi di Midori, devi installare i seguenti "
+"pacchetti: libgir1.2-gda-5.0 (Ubuntu) or libgda-sqlite (Fedora)"
+
+msgid "Logout User"
+msgstr "Logout dell'utente"
+
+msgid "Lock Screen"
+msgstr "Blocca schermo"
+
+msgid "Advanced Settings"
+msgstr "Opzioni avanzate"
+
+msgid "System Settings"
+msgstr "Impostazioni sistema"
+
+msgid "List View"
+msgstr "Vista ad elenco"
+
+msgid "Grid View"
+msgstr "Vista griglia"
+
+msgid "Restart Shell"
+msgstr "Riavvia la Shell"
+
+msgid "Suspend"
+msgstr ""
+
+msgid "Shutdown"
+msgstr "Arresta"
+
+msgid "Preferences"
+msgstr "Preferenze"
+
+msgid "No GnoMenu stylesheet found"
+msgstr "Stylesheet GnoMenu non trovato"
+
+#: placeDisplay.js
+msgid "Failed to launch \"%s\""
+msgstr "Impossibile avviare \"%s\""
+
+msgid "Home"
+msgstr ""
+
+msgid "Browse Network"
+msgstr "Esplora rete"
+
+#: prefs.js
+msgid "<b>Panel Settings</b>"
+msgstr "<b>Impostazioni Pannello</b>"
+
+msgid "Disable activities hot corner"
+msgstr "Disabilita attività hot corner"
+
+msgid "Remove View button from panel"
+msgstr "Rimuovi pulsante Vista dal pannello"
+
+msgid "Use custom label for View button"
+msgstr "Usa etichetta personalizzata per il pulsante Vista"
+
+msgid "Remove Apps button from panel"
+msgstr "Rimuovi pulsante Applicazioni dal pannello"
+
+msgid "Use custom label for Apps button"
+msgstr "Usa etichetta personalizzata per il pulsante Applicazioni"
+
+msgid "Remove Menu button from panel"
+msgstr "Rimuovi pulsante Menu dal pannello"
+
+msgid "Disable Menu button hot spot"
+msgstr "Disabilita pulsante Menu hot spot"
+
+msgid "Disable Menu button keyboard shortcut"
+msgstr "Disabilita scorciatoia tastiera pulsante Menu"
+
+msgid "Use custom label for Menu button"
+msgstr "Usa etichetta personalizzata per il pulsante Menu"
+
+msgid "<b>Menu Settings</b>"
+msgstr "<b>Impostazioni Menu</b>"
+
+msgid "Menu layout style"
+msgstr "Stile visualizzazione Menu"
+
+msgid "Startup applications to display"
+msgstr "Applicazioni di Avvio sul display"
+
+msgid "Default view mode for applications"
+msgstr "Modo visuale di default per applicazioni"
+
+msgid "Category selection method"
+msgstr "Metodo di selezione della categoria"
+
+msgid "Size of Favorites Panel icons"
+msgstr ""
+
+msgid "Size of Application List icons"
+msgstr ""
+
+msgid "Size of Application Grid icons"
+msgstr ""
+
+msgid "Hide favorites section of menu"
+msgstr ""
