@@ -48,7 +48,8 @@ const PlaceInfo = new Lang.Class({
     },
 
     launch: function(timestamp) {
-        let launchContext = global.create_app_launch_context();
+        //let time = global.get_current_time();
+        let launchContext = global.create_app_launch_context(0, -1);
         launchContext.set_timestamp(timestamp);
 
         try {

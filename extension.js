@@ -8,6 +8,8 @@
  *  gnome-shell-extensions -  http://git.gnome.org/browse/gnome-shell-extensions/
  *  places status indicator extension - http://git.gnome.org/gnome-shell-extensions
  *  recent items extension - http://www.bananenfisch.net/gnome
+ *  applications menu extension - https://extensions.gnome.org/extension/6/applications-menu/
+ *  search bookmarks extension - https://extensions.gnome.org/extension/557/search-bookmarks/
  * ========================================================================================================
  */
 
@@ -271,7 +273,7 @@ const ShortcutButton = new Lang.Class({
                this._app.launch();
            }
         } else if (this._type == ApplicationType.RECENT) {
-            Gio.app_info_launch_default_for_uri(this._app.uri, global.create_app_launch_context());
+            Gio.app_info_launch_default_for_uri(this._app.uri, global.create_app_launch_context(0, -1));
         }
 
         this.actor.remove_style_pseudo_class('pressed');
@@ -375,7 +377,7 @@ const AppListButton = new Lang.Class({
                this._app.launch();
            }
         } else if (this._type == ApplicationType.RECENT) {
-            Gio.app_info_launch_default_for_uri(this._app.uri, global.create_app_launch_context());
+            Gio.app_info_launch_default_for_uri(this._app.uri, global.create_app_launch_context(0, -1));
         }
 
         this.actor.remove_style_pseudo_class('pressed');
@@ -484,7 +486,7 @@ const AppGridButton = new Lang.Class({
                this._app.launch();
            }
         } else if (this._type == ApplicationType.RECENT) {
-            Gio.app_info_launch_default_for_uri(this._app.uri, global.create_app_launch_context());
+            Gio.app_info_launch_default_for_uri(this._app.uri, global.create_app_launch_context(0, -1));
         }
 
         this.actor.remove_style_pseudo_class('pressed');
@@ -589,8 +591,20 @@ const PanelMenuButton = new Lang.Class({
         this.parent(0.0, '');
 
         this.actor.add_style_class_name('panel-status-button');
+        this._bin = new St.Widget({ layout_manager: new Clutter.BinLayout() });
         this._box = new St.BoxLayout({ style_class: 'gnomenu-panel-menu-button' });
-        this.actor.add_actor(this._box);
+
+        this._bin.add_child(this._box);
+        this.actor.add_actor(this._bin);
+
+        // Add hotspot area 1px high at top of PanelMenuButton
+        if (!settings.get_boolean('disable-panel-menu-hotspot')) {
+            this._hotspot = new Clutter.Actor({reactive: true, opacity:0, x_expand: true});
+            this._hotspot.y = 0;
+            this._hotspot.height = 1;
+            this._bin.add_child(this._hotspot);
+            this._hotspot.connect('enter-event', Lang.bind(this, this._onHotSpotEntered));
+        }
 
         // Add icon to button
         if (settings.get_boolean('use-panel-menu-icon')) {
@@ -637,6 +651,14 @@ const PanelMenuButton = new Lang.Class({
     destroy: function() {
         this.parent();
         this._searchWebBookmarks.destroy();
+    },
+
+    // handler for when PanelMenuButton hotspot entered
+    _onHotSpotEntered: function() {
+        if (_DEBUG_) global.log("PanelMenuButton: _onHotSpotEntered");
+        if (!this.menu.isOpen) {
+            this.menu.toggle();   
+        }
     },
 
     // Override _onStyleChanged function
@@ -808,7 +830,7 @@ const PanelMenuButton = new Lang.Class({
                 var entry = iter.get_entry();
                 if (!entry.get_app_info().get_nodisplay()) {
                     //if (_DEBUG_) global.log("PanelMenuButton: _loadCategories - entry valid");
-                    var app = Shell.AppSystem.get_default().lookup_app_by_tree_entry(entry);
+                    var app = Shell.AppSystem.get_default().lookup_app(entry.get_desktop_file_id());
                     if (rootDir) {
                         //if (_DEBUG_) global.log("PanelMenuButton: _loadCategories - push root.get_menu_id = "+rootDir.get_menu_id());
                         if (rootDir.get_menu_id())
@@ -1383,7 +1405,7 @@ const PanelMenuButton = new Lang.Class({
                            appListButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
-                           Gio.app_info_launch_default_for_uri(app.uri, global.create_app_launch_context());
+                           Gio.app_info_launch_default_for_uri(app.uri, global.create_app_launch_context(0, -1));
                            this.menu.close();
                         }));
                         this.applicationsListBox.add_actor(appListButton.actor);
@@ -1409,7 +1431,7 @@ const PanelMenuButton = new Lang.Class({
                            appGridButton.actor.remove_style_pseudo_class('active');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
-                           Gio.app_info_launch_default_for_uri(app.uri, global.create_app_launch_context());
+                           Gio.app_info_launch_default_for_uri(app.uri, global.create_app_launch_context(0, -1));
                            this.menu.close();
                         }));
                         this.applicationsGridBox.add(appGridButton.actor, {row:rownum, col:column, x_fill:false, y_fill:false, x_expand:false, y_expand: false, x_align:St.Align.START, y_align:St.Align.START});
@@ -1527,7 +1549,7 @@ const PanelMenuButton = new Lang.Class({
                         item_actor._delegate._app.launch();
                     } else if (itemType == 2) {
                         this.menu.close();
-                        Gio.app_info_launch_default_for_uri(item_actor._delegate._app.uri, global.create_app_launch_context());
+                        Gio.app_info_launch_default_for_uri(item_actor._delegate._app.uri, global.create_app_launch_context(0, -1));
                     }
                     return true;
                 } else {
@@ -2155,14 +2177,15 @@ const PanelMenuButton = new Lang.Class({
 
         // Load rest of categories
         if (_DEBUG_) global.log("PanelMenuButton: _display - start loading categories");
-        let tree = Shell.AppSystem.get_default().get_tree();
+        let tree = new GMenu.Tree({ menu_basename: 'applications.menu' });
+        tree.load_sync();
         let root = tree.get_root_directory();
         let iter = root.iter();
         let nextType;
         while ((nextType = iter.next()) != GMenu.TreeItemType.INVALID) {
             if (nextType == GMenu.TreeItemType.DIRECTORY) {
                 let dir = iter.get_directory();
-                this.applicationsByCategory[dir.get_menu_id()] = new Array();
+                this.applicationsByCategory[dir.get_menu_id()] = [];
                 this._loadCategories(dir);
                 if (this.applicationsByCategory[dir.get_menu_id()].length>0){
                     let appCategory = new CategoryListButton(dir);
@@ -2491,7 +2514,6 @@ const GnoMenuButton = new Lang.Class({
 
         // Initialize GnoMenuButton actor
         this.actor = new St.BoxLayout({ name: 'gnomenuPanelBox', style_class: 'gnomenu-panel-box' });
-        this.actor.connect('notify::allocation', Lang.bind(this, this._onGnoMenuPanelButtonAllocate));
 
         this._setHotSpotTimeoutId = 0;
         this._display();
@@ -2509,11 +2531,6 @@ const GnoMenuButton = new Lang.Class({
         if (this._hotCorner) this._hotCorner.destroy();
         this._hotCorner = null;
         if (_DEBUG_) global.log("GnoMenuButton: _clearAll removed and destroyed hotcorner from gnomenubutton actor");
-
-        if (this._hotspot) this._hotspot.destroy();
-        this._hotspot = null;
-        this._hotspotId = null;
-        if (_DEBUG_) global.log("GnoMenuButton: _clearAll removed and destroyed hotspot from gnomenubutton actor");
 
         if (this.viewButton) this.actor.remove_actor(this.viewButton.container);
         if (this.appsButton) this.actor.remove_actor(this.appsButton.container);
@@ -2567,17 +2584,7 @@ const GnoMenuButton = new Lang.Class({
         // Initialize apps menu button
         if (!settings.get_boolean('hide-panel-menu')) {
             this.appsMenuButton = new PanelMenuButton();
-            this.appsMenuButton.actor.connect('notify::allocation', Lang.bind(this, this._onAppsMenuButtonAllocate));
             if (_DEBUG_) global.log("GnoMenuButton: _display initialized menu button");
-
-            // Add hotspot area 1px high at top of appsMenuButton
-            if (!settings.get_boolean('disable-panel-menu-hotspot')) {
-                this._hotspot = new Clutter.Actor({reactive: true, opacity:0});
-                Main.layoutManager.addChrome(this._hotspot);
-                this._hotspot.connect('enter-event', Lang.bind(this, this._onAppsMenuButtonHotSpotEntered));
-                this._hotspotId = this._hotspot.connect('realize', Lang.bind(this, function(){}));
-                if (_DEBUG_) global.log("GnoMenuButton: _display initialized menu hotspot");
-            }
 
             // Bind menu accelerator key
             if (!settings.get_boolean('disable-panel-menu-keyboard')) {
@@ -2639,43 +2646,6 @@ const GnoMenuButton = new Lang.Class({
         if (this.appsMenuButton) Main.panel.menuManager.addMenu(this.appsMenuButton.menu);
     },
 
-    _setHotSpotPosition: function() {
-        if (this._hotspotId && this.appsMenuButton) {
-            let [x, y] = this.appsMenuButton.actor.get_transformed_position();
-            let [w, h] = this.appsMenuButton.actor.get_size();
-            x = Math.floor(x);
-            w = Math.floor(w);
-            if (_DEBUG_) global.log("GnoMenuButton: _setHotSpotPosition x="+x+"  w="+w);
-            this._hotspot.set_position(x, 0);
-            this._hotspot.set_size(w, 1);
-        }
-
-        if (this._setHotSpotTimeoutId > 0)
-            Mainloop.source_remove(this._setHotSpotTimeoutId);
-
-        this._setHotSpotTimeoutId = 0;
-    },
-
-    // function called when allocating GnoMenuButton .. to position appsMenuButton hotspot
-    // ISSUE: provides a safety net just in case the allocation cycle below isn't ready
-    _onGnoMenuPanelButtonAllocate: function() {
-        if (_DEBUG_) global.log("GnoMenuButton: _onGnoMenuPanelButtonAllocate");
-        if (this._setHotSpotTimeoutId > 0)
-            Mainloop.source_remove(this._setHotSpotTimeoutId);
-
-        this._setHotSpotTimeoutId = Mainloop.timeout_add(1000, Lang.bind(this, this._setHotSpotPosition));
-    },
-
-    // function called when allocating appsMenuButton .. to position appsMenuButton hotspot
-    // ISSUE: provides a safety net just in case the allocation cycle above isn't ready
-    _onAppsMenuButtonAllocate: function() {
-        if (_DEBUG_) global.log("GnoMenuButton: _onAppsMenuButtonAllocate");
-        if (this._setHotSpotTimeoutId > 0)
-            Mainloop.source_remove(this._setHotSpotTimeoutId);
-
-        this._setHotSpotTimeoutId = Mainloop.timeout_add(1000, Lang.bind(this, this._setHotSpotPosition));
-    },
-
     // handler for when view panel button clicked
     _onViewButtonRelease: function() {
         if (_DEBUG_) global.log("GnoMenuButton: _onViewButtonRelease");
@@ -2704,15 +2674,6 @@ const GnoMenuButton = new Lang.Class({
         } else {
             Main.overview.show();
             Main.overview.viewSelector._showAppsButton.checked = true;
-        }
-    },
-
-    // handler for when appsMenuButton hotspot entered
-    _onAppsMenuButtonHotSpotEntered: function() {
-        if (_DEBUG_) global.log("GnoMenuButton: _onAppsMenuButtonHotSpotEntered");
-        if (this.appsMenuButton) {
-            if (!this.appsMenuButton.menu.isOpen)
-                this.appsMenuButton.menu.toggle();
         }
     },
 
@@ -2858,11 +2819,13 @@ const GnoMenuButton = new Lang.Class({
         settings.connect('changed::use-panel-apps-icon', Lang.bind(this, this.refresh));
         settings.connect('changed::panel-apps-icon-name', Lang.bind(this, this.refresh));
         settings.connect('changed::hide-panel-menu', Lang.bind(this, this.refresh));
-        settings.connect('changed::disable-panel-menu-hotspot', Lang.bind(this, this.refresh));
         settings.connect('changed::disable-panel-menu-keyboard', Lang.bind(this, this.refresh));
         settings.connect('changed::panel-menu-label-text', Lang.bind(this, this.refresh));
         settings.connect('changed::use-panel-menu-icon', Lang.bind(this, this.refresh));
         settings.connect('changed::panel-menu-icon-name', Lang.bind(this, this.refresh));
+        settings.connect('changed::disable-panel-menu-hotspot', Lang.bind(this, function() {
+            if (this.appsMenuButton) this.appsMenuButton.refresh();
+        }));
         settings.connect('changed::category-selection-method', Lang.bind(this, function() {
             if (this.appsMenuButton) this.appsMenuButton.refresh();
         }));
@@ -2891,10 +2854,6 @@ const GnoMenuButton = new Lang.Class({
 
         // Unbind menu accelerator key
         Main.wm.removeKeybinding('panel-menu-keyboard-accelerator');
-
-        // We have to destroy the hotspot manually.
-        // It is no longer a child of the GnoMenuButton actor
-        if (this._hotspot) this._hotspot.destroy();
 
         // Destroy main clutter actor: this should be sufficient
         // From clutter documentation:
