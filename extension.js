@@ -657,7 +657,7 @@ const PanelMenuButton = new Lang.Class({
     _onHotSpotEntered: function() {
         if (_DEBUG_) global.log("PanelMenuButton: _onHotSpotEntered");
         if (!this.menu.isOpen) {
-            this.menu.toggle();   
+            this.menu.toggle();
         }
     },
 
@@ -1983,6 +1983,7 @@ const PanelMenuButton = new Lang.Class({
         this._searchActiveIcon = new St.Icon({ style_class: 'search-entry-icon', icon_name: 'edit-clear-symbolic' });
         this.searchBox = new St.BoxLayout({ style_class: 'gnomenu-search-box' });
         this.searchEntry = new St.Entry({ name: 'searchEntry',
+                                     style_class: 'search-entry',
                                      hint_text: _("Type to search..."),
                                      track_hover: true,
                                      can_focus: true });
