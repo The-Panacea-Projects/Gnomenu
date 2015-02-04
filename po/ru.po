@@ -1,0 +1,175 @@
+#
+# vantu5z <vantu5z@mail.ru>, 2015.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Gnomenu\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2015-02-02 15:23+0300\n"
+"Last-Translator: vantu5z <vantu5z@mail.ru>\n"
+"Language-Team: русский <vantu5z@mail.ru>\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"X-Generator: Gtranslator 2.91.6\n"
+
+#: extension.js
+msgid "View"
+msgstr "Обзор"
+
+msgid "Apps"
+msgstr "Приложения"
+
+msgid "Menu"
+msgstr "Меню"
+
+msgid "Type to search..."
+msgstr "Введите запрос для поиска..."
+
+msgid "All Applications"
+msgstr "Все приложения"
+
+# msgid "All Places"
+# msgstr ""
+msgid "Places"
+msgstr "Места"
+
+msgid "Computer"
+msgstr "Компьютер"
+
+msgid "Bookmarks"
+msgstr "Закладки"
+
+msgid "Devices"
+msgstr "Устройства"
+
+msgid "Recent"
+msgstr "Недавние"
+
+msgid "Web"
+msgstr "Веб"
+
+msgid "Gno-Menu: Search Firefox bookmarks disabled"
+msgstr "Gno-Menu: поиск по закладкам Firefox отключен"
+
+msgid ""
+"If you want to search Firefox bookmarks, you must install the required "
+"pacakages: libgir1.2-gda-5.0 (Ubuntu) or libgda-sqlite (Fedora)"
+msgstr ""
+"Для включения поиска по закладкам Firefox необходимо установить "
+"дополнительные пакеты: libgir1.2-gda-5.0 (Ubuntu) или libgda-sqlite (Fedora)"
+
+msgid "Gno-Menu: Search Midori bookmarks disabled"
+msgstr "Gno-Menu: поиск по закладкам Midori отключен"
+
+msgid ""
+"If you want to search Midori bookmarks, you must install the required "
+"pacakages: libgir1.2-gda-5.0 (Ubuntu) or libgda-sqlite (Fedora)"
+msgstr ""
+"Для включения поиска по закладкам Midori необходимо установить "
+"дополнительные пакеты: libgir1.2-gda-5.0 (Ubuntu) или libgda-sqlite (Fedora)"
+
+msgid "Logout User"
+msgstr "Завершить сеанс"
+
+msgid "Lock Screen"
+msgstr "Заблокировать экран"
+
+msgid "Advanced Settings"
+msgstr "Расширенные настройки"
+
+msgid "System Settings"
+msgstr "Системные настройки"
+
+msgid "List View"
+msgstr "В виде списка"
+
+msgid "Grid View"
+msgstr "В виде сетки"
+
+msgid "Restart Shell"
+msgstr "Перезапустить Shell"
+
+msgid "Suspend"
+msgstr "Режим ожидания"
+
+msgid "Shutdown"
+msgstr "Завершение работы"
+
+msgid "Preferences"
+msgstr "Настройки"
+
+msgid "No GnoMenu stylesheet found"
+msgstr "Не найден стиль для GnoMenu"
+
+#: placeDisplay.js
+msgid "Failed to launch \"%s\""
+msgstr "Не удалось запустить «%s»"
+
+msgid "Home"
+msgstr "Домашняя папка"
+
+msgid "Browse Network"
+msgstr "Обзор сети"
+
+#: prefs.js
+msgid "<b>Panel Settings</b>"
+msgstr "<b>Настройки панели</b>"
+
+msgid "Disable activities hot corner"
+msgstr "Отключить «Горячий угол»"
+
+msgid "Remove View button from panel"
+msgstr "Удалить кнопку «Обзор» с панели"
+
+msgid "Use custom label for View button"
+msgstr "Текст для кнопки «Обзор»"
+
+msgid "Remove Apps button from panel"
+msgstr "Удалить кнопку «Приложения» с панели"
+
+msgid "Use custom label for Apps button"
+msgstr "Текст для кнопки «Приложения»"
+
+msgid "Remove Menu button from panel"
+msgstr "Удалить кнопку «Меню» с панели"
+
+msgid "Disable Menu button hot spot"
+msgstr "Отключить горячую область у кнопки «Меню»"
+
+msgid "Disable Menu button keyboard shortcut"
+msgstr "Отключить вызов «Меню» по горячей клавише"
+
+msgid "Use custom label for Menu button"
+msgstr "Текст для кнопки «Меню»"
+
+msgid "<b>Menu Settings</b>"
+msgstr "<b>Настройки меню</b>"
+
+msgid "Menu layout style"
+msgstr "Размер меню"
+
+msgid "Startup applications to display"
+msgstr "Приложения показываемые при запуске"
+
+msgid "Default view mode for applications"
+msgstr "Вид для обзора приложений по умолчанию"
+
+msgid "Category selection method"
+msgstr "Метод выбора категории"
+
+msgid "Size of Favorites Panel icons"
+msgstr "Размер иконок для панели «Избранное»"
+
+msgid "Size of Application List icons"
+msgstr "Размер иконок для приложений в виде списка"
+
+msgid "Size of Application Grid icons"
+msgstr "Размер иконок для приложений в виде сетки"
+
+msgid "Hide favorites section of menu"
+msgstr "Скрыть раздел избранное из меню"
