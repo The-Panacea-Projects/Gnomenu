@@ -1,3 +1,4 @@
+# Translator list
 #
 # vantu5z <vantu5z@mail.ru>, 2015.
 #
@@ -18,6 +19,7 @@ msgstr ""
 "X-Generator: Gtranslator 2.91.6\n"
 
 #: extension.js
+
 msgid "View"
 msgstr "Обзор"
 
@@ -30,11 +32,12 @@ msgstr "Меню"
 msgid "Type to search..."
 msgstr "Введите запрос для поиска..."
 
+msgid "Frequent Apps"
+msgstr "Часто используемые"
+
 msgid "All Applications"
 msgstr "Все приложения"
 
-# msgid "All Places"
-# msgstr ""
 msgid "Places"
 msgstr "Места"
 
@@ -52,6 +55,9 @@ msgstr "Недавние"
 
 msgid "Web"
 msgstr "Веб"
+
+msgid "Favorites"
+msgstr "Избранное"
 
 msgid "Gno-Menu: Search Firefox bookmarks disabled"
 msgstr "Gno-Menu: поиск по закладкам Firefox отключен"
@@ -126,44 +132,86 @@ msgstr "Отключить «Горячий угол»"
 msgid "Remove View button from panel"
 msgstr "Удалить кнопку «Обзор» с панели"
 
-msgid "Use custom label for View button"
+msgid "Label for View button"
 msgstr "Текст для кнопки «Обзор»"
+
+msgid "Use icon with View button"
+msgstr "Показывать иконку для кнопки «Обзор»"
 
 msgid "Remove Apps button from panel"
 msgstr "Удалить кнопку «Приложения» с панели"
 
-msgid "Use custom label for Apps button"
+msgid "Label for Apps button"
 msgstr "Текст для кнопки «Приложения»"
+
+msgid "Use icon with Apps button"
+msgstr "Показывать иконку для кнопки «Приложения»"
 
 msgid "Remove Menu button from panel"
 msgstr "Удалить кнопку «Меню» с панели"
 
+msgid "Label for Menu button"
+msgstr "Текст для кнопки «Меню»"
+
+msgid "Use icon with Menu button"
+msgstr "Показывать иконку для кнопки «Меню»"
+
 msgid "Disable Menu button hot spot"
 msgstr "Отключить горячую область у кнопки «Меню»"
 
-msgid "Disable Menu button keyboard shortcut"
+msgid "Disable Menu button shortcut key"
 msgstr "Отключить вызов «Меню» по горячей клавише"
-
-msgid "Use custom label for Menu button"
-msgstr "Текст для кнопки «Меню»"
 
 msgid "<b>Menu Settings</b>"
 msgstr "<b>Настройки меню</b>"
 
-msgid "Menu layout style"
+msgid "Hide Shortcuts Panel"
+msgstr "Скрыть панель быстрого доступа"
+
+msgid "Menu layout size"
 msgstr "Размер меню"
 
-msgid "Startup applications to display"
+msgid "Large"
+msgstr "Большой"
+
+msgid "Medium"
+msgstr "Средний"
+
+msgid "Small"
+msgstr "Маленький"
+
+msgid "Icons to display on Shortcuts Panel"
+msgstr "Элементы на панели быстрого доступа"
+
+msgid "Applications to display at startup"
 msgstr "Приложения показываемые при запуске"
+
+msgid "All"
+msgstr "Все"
+
+msgid "Frequent"
+msgstr "Частые"
 
 msgid "Default view mode for applications"
 msgstr "Вид для обзора приложений по умолчанию"
 
+msgid "List"
+msgstr "Список"
+
+msgid "Grid"
+msgstr "Сетка"
+
 msgid "Category selection method"
 msgstr "Метод выбора категории"
 
-msgid "Size of Favorites Panel icons"
-msgstr "Размер иконок для панели «Избранное»"
+msgid "Click"
+msgstr "Нажатие"
+
+msgid "Hover"
+msgstr "Наведение"
+
+msgid "Size of Shortcuts Panel icons"
+msgstr "Размер иконок для панели быстрого доступа"
 
 msgid "Size of Application List icons"
 msgstr "Размер иконок для приложений в виде списка"
@@ -173,3 +221,5 @@ msgstr "Размер иконок для приложений в виде сет
 
 msgid "Hide favorites section of menu"
 msgstr "Скрыть раздел избранное из меню"
+
+

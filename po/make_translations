@@ -6,7 +6,7 @@
 # apt-get install gettext
 
 # To add a translation - add the language to LANGUAGES, copy
-# en_GB.po to a po file for the language, and then run this script
+# en_US.po to a po file for the language, and then run this script
 
 for file in `cat LANGUAGES`
 do
