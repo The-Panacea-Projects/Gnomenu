@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Gnomenu\n"
+"Project-Id-Version: Gno-Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2014-11-15 16:09+0900\n"
@@ -12,41 +12,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.5.7\n"
 
+
+#: convenience.js
+
+
 #: extension.js
-msgid "View"
-msgstr "表示"
-
-msgid "Apps"
-msgstr "アプリ"
-
-msgid "Menu"
-msgstr "メニュー"
-
-msgid "Type to search..."
-msgstr "入力して検索..."
-
-msgid "All Applications"
-msgstr "すべてのアプリケーション"
-
-# msgid "All Places"
-# msgstr ""
-msgid "Places"
-msgstr "場所"
-
-msgid "Computer"
-msgstr "コンピューター"
-
-msgid "Bookmarks"
-msgstr "ブックマーク"
-
-msgid "Devices"
-msgstr "デバイス"
-
-msgid "Recent"
-msgstr "最近"
-
-msgid "Web"
-msgstr "Web"
 
 msgid "Gno-Menu: Search Firefox bookmarks disabled"
 msgstr "Gno-Menu: Firefox ブックマークの検索は使用できません"
@@ -70,23 +40,32 @@ msgstr ""
 "ルする必要があります: libgir1.2-gda-5.0 (Ubuntu) または libgda-sqlite "
 "(Fedora)"
 
-msgid "Logout User"
-msgstr "ユーザーのログアウト"
+msgid "Recent"
+msgstr "最近"
 
-msgid "Lock Screen"
-msgstr "画面ロック"
+msgid "Web"
+msgstr "Web"
 
-msgid "Advanced Settings"
-msgstr "詳細設定"
+msgid "Favorites"
+msgstr "Favorites"
 
-msgid "System Settings"
-msgstr "システム設定"
+msgid "Places"
+msgstr "場所"
 
 msgid "List View"
 msgstr "リスト一覧"
 
 msgid "Grid View"
 msgstr "グリット一覧"
+
+msgid "Type to search..."
+msgstr "入力して検索..."
+
+msgid "Frequent Apps"
+msgstr "Frequent Apps"
+
+msgid "All Applications"
+msgstr "すべてのアプリケーション"
 
 msgid "Restart Shell"
 msgstr "シェルの再起動"
@@ -97,23 +76,37 @@ msgstr "サスペンド"
 msgid "Shutdown"
 msgstr "シャットダウン"
 
+msgid "Logout User"
+msgstr "ユーザーのログアウト"
+
+msgid "Lock Screen"
+msgstr "画面ロック"
+
 msgid "Preferences"
 msgstr "設定"
 
 msgid "No GnoMenu stylesheet found"
 msgstr "GnoMenu スタイルシートが見つかりません"
 
+
+
 #: placeDisplay.js
+
 msgid "Failed to launch \"%s\""
 msgstr "ランチャー \"%s\" に問題があります"
 
 msgid "Home"
 msgstr "ホーム"
 
+msgid "Computer"
+msgstr "コンピューター"
+
 msgid "Browse Network"
 msgstr "ネットワークの閲覧"
 
+
 #: prefs.js
+
 msgid "<b>Panel Settings</b>"
 msgstr "<b>パネルの設定</b>"
 
@@ -123,43 +116,88 @@ msgstr "ホットコーナーの動作を無効にする"
 msgid "Remove View button from panel"
 msgstr "パネルの表示ボタンを削除"
 
-msgid "Use custom label for View button"
-msgstr "表示ボタンの任意の名前を付ける"
+msgid "Label for View button"
+msgstr "Label for View button"
+
+msgid "Use icon with View button"
+msgstr "Use icon with View button"
 
 msgid "Remove Apps button from panel"
 msgstr "パネルからアプリボタンを削除"
 
-msgid "Use custom label for Apps button"
-msgstr "アプリボタンに任意の名前を付ける"
+msgid "Label for Apps button"
+msgstr "Label for Apps button"
+
+msgid "Use icon with Apps button"
+msgstr "Use icon with Apps button"
 
 msgid "Remove Menu button from panel"
 msgstr "パネルのメニューボタンを削除"
 
+msgid "Label for Menu button"
+msgstr "Label for Menu button"
+
+msgid "Use icon with Menu button"
+msgstr "Use icon with Menu button"
+
 msgid "Disable Menu button hot spot"
 msgstr "ホットスポットのメニューボタンを無効"
 
-msgid "Disable Menu button keyboard shortcut"
+msgid "Disable Menu button shortcut key"
 msgstr "ショートカットのメニューボタンを無効"
 
-msgid "Use custom label for Menu button"
-msgstr "メニューボタンに任意の名前を付ける"
+msgid "Invalid accelerator. Try F12, <Super>space, <Ctrl><Alt><Shift>a, etc."
+msgstr "Invalid accelerator. Try F12, <Super>space, <Ctrl><Alt><Shift>a, etc."
 
 msgid "<b>Menu Settings</b>"
 msgstr "<b>メニュー設定</b>"
 
-msgid "Menu layout style"
+msgid "Hide Shortcuts Panel"
+msgstr "Hide Shortcuts Panel"
+
+msgid "Menu layout size"
 msgstr "メニューレイアウトスタイル"
 
-msgid "Startup applications to display"
+msgid "Large"
+msgstr "Large"
+
+msgid "Medium"
+msgstr "Medium"
+
+msgid "Small"
+msgstr "Small"
+
+msgid "Icons to display on Shortcuts Panel"
+msgstr "Icons to display on Shortcuts Panel"
+
+msgid "Applications to display at startup"
 msgstr "開始時に表示するアプリケーション"
+
+msgid "All"
+msgstr ""
+
+msgid "Frequent"
+msgstr ""
 
 msgid "Default view mode for applications"
 msgstr "アプリケーションの標準表示モード"
 
+msgid "List"
+msgstr "List"
+
+msgid "Grid"
+msgstr "Grid"
+
 msgid "Category selection method"
 msgstr "カテゴリの選択方法"
 
-msgid "Size of Favorites Panel icons"
+msgid "Hover"
+msgstr "Hover"
+
+msgid "Click"
+msgstr "Click"
+
+msgid "Size of Shortcuts Panel icons"
 msgstr "お気に入りパネルアイコンのサイズ"
 
 msgid "Size of Application List icons"
@@ -168,5 +206,24 @@ msgstr "アプリケーションリストアイコンのサイズ"
 msgid "Size of Application Grid icons"
 msgstr "アプリケーショングリットアイコンのサイズ"
 
-msgid "Hide favorites section of menu"
-msgstr "メニューお気に入りセッションの表示"
+
+#: webChromium.js
+
+
+#: webEpiphany.js
+
+
+#: webFirefox.js
+
+
+#: webGoogleChrome.js
+
+
+#: webMidori.js
+
+
+#: webOpera.js
+
+
+#: workspaceThumbnail.js
+

@@ -4,7 +4,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gnomenu\n"
+"Project-Id-Version: Gno-Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2015-02-02 15:23+0300\n"
@@ -18,46 +18,10 @@ msgstr ""
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 "X-Generator: Gtranslator 2.91.6\n"
 
+#: convenience.js
+
+
 #: extension.js
-
-msgid "View"
-msgstr "Обзор"
-
-msgid "Apps"
-msgstr "Приложения"
-
-msgid "Menu"
-msgstr "Меню"
-
-msgid "Type to search..."
-msgstr "Введите запрос для поиска..."
-
-msgid "Frequent Apps"
-msgstr "Часто используемые"
-
-msgid "All Applications"
-msgstr "Все приложения"
-
-msgid "Places"
-msgstr "Места"
-
-msgid "Computer"
-msgstr "Компьютер"
-
-msgid "Bookmarks"
-msgstr "Закладки"
-
-msgid "Devices"
-msgstr "Устройства"
-
-msgid "Recent"
-msgstr "Недавние"
-
-msgid "Web"
-msgstr "Веб"
-
-msgid "Favorites"
-msgstr "Избранное"
 
 msgid "Gno-Menu: Search Firefox bookmarks disabled"
 msgstr "Gno-Menu: поиск по закладкам Firefox отключен"
@@ -79,23 +43,32 @@ msgstr ""
 "Для включения поиска по закладкам Midori необходимо установить "
 "дополнительные пакеты: libgir1.2-gda-5.0 (Ubuntu) или libgda-sqlite (Fedora)"
 
-msgid "Logout User"
-msgstr "Завершить сеанс"
+msgid "Recent"
+msgstr "Недавние"
 
-msgid "Lock Screen"
-msgstr "Заблокировать экран"
+msgid "Web"
+msgstr "Веб"
 
-msgid "Advanced Settings"
-msgstr "Расширенные настройки"
+msgid "Favorites"
+msgstr "Избранное"
 
-msgid "System Settings"
-msgstr "Системные настройки"
+msgid "Places"
+msgstr "Места"
 
 msgid "List View"
 msgstr "В виде списка"
 
 msgid "Grid View"
 msgstr "В виде сетки"
+
+msgid "Type to search..."
+msgstr "Введите запрос для поиска..."
+
+msgid "Frequent Apps"
+msgstr "Часто используемые"
+
+msgid "All Applications"
+msgstr "Все приложения"
 
 msgid "Restart Shell"
 msgstr "Перезапустить Shell"
@@ -106,23 +79,37 @@ msgstr "Режим ожидания"
 msgid "Shutdown"
 msgstr "Завершение работы"
 
+msgid "Logout User"
+msgstr "Завершить сеанс"
+
+msgid "Lock Screen"
+msgstr "Заблокировать экран"
+
 msgid "Preferences"
 msgstr "Настройки"
 
 msgid "No GnoMenu stylesheet found"
 msgstr "Не найден стиль для GnoMenu"
 
+
+
 #: placeDisplay.js
+
 msgid "Failed to launch \"%s\""
 msgstr "Не удалось запустить «%s»"
 
 msgid "Home"
 msgstr "Домашняя папка"
 
+msgid "Computer"
+msgstr "Компьютер"
+
 msgid "Browse Network"
 msgstr "Обзор сети"
 
+
 #: prefs.js
+
 msgid "<b>Panel Settings</b>"
 msgstr "<b>Настройки панели</b>"
 
@@ -161,6 +148,9 @@ msgstr "Отключить горячую область у кнопки «Ме�
 
 msgid "Disable Menu button shortcut key"
 msgstr "Отключить вызов «Меню» по горячей клавише"
+
+msgid "Invalid accelerator. Try F12, <Super>space, <Ctrl><Alt><Shift>a, etc."
+msgstr "Invalid accelerator. Try F12, <Super>space, <Ctrl><Alt><Shift>a, etc."
 
 msgid "<b>Menu Settings</b>"
 msgstr "<b>Настройки меню</b>"
@@ -204,11 +194,11 @@ msgstr "Сетка"
 msgid "Category selection method"
 msgstr "Метод выбора категории"
 
-msgid "Click"
-msgstr "Нажатие"
-
 msgid "Hover"
 msgstr "Наведение"
+
+msgid "Click"
+msgstr "Нажатие"
 
 msgid "Size of Shortcuts Panel icons"
 msgstr "Размер иконок для панели быстрого доступа"
@@ -219,7 +209,24 @@ msgstr "Размер иконок для приложений в виде спи
 msgid "Size of Application Grid icons"
 msgstr "Размер иконок для приложений в виде сетки"
 
-msgid "Hide favorites section of menu"
-msgstr "Скрыть раздел избранное из меню"
 
+#: webChromium.js
+
+
+#: webEpiphany.js
+
+
+#: webFirefox.js
+
+
+#: webGoogleChrome.js
+
+
+#: webMidori.js
+
+
+#: webOpera.js
+
+
+#: workspaceThumbnail.js
 

@@ -1,7 +1,7 @@
 # Livedevelop Live User <mortaromarcello@gmail.com>, 2014.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gnomenu\n"
+"Project-Id-Version: Gno-Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2014-01-25 13:10+0200\n"
@@ -15,41 +15,11 @@ msgstr ""
 "X-Generator: Virtaal 0.7.1\n"
 "X-Project-Style: gnome\n"
 
+
+#: convenience.js
+
+
 #: extension.js
-msgid "View"
-msgstr "Mostra"
-
-msgid "Apps"
-msgstr "Applicazioni"
-
-msgid "Menu"
-msgstr "Menu"
-
-msgid "Type to search..."
-msgstr "Ricerca..."
-
-msgid "All Applications"
-msgstr "Tutte le applicazioni"
-
-#msgid "All Places"
-#msgstr ""
-msgid "Places"
-msgstr "Posizioni"
-
-msgid "Computer"
-msgstr "Computer"
-
-msgid "Bookmarks"
-msgstr "Segnalibri"
-
-msgid "Devices"
-msgstr "Dispositivi"
-
-msgid "Recent"
-msgstr "Recenti"
-
-msgid "Web"
-msgstr "Web"
 
 msgid "Gno-Menu: Search Firefox bookmarks disabled"
 msgstr "Gno-Menu: Ricerca segnalibri Firefox disabilitata"
@@ -67,17 +37,17 @@ msgstr ""
 "Se vuoi ricercare i segnalibi di Midori, devi installare i seguenti "
 "pacchetti: libgir1.2-gda-5.0 (Ubuntu) or libgda-sqlite (Fedora)"
 
-msgid "Logout User"
-msgstr "Logout dell'utente"
+msgid "Recent"
+msgstr "Recenti"
 
-msgid "Lock Screen"
-msgstr "Blocca schermo"
+msgid "Web"
+msgstr "Web"
 
-msgid "Advanced Settings"
-msgstr "Opzioni avanzate"
+msgid "Favorites"
+msgstr "Favorites"
 
-msgid "System Settings"
-msgstr "Impostazioni sistema"
+msgid "Places"
+msgstr "Posizioni"
 
 msgid "List View"
 msgstr "Vista ad elenco"
@@ -85,14 +55,29 @@ msgstr "Vista ad elenco"
 msgid "Grid View"
 msgstr "Vista griglia"
 
+msgid "Type to search..."
+msgstr "Ricerca..."
+
+msgid "Frequent Apps"
+msgstr "Frequent Apps"
+
+msgid "All Applications"
+msgstr "Tutte le applicazioni"
+
 msgid "Restart Shell"
 msgstr "Riavvia la Shell"
 
 msgid "Suspend"
-msgstr ""
+msgstr "Suspend"
 
 msgid "Shutdown"
 msgstr "Arresta"
+
+msgid "Logout User"
+msgstr "Logout dell'utente"
+
+msgid "Lock Screen"
+msgstr "Blocca schermo"
 
 msgid "Preferences"
 msgstr "Preferenze"
@@ -100,17 +85,24 @@ msgstr "Preferenze"
 msgid "No GnoMenu stylesheet found"
 msgstr "Stylesheet GnoMenu non trovato"
 
+
+
 #: placeDisplay.js
+
 msgid "Failed to launch \"%s\""
 msgstr "Impossibile avviare \"%s\""
 
 msgid "Home"
-msgstr ""
+msgstr "Home"
+
+msgid "Computer"
+msgstr "Computer"
 
 msgid "Browse Network"
 msgstr "Esplora rete"
 
 #: prefs.js
+
 msgid "<b>Panel Settings</b>"
 msgstr "<b>Impostazioni Pannello</b>"
 
@@ -120,43 +112,88 @@ msgstr "Disabilita attività hot corner"
 msgid "Remove View button from panel"
 msgstr "Rimuovi pulsante Vista dal pannello"
 
-msgid "Use custom label for View button"
-msgstr "Usa etichetta personalizzata per il pulsante Vista"
+msgid "Label for View button"
+msgstr "Etichetta per il pulsante Vista"
+
+msgid "Use icon with View button"
+msgstr "Use icon with View button"
 
 msgid "Remove Apps button from panel"
 msgstr "Rimuovi pulsante Applicazioni dal pannello"
 
-msgid "Use custom label for Apps button"
-msgstr "Usa etichetta personalizzata per il pulsante Applicazioni"
+msgid "Label for Apps button"
+msgstr "Etichetta per il pulsante Applicazioni"
+
+msgid "Use icon with Apps button"
+msgstr "Use icon with Apps button"
 
 msgid "Remove Menu button from panel"
 msgstr "Rimuovi pulsante Menu dal pannello"
 
+msgid "Label for Menu button"
+msgstr "Label for Menu button"
+
+msgid "Use icon with Menu button"
+msgstr "Use icon with Menu button"
+
 msgid "Disable Menu button hot spot"
 msgstr "Disabilita pulsante Menu hot spot"
 
-msgid "Disable Menu button keyboard shortcut"
+msgid "Disable Menu button shortcut key"
 msgstr "Disabilita scorciatoia tastiera pulsante Menu"
 
-msgid "Use custom label for Menu button"
-msgstr "Usa etichetta personalizzata per il pulsante Menu"
+msgid "Invalid accelerator. Try F12, <Super>space, <Ctrl><Alt><Shift>a, etc."
+msgstr "Invalid accelerator. Try F12, <Super>space, <Ctrl><Alt><Shift>a, etc."
 
 msgid "<b>Menu Settings</b>"
 msgstr "<b>Impostazioni Menu</b>"
 
-msgid "Menu layout style"
+msgid "Hide Shortcuts Panel"
+msgstr "Hide Shortcuts Panel"
+
+msgid "Menu layout size"
 msgstr "Stile visualizzazione Menu"
 
-msgid "Startup applications to display"
+msgid "Large"
+msgstr "Large"
+
+msgid "Medium"
+msgstr "Medium"
+
+msgid "Small"
+msgstr "Small"
+
+msgid "Icons to display on Shortcuts Panel"
+msgstr "Icons to display on Shortcuts Panel"
+
+msgid "Applications to display at startup"
 msgstr "Applicazioni di Avvio sul display"
+
+msgid "All"
+msgstr "All"
+
+msgid "Frequent"
+msgstr "Frequent"
 
 msgid "Default view mode for applications"
 msgstr "Modo visuale di default per applicazioni"
 
+msgid "List"
+msgstr "List"
+
+msgid "Grid"
+msgstr "Grid"
+
 msgid "Category selection method"
 msgstr "Metodo di selezione della categoria"
 
-msgid "Size of Favorites Panel icons"
+msgid "Hover"
+msgstr ""
+
+msgid "Click"
+msgstr ""
+
+msgid "Size of Shortcuts Panel icons"
 msgstr ""
 
 msgid "Size of Application List icons"
@@ -165,5 +202,24 @@ msgstr ""
 msgid "Size of Application Grid icons"
 msgstr ""
 
-msgid "Hide favorites section of menu"
-msgstr ""
+
+#: webChromium.js
+
+
+#: webEpiphany.js
+
+
+#: webFirefox.js
+
+
+#: webGoogleChrome.js
+
+
+#: webMidori.js
+
+
+#: webOpera.js
+
+
+#: workspaceThumbnail.js
+

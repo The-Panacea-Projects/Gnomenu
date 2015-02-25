@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Gnomenu\n"
+"Project-Id-Version: Gno-Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2015-02-25 10:21:50-0500\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en_US\n"
@@ -11,49 +11,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+
+#: convenience.js
+
+
 #: extension.js
-
-msgid "View"
-msgstr ""
-
-msgid "Apps"
-msgstr ""
-
-msgid "Menu"
-msgstr ""
-
-msgid "Type to search..."
-msgstr ""
-
-msgid "Frequent Apps"
-msgstr ""
-
-msgid "All Applications"
-msgstr ""
-
-#msgid "All Places"
-#msgstr ""
-
-msgid "Places"
-msgstr ""
-
-msgid "Computer"
-msgstr ""
-
-msgid "Bookmarks"
-msgstr ""
-
-msgid "Devices"
-msgstr ""
-
-msgid "Recent"
-msgstr ""
-
-msgid "Web"
-msgstr ""
-
-msgid "Favorites"
-msgstr ""
 
 msgid "Gno-Menu: Search Firefox bookmarks disabled"
 msgstr ""
@@ -67,22 +29,31 @@ msgstr ""
 msgid "If you want to search Midori bookmarks, you must install the required pacakages: libgir1.2-gda-5.0 (Ubuntu) or libgda-sqlite (Fedora)"
 msgstr ""
 
-msgid "Logout User"
+msgid "Recent"
 msgstr ""
 
-msgid "Lock Screen"
+msgid "Web"
 msgstr ""
 
-msgid "Advanced Settings"
+msgid "Favorites"
 msgstr ""
 
-msgid "System Settings"
+msgid "Places"
 msgstr ""
 
 msgid "List View"
 msgstr ""
 
 msgid "Grid View"
+msgstr ""
+
+msgid "Type to search..."
+msgstr ""
+
+msgid "Frequent Apps"
+msgstr ""
+
+msgid "All Applications"
 msgstr ""
 
 msgid "Restart Shell"
@@ -94,11 +65,18 @@ msgstr ""
 msgid "Shutdown"
 msgstr ""
 
+msgid "Logout User"
+msgstr ""
+
+msgid "Lock Screen"
+msgstr ""
+
 msgid "Preferences"
 msgstr ""
 
 msgid "No GnoMenu stylesheet found"
 msgstr ""
+
 
 
 #: placeDisplay.js
@@ -109,7 +87,10 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
-msgid "Browse Network"
+msgid "Computer"
+msgstr ""
+
+msgid "Browse network"
 msgstr ""
 
 
@@ -154,6 +135,9 @@ msgstr ""
 msgid "Disable Menu button shortcut key"
 msgstr ""
 
+msgid "Invalid accelerator. Try F12, <Super>space, <Ctrl><Alt><Shift>a, etc."
+msgstr ""
+
 msgid "<b>Menu Settings</b>"
 msgstr ""
 
@@ -196,10 +180,10 @@ msgstr ""
 msgid "Category selection method"
 msgstr ""
 
-msgid "Click"
+msgid "Hover"
 msgstr ""
 
-msgid "Hover"
+msgid "Click"
 msgstr ""
 
 msgid "Size of Shortcuts Panel icons"
@@ -211,5 +195,24 @@ msgstr ""
 msgid "Size of Application Grid icons"
 msgstr ""
 
-msgid "Hide favorites section of menu"
-msgstr ""
+
+#: webChromium.js
+
+
+#: webEpiphany.js
+
+
+#: webFirefox.js
+
+
+#: webGoogleChrome.js
+
+
+#: webMidori.js
+
+
+#: webOpera.js
+
+
+#: workspaceThumbnail.js
+
