@@ -25,6 +25,9 @@ msgstr ""
 msgid "Type to search..."
 msgstr ""
 
+msgid "Frequent Apps"
+msgstr ""
+
 msgid "All Applications"
 msgstr ""
 
@@ -47,6 +50,9 @@ msgid "Recent"
 msgstr ""
 
 msgid "Web"
+msgstr ""
+
+msgid "Favorites"
 msgstr ""
 
 msgid "Gno-Menu: Search Firefox bookmarks disabled"
@@ -118,43 +124,85 @@ msgstr ""
 msgid "Remove View button from panel"
 msgstr ""
 
-msgid "Use custom label for View button"
+msgid "Label for View button"
+msgstr ""
+
+msgid "Use icon with View button"
 msgstr ""
 
 msgid "Remove Apps button from panel"
 msgstr ""
 
-msgid "Use custom label for Apps button"
+msgid "Label for Apps button"
+msgstr ""
+
+msgid "Use icon with Apps button"
 msgstr ""
 
 msgid "Remove Menu button from panel"
 msgstr ""
 
+msgid "Label for Menu button"
+msgstr ""
+
+msgid "Use icon with Menu button"
+msgstr ""
+
 msgid "Disable Menu button hot spot"
 msgstr ""
 
-msgid "Disable Menu button keyboard shortcut"
-msgstr ""
-
-msgid "Use custom label for Menu button"
+msgid "Disable Menu button shortcut key"
 msgstr ""
 
 msgid "<b>Menu Settings</b>"
 msgstr ""
 
-msgid "Menu layout style"
+msgid "Hide Shortcuts Panel"
 msgstr ""
 
-msgid "Startup applications to display"
+msgid "Menu layout size"
+msgstr ""
+
+msgid "Large"
+msgstr ""
+
+msgid "Medium"
+msgstr ""
+
+msgid "Small"
+msgstr ""
+
+msgid "Icons to display on Shortcuts Panel"
+msgstr ""
+
+msgid "Applications to display at startup"
+msgstr ""
+
+msgid "All"
+msgstr ""
+
+msgid "Frequent"
 msgstr ""
 
 msgid "Default view mode for applications"
 msgstr ""
 
+msgid "List"
+msgstr ""
+
+msgid "Grid"
+msgstr ""
+
 msgid "Category selection method"
 msgstr ""
 
-msgid "Size of Favorites Panel icons"
+msgid "Click"
+msgstr ""
+
+msgid "Hover"
+msgstr ""
+
+msgid "Size of Shortcuts Panel icons"
 msgstr ""
 
 msgid "Size of Application List icons"
