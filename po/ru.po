@@ -1,16 +1,14 @@
 # Translator list
-#
-# vantu5z <vantu5z@mail.ru>, 2015.
+# Ivan Komaritsyn <vantu5z@mail.ru>, 2015.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Gno-Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2015-02-02 15:23+0300\n"
-"Last-Translator: vantu5z <vantu5z@mail.ru>\n"
-"Language-Team: русский <vantu5z@mail.ru>\n"
-"Language: en_US\n"
+"PO-Revision-Date: 2015-02-27 13:18+0300\n"
+"Last-Translator: Ivan Komaritsyn <vantu5z@mail.ru>\n"
+"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -74,10 +72,10 @@ msgid "Restart Shell"
 msgstr "Перезапустить Shell"
 
 msgid "Suspend"
-msgstr "Режим ожидания"
+msgstr "Перейти в режим ожидания"
 
 msgid "Shutdown"
-msgstr "Завершение работы"
+msgstr "Выключить компьютер"
 
 msgid "Logout User"
 msgstr "Завершить сеанс"
@@ -150,7 +148,9 @@ msgid "Disable Menu button shortcut key"
 msgstr "Отключить вызов «Меню» по горячей клавише"
 
 msgid "Invalid accelerator. Try F12, <Super>space, <Ctrl><Alt><Shift>a, etc."
-msgstr "Invalid accelerator. Try F12, <Super>space, <Ctrl><Alt><Shift>a, etc."
+msgstr ""
+"Неверно указана горячая клавиша. Попробуйте F12, <Super>space, "
+"<Ctrl><Alt><Shift>a, и др."
 
 msgid "<b>Menu Settings</b>"
 msgstr "<b>Настройки меню</b>"
