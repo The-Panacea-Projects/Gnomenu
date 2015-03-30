@@ -2589,7 +2589,7 @@ const GnoMenuButton = new Lang.Class({
 
             // Bind menu accelerator key
             if (!settings.get_boolean('disable-panel-menu-keyboard')) {
-                Main.wm.addKeybinding('panel-menu-keyboard-accelerator', settings, Meta.KeyBindingFlags.NONE, Shell.KeyBindingMode.NORMAL,
+                Main.wm.addKeybinding('panel-menu-keyboard-accelerator', settings, Meta.KeyBindingFlags.NONE, Shell.ActionMode.NORMAL,
                     Lang.bind(this, function() {
                         if (this.appsMenuButton) {
                             if (!this.appsMenuButton.menu.isOpen)
@@ -2735,22 +2735,25 @@ const GnoMenuButton = new Lang.Class({
             themeStylesheet = Main._cssStylesheet;
 
         // Get theme directory
-        let themeDirectory = GLib.path_get_dirname(themeStylesheet);
+        let themeDirectory = themeStylesheet.get_path() ? GLib.path_get_dirname(themeStylesheet.get_path()) : "";
         if (_DEBUG_) global.log("GnoMenuButton: _changedStylesheet new theme = "+themeStylesheet);
 
         // Test for gnomenu stylesheet
-        let newStylesheet = themeDirectory + '/extensions/gno-menu/' + filename;
-        if (!GLib.file_test(newStylesheet, GLib.FileTest.EXISTS)) {
+        let newStylesheet = null;
+        if (themeDirectory != "")
+            newStylesheet = Gio.file_new_for_path(themeDirectory + '/extensions/gno-menu/' + filename);
+
+        if (!newStylesheet || !newStylesheet.query_exists(null)) {
             if (_DEBUG_) global.log("GnoMenuButton: _chengeStylesheet Theme doesn't support gnomenu .. use default stylesheet");
             let defaultStylesheet = Gio.File.new_for_path(Me.path + "/themes/default/" + filename);
             if (defaultStylesheet.query_exists(null)) {
-                newStylesheet = defaultStylesheet.get_path();
+                newStylesheet = defaultStylesheet;
             } else {
                 throw new Error(_("No GnoMenu stylesheet found") + " (extension.js).");
             }
         }
 
-        if (GnoMenuStylesheet && GnoMenuStylesheet == newStylesheet) {
+        if (GnoMenuStylesheet && GnoMenuStylesheet.equal(newStylesheet)) {
             if (_DEBUG_) global.log("GnoMenuButton: _changeStylesheet No change in stylesheet. Exit");
             return false;
         }
@@ -2775,7 +2778,7 @@ const GnoMenuButton = new Lang.Class({
 
         let newTheme = new St.Theme ({ application_stylesheet: themeStylesheet });
         for (let i = 0; i < customStylesheets.length; i++) {
-            if (customStylesheets[i] != previousStylesheet) {
+            if (!customStylesheets[i].equal(previousStylesheet)) {
                 newTheme.load_stylesheet(customStylesheets[i]);
             }
         }
@@ -2886,15 +2889,17 @@ function loadStylesheet() {
         themeStylesheet = Main._cssStylesheet;
 
     // Get theme directory
-    let themeDirectory = GLib.path_get_dirname(themeStylesheet);
+    let themeDirectory = themeStylesheet.get_path() ? GLib.path_get_dirname(themeStylesheet.get_path()) : "";
 
     // Test for gnomenu stylesheet
-    GnoMenuStylesheet = themeDirectory + '/extensions/gno-menu/' + filename;
-    if (!GLib.file_test(GnoMenuStylesheet, GLib.FileTest.EXISTS)) {
+    if (themeDirectory != "")
+        GnoMenuStylesheet = Gio.file_new_for_path(themeDirectory + '/extensions/gno-menu/' + filename);
+
+    if (!GnoMenuStylesheet || !GnoMenuStylesheet.query_exists(null)) {
         if (_DEBUG_) global.log("GnoMenu Extension: Theme doesn't support gnomenu .. use default stylesheet");
         let defaultStylesheet = Gio.File.new_for_path(Me.path + "/themes/default/" + filename);
         if (defaultStylesheet.query_exists(null)) {
-            GnoMenuStylesheet = defaultStylesheet.get_path();
+            GnoMenuStylesheet = defaultStylesheet;
         } else {
             throw new Error(_("No GnoMenu stylesheet found") + " (extension.js).");
         }
