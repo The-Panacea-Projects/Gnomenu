@@ -1273,7 +1273,8 @@ const PanelMenuButton = new Lang.Class({
                            appGridButton._app.open_new_window(-1);
                            this.menu.close();
                         }));
-                        this.applicationsGridBox.add(appGridButton.actor, {row:rownum, col:column, x_fill:false, y_fill:false, x_expand:false, y_expand: false, x_align:St.Align.START, y_align:St.Align.START});
+                        let gridLayout = this.applicationsGridBox.layout_manager;
+                        gridLayout.pack(appGridButton.actor, column, rownum);
                         column ++;
                         if (column > this._appGridColumns-1) {
                             column = 0;
@@ -1357,7 +1358,8 @@ const PanelMenuButton = new Lang.Class({
                            }
                            this.menu.close();
                         }));
-                        this.applicationsGridBox.add(appGridButton.actor, {row:rownum, col:column, x_fill:false, y_fill:false, x_expand:false, y_expand: false, x_align:St.Align.START, y_align:St.Align.START});
+                        let gridLayout = this.applicationsGridBox.layout_manager;
+                        gridLayout.pack(appGridButton.actor, column, rownum);
                         column ++;
                         if (column > this._appGridColumns-1) {
                             column = 0;
@@ -1434,7 +1436,8 @@ const PanelMenuButton = new Lang.Class({
                            Gio.app_info_launch_default_for_uri(app.uri, global.create_app_launch_context(0, -1));
                            this.menu.close();
                         }));
-                        this.applicationsGridBox.add(appGridButton.actor, {row:rownum, col:column, x_fill:false, y_fill:false, x_expand:false, y_expand: false, x_align:St.Align.START, y_align:St.Align.START});
+                        let gridLayout = this.applicationsGridBox.layout_manager;
+                        gridLayout.pack(appGridButton.actor, column, rownum);
                         column ++;
                         if (column > this._appGridColumns-1) {
                             column = 0;
@@ -2389,7 +2392,7 @@ const PanelMenuButton = new Lang.Class({
         }));
 
         this.applicationsListBox = new St.BoxLayout({ style_class: 'gnomenu-applications-list-box', vertical:true });
-        this.applicationsGridBox = new St.Table({ homogeneous:false, reactive:true, style_class: 'gnomenu-applications-grid-box'});
+        this.applicationsGridBox = new St.Widget({ layout_manager: new Clutter.TableLayout(), reactive:true, style_class: 'gnomenu-applications-grid-box'});
         this.applicationsBoxWrapper = new St.BoxLayout({ style_class: 'gnomenu-applications-box-wrapper' });
         this.applicationsBoxWrapper.add(this.applicationsGridBox, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
         this.applicationsBoxWrapper.add(this.applicationsListBox, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
