@@ -13,7 +13,7 @@
    height="16"
    width="16"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="suspend-symbolic.svg">
   <defs
      id="defs10" />
@@ -30,11 +30,11 @@
      inkscape:window-height="792"
      id="namedview8"
      showgrid="false"
-     inkscape:zoom="14.75"
-     inkscape:cx="-3.2881356"
+     inkscape:zoom="37.875"
+     inkscape:cx="8"
      inkscape:cy="8"
      inkscape:window-x="115"
-     inkscape:window-y="95"
+     inkscape:window-y="96"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg7384" />
   <metadata
@@ -53,10 +53,10 @@
      id="title9167">Gnome Symbolic Icon Theme</title>
   <g
      id="layer12"
-     transform="matrix(0.98575771,0,0,0.98570305,-216.75212,-597.22147)">
+     transform="matrix(1.0703124,0,0,1.0722711,-236.04193,-650.39)">
     <path
        id="path4222"
-       style="text-indent:0;text-transform:none;block-progression:tb;color:#000000;fill:#bebebe"
+       style="color:#000000;text-indent:0;text-transform:none;block-progression:tb;fill:#bebebe"
        d="m 228.01,607.02 c -3.86,0 -7.0073,3.166 -7.0073,7.0103 0,3.8443 3.1472,6.9787 7.0073,6.9787 3.86,0 7.0073,-3.1344 7.0073,-6.9787 0,-3.8443 -3.1472,-7.0103 -7.0073,-7.0103 z m 0,2.021 c 2.7769,0 5.0097,2.2237 5.0097,4.9893 0,2.7656 -2.2328,4.9577 -5.0097,4.9577 -2.777,0 -5.0097,-2.1921 -5.0097,-4.9577 0,-2.7656 2.2328,-4.9893 5.0097,-4.9893 z"
        inkscape:connector-curvature="0" />
   </g>
@@ -65,8 +65,8 @@
      id="layer12-3">
     <path
        inkscape:connector-curvature="0"
-       d="m 107.78,686 a 1.0001,1.0001 0 0 0 -0.78,1 v 5 a 1.0001,1.0001 0 1 0 2,0 v -5 a 1.0001,1.0001 0 0 0 -1.2188,-1 z"
-       style="text-indent:0;text-transform:none;block-progression:tb;color:#000000;fill:#bebebe"
+       d="m 107.74836,685.11609 a 0.9998055,1.2425535 0 0 0 -0.77977,1.24244 l 0,6.21213 a 0.9998055,1.2425535 0 1 0 1.99941,0 l 0,-6.21213 a 0.9998055,1.2425535 0 0 0 -1.21844,-1.24244 z"
+       style="color:#000000;text-indent:0;text-transform:none;block-progression:tb;fill:#bebebe"
        id="path4710" />
   </g>
 </svg>

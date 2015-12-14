@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Gno-Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2015-02-25 10:21:50-0500\n"
+"PO-Revision-Date: 2015-12-02 14:11:27-0500\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en_US\n"
@@ -20,25 +20,28 @@ msgstr ""
 msgid "Gno-Menu: Search Firefox bookmarks disabled"
 msgstr ""
 
-msgid "If you want to search Firefox bookmarks, you must install the required pacakages: libgir1.2-gda-5.0 (Ubuntu) or libgda-sqlite (Fedora)"
+msgid "If you want to search Firefox bookmarks, you must install the required pacakages: libgir1.2-gda-5.0 [Ubuntu] or libgda-sqlite [Fedora]"
 msgstr ""
 
 msgid "Gno-Menu: Search Midori bookmarks disabled"
 msgstr ""
 
-msgid "If you want to search Midori bookmarks, you must install the required pacakages: libgir1.2-gda-5.0 (Ubuntu) or libgda-sqlite (Fedora)"
+msgid "If you want to search Midori bookmarks, you must install the required pacakages: libgir1.2-gda-5.0 [Ubuntu] or libgda-sqlite [Fedora]"
 msgstr ""
 
 msgid "Recent"
 msgstr ""
 
-msgid "Web"
+msgid "Webmarks"
 msgstr ""
 
 msgid "Favorites"
 msgstr ""
 
 msgid "Places"
+msgstr ""
+
+msgid "Toggle Startup Apps View"
 msgstr ""
 
 msgid "List View"
@@ -50,10 +53,13 @@ msgstr ""
 msgid "Type to search..."
 msgstr ""
 
+msgid "All Applications"
+msgstr ""
+
 msgid "Frequent Apps"
 msgstr ""
 
-msgid "All Applications"
+msgid "Favorite Apps"
 msgstr ""
 
 msgid "Restart Shell"
@@ -76,7 +82,6 @@ msgstr ""
 
 msgid "No GnoMenu stylesheet found"
 msgstr ""
-
 
 
 #: placeDisplay.js
@@ -138,7 +143,22 @@ msgstr ""
 msgid "Invalid accelerator. Try F12, <Super>space, <Ctrl><Alt><Shift>a, etc."
 msgstr ""
 
+msgid "Set Menu button position"
+msgstr ""
+
+msgid "Left"
+msgstr ""
+
+msgid "Center"
+msgstr ""
+
+msgid "Right"
+msgstr ""
+
 msgid "<b>Menu Settings</b>"
+msgstr ""
+
+msgid "Hide User Options Panel"
 msgstr ""
 
 msgid "Hide Shortcuts Panel"
@@ -147,13 +167,10 @@ msgstr ""
 msgid "Menu layout size"
 msgstr ""
 
-msgid "Large"
+msgid "Normal"
 msgstr ""
 
-msgid "Medium"
-msgstr ""
-
-msgid "Small"
+msgid "Compact"
 msgstr ""
 
 msgid "Icons to display on Shortcuts Panel"
@@ -168,6 +185,27 @@ msgstr ""
 msgid "Frequent"
 msgstr ""
 
+msgid "None"
+msgstr ""
+
+msgid "Number of columns in Application Grid"
+msgstr ""
+
+msgid "3"
+msgstr ""
+
+msgid "4"
+msgstr ""
+
+msgid "5"
+msgstr ""
+
+msgid "6"
+msgstr ""
+
+msgid "7"
+msgstr ""
+
 msgid "Default view mode for applications"
 msgstr ""
 
@@ -175,6 +213,9 @@ msgid "List"
 msgstr ""
 
 msgid "Grid"
+msgstr ""
+
+msgid "Hide Categories Panel"
 msgstr ""
 
 msgid "Category selection method"

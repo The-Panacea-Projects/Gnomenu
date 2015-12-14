@@ -14,7 +14,7 @@
    height="16"
    width="16"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="user-logout-symbolic.svg">
   <defs
      id="defs10">
@@ -97,16 +97,16 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="949"
-     inkscape:window-height="792"
+     inkscape:window-width="1920"
+     inkscape:window-height="996"
      id="namedview8"
      showgrid="false"
-     inkscape:zoom="14.75"
-     inkscape:cx="8"
-     inkscape:cy="8"
-     inkscape:window-x="108"
-     inkscape:window-y="56"
-     inkscape:window-maximized="0"
+     inkscape:zoom="51.3125"
+     inkscape:cx="8.0779537"
+     inkscape:cy="7.9415347"
+     inkscape:window-x="0"
+     inkscape:window-y="41"
+     inkscape:window-maximized="1"
      inkscape:current-layer="svg7384" />
   <metadata
      id="metadata90">
@@ -123,7 +123,7 @@
   <title
      id="title9167">Gnome Symbolic Icon Theme</title>
   <g
-     transform="matrix(0.94283111,0,0,0.82926827,-1.6098741,-854.32446)"
+     transform="matrix(0.88585264,0,0,0.80665582,-1.5620804,-831.51322)"
      id="layer1"
      inkscape:label="Layer 1">
     <g
@@ -133,13 +133,12 @@
          inkscape:connector-curvature="0"
          id="rect20599"
          style="color:#bebebe;fill:#bebebe"
-         d="m 47,345 c -1.5545,0.11593 -3,1.4148 -3,3 v 4 h 10 v -4 c 0,-1.5852 -1.4455,-2.8841 -3,-3 v 1 h -4 z" />
+         d="m 46.142355,345.21175 c -1.537057,0.12849 -2.966337,1.568 -2.966337,3.32485 l 0,4.43314 9.887789,0 0,-4.43314 c 0,-1.75685 -1.42928,-3.1964 -2.966337,-3.32485 l 0,1.10829 -3.955115,0 z" />
       <path
          inkscape:connector-curvature="0"
          id="path20580"
          style="color:#bebebe;fill:#bebebe"
-         d="m 52,342.5 a 2.5,2.5 0 1 1 -5,0 2.5,2.5 0 1 1 5,0 z"
-         transform="matrix(1.2,0,0,1.2,-10.4,-69)" />
+         d="m 51.003851,341.62369 a 2.8839385,3.3941195 0 0 1 -5.767877,0 2.8839385,3.3941195 0 1 1 5.767877,0 z" />
     </g>
     <g
        id="layer12"
@@ -150,8 +149,9 @@
         <path
            inkscape:connector-curvature="0"
            id="path4421"
-           style="text-indent:0;text-transform:none;block-progression:tb;color:#bebebe;fill:#bebebe;enable-background:new"
-           d="m 122.74587,519.16393 h 0.67629 c 0.01,-1.1e-4 0.0144,-4.1e-4 0.0216,0 0.17244,0.0118 0.34488,0.11734 0.46495,0.28526 l 3.57156,4.76401 -3.57156,4.73545 c -0.12843,0.17344 -0.30428,0.25558 -0.48691,0.25558 h -0.67622 v -0.91283 c 0,-0.24214 0.0627,-0.48431 0.19019,-0.65618 l 2.5783,-3.42312 -2.5783,-3.4517 c -0.14256,-0.17769 -0.20506,-0.42835 -0.19019,-0.68468 v -0.91283 z" />
+           style="color:#bebebe;text-indent:0;text-transform:none;block-progression:tb;fill:#bebebe;enable-background:new"
+           d="m 123.68611,518.09181 5.04842,5.80609 -5.04842,6.12583 -1.22291,-1.61081 3.6671,-4.5163 -3.66686,-4.194 z"
+           sodipodi:nodetypes="ccccccc" />
       </g>
     </g>
   </g>

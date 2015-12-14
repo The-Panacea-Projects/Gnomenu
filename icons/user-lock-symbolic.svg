@@ -14,7 +14,7 @@
    height="16"
    width="16"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="user-lock-symbolic.svg">
   <defs
      id="defs10">
@@ -97,16 +97,16 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1274"
-     inkscape:window-height="952"
+     inkscape:window-width="1007"
+     inkscape:window-height="868"
      id="namedview8"
      showgrid="false"
-     inkscape:zoom="14.75"
+     inkscape:zoom="42.4375"
      inkscape:cx="8"
-     inkscape:cy="8"
-     inkscape:window-x="0"
-     inkscape:window-y="37"
-     inkscape:window-maximized="1"
+     inkscape:cy="7.9646539"
+     inkscape:window-x="287"
+     inkscape:window-y="120"
+     inkscape:window-maximized="0"
      inkscape:current-layer="svg7384" />
   <metadata
      id="metadata90">
@@ -123,7 +123,7 @@
   <title
      id="title9167">Gnome Symbolic Icon Theme</title>
   <g
-     transform="matrix(0.86842103,0,0,0.82208591,-2.3202157,-847.00513)"
+     transform="matrix(0.92105261,0,0,0.85889573,-2.9605318,-885.24924)"
      id="layer1"
      inkscape:label="Layer 1">
     <g
@@ -133,12 +133,12 @@
          inkscape:connector-curvature="0"
          id="rect4063"
          style="color:#bebebe;fill:#bebebe"
-         d="m 184,244 c -0.554,0 -1,0.446 -1,1 v 0.53125 5.4688 h 12 v -5.4688 -0.53 c 0,-0.554 -0.446,-1 -1,-1 h -10 z" />
+         d="m 184,243.61234 c -0.554,0 -1,0.4707 -1,1.05536 l 0,0.56069 0,5.77166 12,0 0,-5.77166 0,-0.55936 c 0,-0.58469 -0.446,-1.05538 -1,-1.05538 l -10,0 z" />
       <path
          inkscape:connector-curvature="0"
          id="rect4291"
-         style="text-indent:0;text-transform:none;block-progression:tb;color:#bebebe;fill:#bebebe"
-         d="m 188,238 c -1.6447,0 -3,1.3553 -3,3 v 7 c 0,1.6447 1.3553,3 3,3 h 2 c 1.6447,0 3,-1.3553 3,-3 v -7 c 0,-1.6447 -1.3553,-3 -3,-3 h -2 z m 0,2 h 2 c 0.5713,0 1,0.4287 1,1 v 7 c 0,0.5713 -0.4287,1 -1,1 h -2 c -0.5713,0 -1,-0.4287 -1,-1 v -7 c 0,-0.5713 0.4287,-1 1,-1 z" />
+         style="color:#bebebe;text-indent:0;text-transform:none;block-progression:tb;fill:#bebebe"
+         d="m 188,238 c -1.6447,0 -3,1.27439 -3,2.8209 l 0,6.58214 c 0,1.54647 1.3553,2.82089 3,2.82089 l 2,0 c 1.6447,0 3,-1.27442 3,-2.82089 l 0,-6.58214 C 193,239.27439 191.6447,238 190,238 l -2,0 z m 0,1.88061 2,0 c 0.5713,0 1,0.4031 1,0.94029 l 0,6.58214 c 0,0.53716 -0.4287,0.94028 -1,0.94028 l -2,0 c -0.5713,0 -1,-0.40312 -1,-0.94028 l 0,-6.58214 c 0,-0.53719 0.4287,-0.94029 1,-0.94029 z" />
     </g>
   </g>
 </svg>

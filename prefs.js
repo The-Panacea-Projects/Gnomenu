@@ -112,7 +112,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             margin_bottom: 5,
             margin_right: 10
         });
-        
+
         let customViewLabel = new Gtk.Label({
             label: _("Label for View button"),
             margin_left: 40,
@@ -211,7 +211,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             margin_bottom: 5,
             margin_right: 10
         });
-        
+
         let customAppsLabel = new Gtk.Label({
             label: _("Label for Apps button"),
             margin_left: 40,
@@ -428,13 +428,41 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         disableMenuKeyboardAccelBox.add(disableMenuKeyboardAccel);
         disableMenuKeyboardAccelBox.add(keyboardAccelEntry);
 
+        let menuButtonPositionBox = new Gtk.Box({
+            spacing: 20,
+            orientation: Gtk.Orientation.HORIZONTAL,
+            homogeneous: false,
+            margin_left: 20,
+            margin_top: 0,
+            margin_bottom: 5,
+            margin_right: 10
+        });
+        // let menuButtonPositionLabel = new Gtk.Label({label: _("Set Menu button position"), hexpand:true, xalign:0});
+        let menuButtonPositionLabel = new Gtk.Label({
+            label: _("Set Menu button position"),
+            margin_left: 40,
+            hexpand: true,
+            halign: Gtk.Align.START
+        });
+        let menuButtonPositionCombo = new Gtk.ComboBoxText({halign:Gtk.Align.END});
+            menuButtonPositionCombo.set_size_request(120, -1);
+            menuButtonPositionCombo.append_text(_('Left'));
+            menuButtonPositionCombo.append_text(_('Center'));
+            menuButtonPositionCombo.append_text(_('Right'));
+            menuButtonPositionCombo.set_active(this.settings.get_enum('panel-menu-position'));
+            menuButtonPositionCombo.connect('changed', Lang.bind (this, function(widget) {
+                    this.settings.set_enum('panel-menu-position', widget.get_active());
+            }));
+
+        menuButtonPositionBox.add(menuButtonPositionLabel);
+        menuButtonPositionBox.add(menuButtonPositionCombo);
 
         this.settings.bind('hide-panel-menu', panelMenuBox, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
         panelMenuBox.add(customMenuLabelBox);
+        panelMenuBox.add(menuButtonPositionBox);
         panelMenuBox.add(customMenuIconBox);
         panelMenuBox.add(disableMenuHotSpotBox);
         panelMenuBox.add(disableMenuKeyboardAccelBox);
-
 
         panelSettings.add(panelSettingsTitle);
         panelSettings.add(disableHotCornerBox);
@@ -460,6 +488,33 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             margin_top: 5,
             margin_bottom: 5
         });
+
+
+        let hideUserOptionsBox = new Gtk.Box({
+            spacing: 20,
+            orientation: Gtk.Orientation.HORIZONTAL,
+            homogeneous: false,
+            margin_left: 20,
+            margin_top: 5,
+            margin_bottom: 5,
+            margin_right: 10
+        });
+        let hideUserOptionsLabel = new Gtk.Label({
+            label: _("Hide User Options Panel"),
+            use_markup: true,
+            xalign: 0,
+            hexpand: true
+        });
+        let hideUserOptionsSwitch = new Gtk.Switch ({
+            halign: Gtk.Align.END
+        });
+        hideUserOptionsSwitch.set_active(this.settings.get_boolean('hide-useroptions'));
+        hideUserOptionsSwitch.connect("notify::active", Lang.bind(this, function(check) {
+            this.settings.set_boolean('hide-useroptions', check.get_active());
+        }));
+
+        hideUserOptionsBox.add(hideUserOptionsLabel);
+        hideUserOptionsBox.add(hideUserOptionsSwitch);
 
         let hideFavoritesBox = new Gtk.Box({
             spacing: 20,
@@ -499,25 +554,20 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         let menuLayoutLabel = new Gtk.Label({label: _("Menu layout size"), hexpand:true, xalign:0});
         let menuLayoutCombo = new Gtk.ComboBoxText({halign:Gtk.Align.END});
             menuLayoutCombo.set_size_request(120, -1);
-            menuLayoutCombo.append_text(_('Large'));
-            menuLayoutCombo.append_text(_('Medium'));
-            menuLayoutCombo.append_text(_('Small'));
+            menuLayoutCombo.append_text(_('Normal'));
+            menuLayoutCombo.append_text(_('Compact'));
             menuLayoutCombo.set_active(this.settings.get_enum('menu-layout'));
             menuLayoutCombo.connect('changed', Lang.bind (this, function(widget) {
                     this.settings.set_enum('menu-layout', widget.get_active());
                     let selected = widget.get_active();
-                    if (selected == 2) {
+                    if (selected == 1) {
                         favoritesIconSizeCombo.set_active(iconSizes.indexOf(24));
                         appsListIconSizeCombo.set_active(iconSizes.indexOf(16));
                         appsGridIconSizeCombo.set_active(iconSizes.indexOf(32));
-                    } else if (selected == 1) {
+                    } else {
                         favoritesIconSizeCombo.set_active(iconSizes.indexOf(32));
                         appsListIconSizeCombo.set_active(iconSizes.indexOf(24));
                         appsGridIconSizeCombo.set_active(iconSizes.indexOf(48));
-                    } else {
-                        favoritesIconSizeCombo.set_active(iconSizes.indexOf(48));
-                        appsListIconSizeCombo.set_active(iconSizes.indexOf(32));
-                        appsGridIconSizeCombo.set_active(iconSizes.indexOf(64));
                     }
             }));
 
@@ -533,7 +583,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             margin_bottom: 5,
             margin_right: 10
         });
-        let shortcutAppsDisplayLabel = new Gtk.Label({label: _("Icons to display on Shortcuts Panel"), 
+        let shortcutAppsDisplayLabel = new Gtk.Label({label: _("Icons to display on Shortcuts Panel"),
                                                         hexpand:true, xalign:0});
         let shortcutAppsDisplayCombo = new Gtk.ComboBoxText({halign:Gtk.Align.END});
             shortcutAppsDisplayCombo.set_size_request(120, -1);
@@ -556,12 +606,14 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             margin_bottom: 5,
             margin_right: 10
         });
-        let startupAppsDisplayLabel = new Gtk.Label({label: _("Applications to display at startup"), 
+        let startupAppsDisplayLabel = new Gtk.Label({label: _("Applications to display at startup"),
                                                         hexpand:true, xalign:0});
         let startupAppsDisplayCombo = new Gtk.ComboBoxText({halign:Gtk.Align.END});
             startupAppsDisplayCombo.set_size_request(120, -1);
             startupAppsDisplayCombo.append_text(_('All'));
             startupAppsDisplayCombo.append_text(_('Frequent'));
+            startupAppsDisplayCombo.append_text(_('Favorites'));
+            startupAppsDisplayCombo.append_text(_('None'));
             startupAppsDisplayCombo.set_active(this.settings.get_enum('startup-apps-display'));
             startupAppsDisplayCombo.connect('changed', Lang.bind (this, function(widget) {
                     this.settings.set_enum('startup-apps-display', widget.get_active());
@@ -569,6 +621,39 @@ const GnoMenuPreferencesWidget = new GObject.Class({
 
         startupAppsDisplayBox.add(startupAppsDisplayLabel);
         startupAppsDisplayBox.add(startupAppsDisplayCombo);
+
+
+
+        let columnCount = [3, 4, 5 , 6, 7];
+        let appsGridColumnCountBox = new Gtk.Box({
+            spacing: 20,
+            orientation: Gtk.Orientation.HORIZONTAL,
+            homogeneous: false,
+            margin_left: 20,
+            margin_top: 5,
+            margin_bottom: 5,
+            margin_right: 10
+        });
+        let appsGridColumnCountLabel = new Gtk.Label({label: _("Number of columns in Application Grid"),
+                                                    hexpand:true, xalign:0});
+        let appsGridColumnCountCombo = new Gtk.ComboBoxText({halign:Gtk.Align.END});
+            appsGridColumnCountCombo.set_size_request(120, -1);
+            appsGridColumnCountCombo.append_text(_('3'));
+            appsGridColumnCountCombo.append_text(_('4'));
+            appsGridColumnCountCombo.append_text(_('5'));
+            appsGridColumnCountCombo.append_text(_('6'));
+            appsGridColumnCountCombo.append_text(_('7'));
+            appsGridColumnCountCombo.set_active(columnCount.indexOf(this.settings.get_int('apps-grid-column-count')));
+            appsGridColumnCountCombo.connect('changed', Lang.bind (this, function(widget) {
+                    this.settings.set_int('apps-grid-column-count', columnCount[widget.get_active()]);
+            }));
+
+
+        appsGridColumnCountBox.add(appsGridColumnCountLabel);
+        appsGridColumnCountBox.add(appsGridColumnCountCombo);
+
+
+
 
         let startupViewModeBox = new Gtk.Box({
             spacing: 20,
@@ -579,7 +664,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             margin_bottom: 5,
             margin_right: 10
         });
-        let startupViewModeLabel = new Gtk.Label({label: _("Default view mode for applications"), 
+        let startupViewModeLabel = new Gtk.Label({label: _("Default view mode for applications"),
                                                     hexpand:true, xalign:0});
         let startupViewModeCombo = new Gtk.ComboBoxText({halign:Gtk.Align.END});
             startupViewModeCombo.set_size_request(120, -1);
@@ -592,6 +677,32 @@ const GnoMenuPreferencesWidget = new GObject.Class({
 
         startupViewModeBox.add(startupViewModeLabel);
         startupViewModeBox.add(startupViewModeCombo);
+
+        let hideCategoriesBox = new Gtk.Box({
+            spacing: 20,
+            orientation: Gtk.Orientation.HORIZONTAL,
+            homogeneous: false,
+            margin_left: 20,
+            margin_top: 5,
+            margin_bottom: 5,
+            margin_right: 10
+        });
+        let hideCategoriesLabel = new Gtk.Label({
+            label: _("Hide Categories Panel"),
+            use_markup: true,
+            xalign: 0,
+            hexpand: true
+        });
+        let hideCategoriesSwitch = new Gtk.Switch ({
+            halign: Gtk.Align.END
+        });
+        hideCategoriesSwitch.set_active(this.settings.get_boolean('hide-categories'));
+        hideCategoriesSwitch.connect("notify::active", Lang.bind(this, function(check) {
+            this.settings.set_boolean('hide-categories', check.get_active());
+        }));
+
+        hideCategoriesBox.add(hideCategoriesLabel);
+        hideCategoriesBox.add(hideCategoriesSwitch);
 
         let categorySelectMethodBox = new Gtk.Box({
             spacing: 20,
@@ -697,15 +808,20 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         appsGridIconSizeBox.add(appsGridIconSizeCombo);
 
         appsSettings.add(appsSettingsTitle);
-        appsSettings.add(hideFavoritesBox);
         appsSettings.add(menuLayoutBox);
+        appsSettings.add(hideUserOptionsBox);
+        appsSettings.add(hideFavoritesBox);
         appsSettings.add(shortcutAppsDisplayBox);
+        appsSettings.add(favoritesIconSizeBox);
+
+        appsSettings.add(hideCategoriesBox);
+        appsSettings.add(categorySelectMethodBox);
+
         appsSettings.add(startupAppsDisplayBox);
         appsSettings.add(startupViewModeBox);
-        appsSettings.add(categorySelectMethodBox);
-        appsSettings.add(favoritesIconSizeBox);
-        appsSettings.add(appsListIconSizeBox);
+        appsSettings.add(appsGridColumnCountBox);
         appsSettings.add(appsGridIconSizeBox);
+        appsSettings.add(appsListIconSizeBox);
 
 
         frame.add(panelSettings);
@@ -717,7 +833,8 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         let scrollWindow = new Gtk.ScrolledWindow({
             'hscrollbar-policy': Gtk.PolicyType.AUTOMATIC,
             'vscrollbar-policy': Gtk.PolicyType.AUTOMATIC,
-            'hexpand': true, 'vexpand': true
+            'hexpand': true, 'vexpand': true,
+            'min-content-height': 500
         });
         scrollWindow.add_with_viewport(frame);
 
@@ -740,5 +857,3 @@ function buildPrefsWidget() {
 
     return widget;
 }
-
-

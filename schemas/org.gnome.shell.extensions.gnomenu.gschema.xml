@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="gnome-shell-extensions-gnomenu">
+  <enum id='org.gnome.shell.extensions.gnomenu.panelMenuPosition'>
+    <value value='0' nick='Left'/>
+    <value value='1' nick='Center'/>
+    <value value='2' nick='Right'/>
+  </enum>
   <enum id='org.gnome.shell.extensions.gnomenu.menuLayout'>
-    <value value='0' nick='Large'/>
-    <value value='1' nick='Medium'/>
-    <value value='2' nick='Small'/>
+    <value value='0' nick='Normal'/>
+    <value value='1' nick='Compact'/>
   </enum>
   <enum id='org.gnome.shell.extensions.gnomenu.shortcutsDisplay'>
     <value value='0' nick='Favorites'/>
@@ -16,6 +20,8 @@
   <enum id='org.gnome.shell.extensions.gnomenu.appsDisplay'>
     <value value='0' nick='All'/>
     <value value='1' nick='Frequent'/>
+    <value value='2' nick='Favorites'/>
+    <value value='3' nick='None'/>
   </enum>
   <enum id='org.gnome.shell.extensions.gnomenu.selectMethod'>
     <value value='0' nick='Hover'/>
@@ -102,10 +108,20 @@
       <summary>Disable the menu button keyboard shortcut</summary>
       <description>Disable the menu button keyboard shortcut</description>
     </key>
+    <key enum="org.gnome.shell.extensions.gnomenu.panelMenuPosition" name="panel-menu-position">
+      <default>'Right'</default>
+      <summary>Set the position of the menu button</summary>
+      <description>Set the position of the menu button</description>
+    </key>
     <key enum="org.gnome.shell.extensions.gnomenu.menuLayout" name="menu-layout">
-      <default>'Medium'</default>
+      <default>'Normal'</default>
       <summary>Size and layout of the applications menu</summary>
       <description>Size and layout of the applications menu</description>
+    </key>
+    <key type="b" name="hide-useroptions">
+      <default>false</default>
+      <summary>Hide the User Options Panel of the menu</summary>
+      <description>Hide the User Options Panel of the menu</description>
     </key>
     <key type="b" name="hide-shortcuts">
       <default>false</default>
@@ -122,10 +138,20 @@
       <summary>Startup applications view mode</summary>
       <description>Startup applications view mode</description>
     </key>
+    <key type="i" name="apps-grid-column-count">
+      <default>5</default>
+      <summary>Number of columns in apps grid</summary>
+      <description>Number of columns in apps grid</description>
+    </key>
     <key enum="org.gnome.shell.extensions.gnomenu.appsDisplay" name="startup-apps-display">
       <default>'Frequent'</default>
       <summary>Startup applications to display</summary>
       <description>Startup applications to display</description>
+    </key>
+    <key type="b" name="hide-categories">
+      <default>false</default>
+      <summary>Hide the Categories Panel of the menu</summary>
+      <description>Hide the Categories Panel of the menu</description>
     </key>
     <key enum="org.gnome.shell.extensions.gnomenu.selectMethod" name="category-selection-method">
       <default>'Click'</default>
