@@ -55,12 +55,6 @@ msgstr "Места"
 msgid "Toggle Startup Apps View"
 msgstr "Переключить категорию отображаемую при запуске"
 
-msgid "Toggle Startup Apps View"
-msgstr "Переключить категорию отображаемую при запуске"
-
-msgid "Toggle Startup Apps View"
-msgstr "Переключить категорию отображаемую при запуске"
-
 msgid "List View"
 msgstr "В виде списка"
 
@@ -93,9 +87,6 @@ msgstr "Заблокировать экран"
 
 msgid "Preferences"
 msgstr "Настройки"
-
-msgid "No GnoMenu stylesheet found"
-msgstr "Не найден стиль для GnoMenu"
 
 msgid "No GnoMenu stylesheet found"
 msgstr "Не найден стиль для GnoMenu"
@@ -168,9 +159,6 @@ msgstr ""
 msgid "Set Menu button position"
 msgstr "Положение кнопки «Меню»"
 
-msgid "Set Menu button position"
-msgstr "Положение кнопки «Меню»"
-
 msgid "Left"
 msgstr "Слева"
 
@@ -201,12 +189,6 @@ msgstr "Компактный"
 msgid "Icons to display on Shortcuts Panel"
 msgstr "Элементы на панели быстрого доступа"
 
-msgid "Favorites"
-msgstr "Избранное"
-
-msgid "Places"
-msgstr "Места"
-
 msgid "Applications to display at startup"
 msgstr "Приложения показываемые при запуске"
 
@@ -215,9 +197,6 @@ msgstr "Все"
 
 msgid "Frequent"
 msgstr "Частые"
-
-msgid "Favorites"
-msgstr "Избранное"
 
 msgid "None"
 msgstr "Нет"
