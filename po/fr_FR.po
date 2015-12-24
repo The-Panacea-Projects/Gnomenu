@@ -3,13 +3,14 @@ msgstr ""
 "Project-Id-Version: Gno-Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2015-12-24 11:26:27-0500\n"
+"PO-Revision-Date: 2015-12-24 11:48+0100\n"
 "Last-Translator: DAEM Q.\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.6\n"
 
 
 #: convenience.js
@@ -27,7 +28,7 @@ msgid "Gno-Menu: Search Midori bookmarks disabled"
 msgstr "Gno-Menu: Recherche dans les marque-pages Midori désactivée"
 
 msgid "If you want to search Midori bookmarks, you must install the required pacakages: libgir1.2-gda-5.0 [Ubuntu] or libgda-sqlite [Fedora]"
-msgstr ""Si vous voulez rechercher dans les marque-pages Midori, vous devez installer les paquages requis: libgir1.2-gda-5.0 [Ubuntu] ou libgda-sqlite [Fedora]"
+msgstr "Si vous voulez rechercher dans les marque-pages Midori, vous devez installer les paquages requis: libgir1.2-gda-5.0 [Ubuntu] ou libgda-sqlite [Fedora]"
 
 msgid "Recent"
 msgstr "Récent"
@@ -83,9 +84,7 @@ msgstr "Préférences"
 msgid "No GnoMenu stylesheet found"
 msgstr "Aucun style GnoMenu trouvé"
 
-
 #: placeDisplay.js
-
 msgid "Failed to launch \"%s\""
 msgstr "Échec de lancement"
 
@@ -97,7 +96,6 @@ msgstr "Ordinateur"
 
 msgid "Browse Network"
 msgstr "Parcouris Réseau"
-
 
 #: prefs.js
 
