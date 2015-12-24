@@ -6,15 +6,14 @@ msgstr ""
 "Project-Id-Version: Gno-Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2015-02-27 13:18+0300\n"
+"PO-Revision-Date: 2015-12-21 20:33:13+0300\n"
 "Last-Translator: Ivan Komaritsyn <vantu5z@mail.ru>\n"
+"Language-Team: \n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
-"X-Generator: Gtranslator 2.91.6\n"
+
 
 #: convenience.js
 
@@ -26,26 +25,26 @@ msgstr "Gno-Menu: поиск по закладкам Firefox отключен"
 
 msgid ""
 "If you want to search Firefox bookmarks, you must install the required "
-"pacakages: libgir1.2-gda-5.0 (Ubuntu) or libgda-sqlite (Fedora)"
+"pacakages: libgir1.2-gda-5.0 [Ubuntu] or libgda-sqlite [Fedora]"
 msgstr ""
 "Для включения поиска по закладкам Firefox необходимо установить "
-"дополнительные пакеты: libgir1.2-gda-5.0 (Ubuntu) или libgda-sqlite (Fedora)"
+"дополнительные пакеты: libgir1.2-gda-5.0 [Ubuntu] или libgda-sqlite [Fedora]"
 
 msgid "Gno-Menu: Search Midori bookmarks disabled"
 msgstr "Gno-Menu: поиск по закладкам Midori отключен"
 
 msgid ""
 "If you want to search Midori bookmarks, you must install the required "
-"pacakages: libgir1.2-gda-5.0 (Ubuntu) or libgda-sqlite (Fedora)"
+"pacakages: libgir1.2-gda-5.0 [Ubuntu] or libgda-sqlite [Fedora]"
 msgstr ""
 "Для включения поиска по закладкам Midori необходимо установить "
-"дополнительные пакеты: libgir1.2-gda-5.0 (Ubuntu) или libgda-sqlite (Fedora)"
+"дополнительные пакеты: libgir1.2-gda-5.0 [Ubuntu] или libgda-sqlite [Fedora]"
 
 msgid "Recent"
 msgstr "Недавние"
 
-msgid "Web"
-msgstr "Веб"
+msgid "Webmarks"
+msgstr "Веб-закладки"
 
 msgid "Favorites"
 msgstr "Избранное"
@@ -53,20 +52,23 @@ msgstr "Избранное"
 msgid "Places"
 msgstr "Места"
 
+msgid "Toggle Startup Apps View"
+msgstr "Переключить категорию отображаемую при запуске"
+
 msgid "List View"
 msgstr "В виде списка"
-
-msgid "Grid View"
-msgstr "В виде сетки"
 
 msgid "Type to search..."
 msgstr "Введите запрос для поиска..."
 
+msgid "All Applications"
+msgstr "Все приложения"
+
 msgid "Frequent Apps"
 msgstr "Часто используемые"
 
-msgid "All Applications"
-msgstr "Все приложения"
+msgid "Favorite Apps"
+msgstr "Избранные приложения"
 
 msgid "Restart Shell"
 msgstr "Перезапустить Shell"
@@ -90,6 +92,8 @@ msgid "No GnoMenu stylesheet found"
 msgstr "Не найден стиль для GnoMenu"
 
 
+#: metadata.json
+
 
 #: placeDisplay.js
 
@@ -102,7 +106,7 @@ msgstr "Домашняя папка"
 msgid "Computer"
 msgstr "Компьютер"
 
-msgid "Browse Network"
+msgid "Browse network"
 msgstr "Обзор сети"
 
 
@@ -152,8 +156,23 @@ msgstr ""
 "Неверно указана горячая клавиша. Попробуйте F12, <Super>space, "
 "<Ctrl><Alt><Shift>a, и др."
 
+msgid "Set Menu button position"
+msgstr "Положение кнопки «Меню»"
+
+msgid "Left"
+msgstr "Слева"
+
+msgid "Center"
+msgstr "По центру"
+
+msgid "Right"
+msgstr "Справа"
+
 msgid "<b>Menu Settings</b>"
 msgstr "<b>Настройки меню</b>"
+
+msgid "Hide User Options Panel"
+msgstr "Скрыть дополнительную панель"
 
 msgid "Hide Shortcuts Panel"
 msgstr "Скрыть панель быстрого доступа"
@@ -161,14 +180,11 @@ msgstr "Скрыть панель быстрого доступа"
 msgid "Menu layout size"
 msgstr "Размер меню"
 
-msgid "Large"
-msgstr "Большой"
+msgid "Normal"
+msgstr "Нормальный"
 
-msgid "Medium"
-msgstr "Средний"
-
-msgid "Small"
-msgstr "Маленький"
+msgid "Compact"
+msgstr "Компактный"
 
 msgid "Icons to display on Shortcuts Panel"
 msgstr "Элементы на панели быстрого доступа"
@@ -182,6 +198,27 @@ msgstr "Все"
 msgid "Frequent"
 msgstr "Частые"
 
+msgid "None"
+msgstr "Нет"
+
+msgid "Number of columns in Application Grid"
+msgstr "Количество колонок приложений в сетке"
+
+msgid "3"
+msgstr "3"
+
+msgid "4"
+msgstr "4"
+
+msgid "5"
+msgstr "5"
+
+msgid "6"
+msgstr "6"
+
+msgid "7"
+msgstr "7"
+
 msgid "Default view mode for applications"
 msgstr "Вид для обзора приложений по умолчанию"
 
@@ -190,6 +227,9 @@ msgstr "Список"
 
 msgid "Grid"
 msgstr "Сетка"
+
+msgid "Hide Categories Panel"
+msgstr "Скрыть панель категорий"
 
 msgid "Category selection method"
 msgstr "Метод выбора категории"
@@ -229,4 +269,3 @@ msgstr "Размер иконок для приложений в виде сет
 
 
 #: workspaceThumbnail.js
-
