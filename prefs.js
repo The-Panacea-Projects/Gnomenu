@@ -727,6 +727,35 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         categorySelectMethodBox.add(categorySelectMethodCombo);
 
 
+        let hoverDelays = [0, 100, 150, 175, 200, 250, 400];
+        let categoryHoverDelayBox = new Gtk.Box({
+            spacing: 20,
+            orientation: Gtk.Orientation.HORIZONTAL,
+            homogeneous: false,
+            margin_left: 20,
+            margin_top: 5,
+            margin_bottom: 5,
+            margin_right: 10
+        });
+        let categoryHoverDelayLabel = new Gtk.Label({label: _("Menu hover delay"), hexpand:true, xalign:0});
+        let categoryHoverDelayCombo = new Gtk.ComboBoxText({halign:Gtk.Align.END});
+            categoryHoverDelayCombo.set_size_request(120, -1);
+            categoryHoverDelayCombo.append_text(_('0'));
+            categoryHoverDelayCombo.append_text(_('100'));
+            categoryHoverDelayCombo.append_text(_('150'));
+            categoryHoverDelayCombo.append_text(_('175'));
+            categoryHoverDelayCombo.append_text(_('200'));
+            categoryHoverDelayCombo.append_text(_('250'));
+            categoryHoverDelayCombo.append_text(_('400'));
+            categoryHoverDelayCombo.set_active(hoverDelays.indexOf(this.settings.get_int('category-hover-delay')));
+            categoryHoverDelayCombo.connect('changed', Lang.bind (this, function(widget) {
+                    this.settings.set_int('category-hover-delay', hoverDelays[widget.get_active()]);
+            }));
+
+        categoryHoverDelayBox.add(categoryHoverDelayLabel);
+        categoryHoverDelayBox.add(categoryHoverDelayCombo);
+
+
         let iconSizes = [16, 22, 24, 32, 48, 64];
 
         let favoritesIconSizeBox = new Gtk.Box({
@@ -816,6 +845,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
 
         appsSettings.add(hideCategoriesBox);
         appsSettings.add(categorySelectMethodBox);
+        appsSettings.add(categoryHoverDelayBox);
 
         appsSettings.add(startupAppsDisplayBox);
         appsSettings.add(startupViewModeBox);
