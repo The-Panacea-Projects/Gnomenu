@@ -1285,7 +1285,14 @@ const PanelMenuButton = new Lang.Class({
             res = [];
             for (let i in applist) {
                 let app = applist[i];
-                if (app.get_name().toLowerCase().indexOf(pattern)!=-1 || (app.get_description() && app.get_description().toLowerCase().indexOf(pattern)!=-1))
+                let info = Gio.DesktopAppInfo.new (app.get_id());
+                if (
+                    app.get_name().toLowerCase().indexOf(pattern)!=-1
+                    || (app.get_description() && app.get_description().toLowerCase().indexOf(pattern)!=-1)
+                    || (info && info.get_display_name() && info.get_display_name().toLowerCase().indexOf(pattern)!=-1)
+                    || (info && info.get_executable() && info.get_executable().toLowerCase().indexOf(pattern)!=-1)
+                    || (info && info.get_keywords() && info.get_keywords().toString().toLowerCase().indexOf(pattern)!=-1)
+                )
                     res.push(app);
             }
         } else {
