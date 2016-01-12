@@ -2555,8 +2555,8 @@ const PanelMenuButton = new Lang.Class({
         let allAppCategory = new CategoryListButton('all', _('All Applications'));
         if (settings.get_enum('category-selection-method') == SelectMethod.HOVER ) {
             allAppCategory.actor.connect('enter-event', Lang.bind(this, function() {
-                this.hoverDelay = settings.get_int('category-hover-delay');
-                this._hoverTimeoutId = Mainloop.timeout_add((this.hoverDelay >0) ? this.hoverDelay : 0, Lang.bind(this, function() {
+                let hoverDelay = settings.get_int('category-hover-delay');
+                this._hoverTimeoutId = Mainloop.timeout_add((hoverDelay >0) ? hoverDelay : 0, Lang.bind(this, function() {
                     this._selectCategory(allAppCategory);
                     this.selectedAppTitle.set_text(allAppCategory.label.get_text());
                     this.selectedAppDescription.set_text('');
@@ -2599,8 +2599,8 @@ const PanelMenuButton = new Lang.Class({
         let freqAppCategory = new CategoryListButton('frequent', _('Frequent Apps'));
         if (settings.get_enum('category-selection-method') == SelectMethod.HOVER ) {
             freqAppCategory.actor.connect('enter-event', Lang.bind(this, function() {
-                this.hoverDelay = settings.get_int('category-hover-delay');
-                this._hoverTimeoutId = Mainloop.timeout_add((this.hoverDelay >0) ? this.hoverDelay : 0, Lang.bind(this, function() {
+                let hoverDelay = settings.get_int('category-hover-delay');
+                this._hoverTimeoutId = Mainloop.timeout_add((hoverDelay >0) ? hoverDelay : 0, Lang.bind(this, function() {
                     this._selectCategory(freqAppCategory);
                     this.selectedAppTitle.set_text(freqAppCategory.label.get_text());
                     this.selectedAppDescription.set_text('');
@@ -2643,8 +2643,8 @@ const PanelMenuButton = new Lang.Class({
         let favAppCategory = new CategoryListButton('favorites', _('Favorite Apps'));
         if (settings.get_enum('category-selection-method') == SelectMethod.HOVER ) {
             favAppCategory.actor.connect('enter-event', Lang.bind(this, function() {
-                this.hoverDelay = settings.get_int('category-hover-delay');
-                this._hoverTimeoutId = Mainloop.timeout_add((this.hoverDelay >0) ? this.hoverDelay : 0, Lang.bind(this, function() {
+                let hoverDelay = settings.get_int('category-hover-delay');
+                this._hoverTimeoutId = Mainloop.timeout_add((hoverDelay >0) ? hoverDelay : 0, Lang.bind(this, function() {
                     this._selectCategory(favAppCategory);
                     this.selectedAppTitle.set_text(favAppCategory.label.get_text());
                     this.selectedAppDescription.set_text('');
@@ -2699,8 +2699,8 @@ const PanelMenuButton = new Lang.Class({
                     let appCategory = new CategoryListButton(dir);
                     if (settings.get_enum('category-selection-method') == SelectMethod.HOVER) {
                         appCategory.actor.connect('enter-event', Lang.bind(this, function() {
-                            this.hoverDelay = settings.get_int('category-hover-delay');
-                            this._hoverTimeoutId = Mainloop.timeout_add((this.hoverDelay >0) ? this.hoverDelay : 0, Lang.bind(this, function() {
+                            let hoverDelay = settings.get_int('category-hover-delay');
+                            this._hoverTimeoutId = Mainloop.timeout_add((hoverDelay >0) ? hoverDelay : 0, Lang.bind(this, function() {
                                 this._selectCategory(appCategory);
                                 this.selectedAppTitle.set_text(appCategory.label.get_text());
                                 this.selectedAppDescription.set_text('');
