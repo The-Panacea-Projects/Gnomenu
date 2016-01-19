@@ -1083,8 +1083,7 @@ const PanelMenuButton = new Lang.Class({
                 let actor = categoryActors[i];
                 if (selectedCategory && (actor == selectedCategory.actor)) {
                     actor.add_style_class_name('popup-sub-menu');
-                    let style = "border-color: rgba(" + this._themeBorderColor.red + "," + this._themeBorderColor.green + "," + this._themeBorderColor.blue + "," + this._themeBorderColor.alpha + ")";
-                    actor.set_style(style);
+                    if (this._style1) actor.set_style(this._style1);
                 } else {
                     actor.remove_style_class_name('popup-sub-menu');
                     actor.set_style('border-color: none');
@@ -1148,8 +1147,7 @@ const PanelMenuButton = new Lang.Class({
                 let actor = categoryActors[i];
                 if (selectedCategory && (actor == selectedCategory.actor)) {
                     actor.add_style_class_name('popup-sub-menu');
-                    let style = "border-color: rgba(" + this._themeBorderColor.red + "," + this._themeBorderColor.green + "," + this._themeBorderColor.blue + "," + this._themeBorderColor.alpha + ")";
-                    actor.set_style(style);
+                    if (this._style1) actor.set_style(this._style1);
                 } else {
                     actor.remove_style_class_name('popup-sub-menu');
                     actor.set_style('border-color: none');
@@ -1311,44 +1309,67 @@ const PanelMenuButton = new Lang.Class({
 
     _adjustThemeForCompatibility: function() {
         // Certain menu objects get color, border, etc from theme
-        this._themeBorderColor = null;
-        this._themeBackgroundColor = null;
-        this._themeBoxShadow = null;
-        let themeBoxShadowInset, themeBoxShadowXOffset, themeBoxShadowYOffset, themeBoxShadowColor;
-        let themeBorderColorAlpha = "1", themeBackgroundColorAlpha = "1", themeBoxShadowColorAlpha = "1";
+        let themeBorderColor = null, themeBorderColorAlpha = "1";
+        let themeBorderColor2 = null, themeBorderColor2Alpha = "1";
+        let themeBackgroundColor = null, themeBackgroundColorAlpha = "1";
+        let themeTextColor = null, themeTextColorAlpha = "1";
+        let themeButtonTextColor = null, themeButtonTextColorAlpha = "1";
+        let themeButtonTextColor2 = null, themeButtonTextColor2Alpha = "1";
+        let themeBoxShadow = null;
+        let themeBoxShadowColor = null, themeBoxShadowColorAlpha = "1";
+        let themeBoxShadowInset, themeBoxShadowXOffset, themeBoxShadowYOffset;
         if (this.menu._boxPointer.actor.get_stage()) {
             let themeNode = this.menu._boxPointer.actor.get_theme_node();
-            this._themeBorderColor = themeNode.get_color('-arrow-border-color');
-            if (this._themeBorderColor.alpha) {
-                themeBorderColorAlpha = this._themeBorderColor.alpha / 255;
+            themeBorderColor = themeNode.get_color('-arrow-border-color');
+            if (themeBorderColor.alpha) {
+                themeBorderColorAlpha = themeBorderColor.alpha / 255;
+            }
+            themeTextColor = themeNode.get_color('color');
+            if (themeTextColor.alpha) {
+                themeTextColorAlpha = themeTextColor.alpha / 255;
             }
         }
         if (this._dummyButton.get_stage()) {
             let themeNode = this._dummyButton.get_theme_node();
-            this._themeBackgroundColor = themeNode.get_background_color();
-            if (this._themeBackgroundColor.alpha) {
-                themeBackgroundColorAlpha = this._themeBackgroundColor.alpha / 255;
+            themeBackgroundColor = themeNode.get_background_color();
+            if (themeBackgroundColor.alpha) {
+                themeBackgroundColorAlpha = themeBackgroundColor.alpha / 255;
             }
-            this._themeBoxShadow = themeNode.get_box_shadow();
-            if (this._themeBoxShadow) {
-                themeBoxShadowInset = this._themeBoxShadow.inset;
+            themeBoxShadow = themeNode.get_box_shadow();
+            if (themeBoxShadow) {
+                themeBoxShadowInset = themeBoxShadow.inset;
                 if (themeBoxShadowInset) {
                     themeBoxShadowInset = "inset";
                 } else  {
                     themeBoxShadowInset = "";
                 }
-                themeBoxShadowXOffset = this._themeBoxShadow.xoffset;
-                themeBoxShadowYOffset = this._themeBoxShadow.yoffset;
-                themeBoxShadowColor = this._themeBoxShadow.color;
+                themeBoxShadowXOffset = themeBoxShadow.xoffset;
+                themeBoxShadowYOffset = themeBoxShadow.yoffset;
+                themeBoxShadowColor = themeBoxShadow.color;
                 if (themeBoxShadowColor.alpha) {
                     themeBoxShadowColorAlpha = themeBoxShadowColor.alpha / 255;
                 }
             }
+            themeButtonTextColor = themeNode.get_color('color');
+            if (themeButtonTextColor.alpha) {
+                themeButtonTextColorAlpha = themeButtonTextColor.alpha / 255;
+            }
+        }
+        if (this._dummyButton2.get_stage()) {
+            let themeNode = this._dummyButton2.get_theme_node();
+            themeBorderColor2 = themeNode.get_border_color(St.Side.TOP);
+            if (themeBorderColor2.alpha) {
+                themeBorderColor2Alpha = themeBorderColor2.alpha / 255;
+            }
+            themeButtonTextColor2 = themeNode.get_color('color');
+            if (themeButtonTextColor2.alpha) {
+                themeButtonTextColor2Alpha = themeButtonTextColor2.alpha / 255;
+            }
         }
 
-        let style1 = "", style2 = "", style3 = "";
-        let delimeter1 = "", delimeter2 = "", delimeter3 = "";
-        if (this._themeBorderColor) {
+        let style1 = "", style2 = "", style3 = "", style4 = "", style5 = "";
+        let delimeter1 = "", delimeter2 = "", delimeter3 = "", delimeter4 = "", delimeter5 = "";
+        if (themeBorderColor) {
             if (style1 != "") {
                 delimeter1 = "; ";
             }
@@ -1358,51 +1379,67 @@ const PanelMenuButton = new Lang.Class({
             if (style3 != "") {
                 delimeter3 = "; ";
             }
-            style1 += delimeter1 + "border-color: rgba(" + this._themeBorderColor.red + "," + this._themeBorderColor.green + "," + this._themeBorderColor.blue + "," + themeBorderColorAlpha + ")";
-            style2 += delimeter2 + "border-color: rgba(" + this._themeBorderColor.red + "," + this._themeBorderColor.green + "," + this._themeBorderColor.blue + "," +  themeBorderColorAlpha + ")";
-            style3 += delimeter3 + "border-color: rgba(" + this._themeBorderColor.red + "," + this._themeBorderColor.green + "," + this._themeBorderColor.blue + "," +  themeBorderColorAlpha + ")";
-        }
-        if (this._themeBackgroundColor) {
-            if (style2 != "") {
-                delimeter2 = "; ";
+            if (style5 != "") {
+                delimeter5 = "; ";
             }
+            style1 += delimeter1 + "border-color: rgba(" + themeBorderColor.red + "," + themeBorderColor.green + "," + themeBorderColor.blue + "," + themeBorderColorAlpha + ")";
+            style2 += delimeter2 + "border-color: rgba(" + themeBorderColor.red + "," + themeBorderColor.green + "," + themeBorderColor.blue + "," +  themeBorderColorAlpha + ")";
+            style3 += delimeter3 + "border-color: rgba(" + themeBorderColor.red + "," + themeBorderColor.green + "," + themeBorderColor.blue + "," +  themeBorderColorAlpha + ")";
+            style5 += delimeter5 + "border-color: rgba(" + themeBorderColor.red + "," + themeBorderColor.green + "," + themeBorderColor.blue + "," +  themeBorderColorAlpha + ")";
+        }
+        if (themeBackgroundColor) {
             if (style3 != "") {
                 delimeter3 = "; ";
             }
-            style2 += delimeter2 + "background-color: rgba(" + this._themeBackgroundColor.red + "," + this._themeBackgroundColor.green + "," + this._themeBackgroundColor.blue + "," +  themeBackgroundColorAlpha + ")";
-            style3 += delimeter3 + "background-color: rgba(" + this._themeBackgroundColor.red + "," + this._themeBackgroundColor.green + "," + this._themeBackgroundColor.blue + "," +  themeBackgroundColorAlpha + ")";
+            style3 += delimeter3 + "background-color: rgba(" + themeBackgroundColor.red + "," + themeBackgroundColor.green + "," + themeBackgroundColor.blue + "," +  themeBackgroundColorAlpha + ")";
         }
-        if (this._themeBoxShadow) {
+        if (themeTextColor) {
+            if (style2 != "") {
+                delimeter2 = "; ";
+            }
+            style2 += delimeter2 + "color: rgba(" + themeTextColor.red + "," + themeTextColor.green + "," + themeTextColor.blue + "," + themeTextColorAlpha + ")";
+        }
+        if (themeButtonTextColor) {
+            if (style3 != "") {
+                delimeter3 = "; ";
+            }
+            style3 += delimeter3 + "color: rgba(" + themeButtonTextColor.red + "," + themeButtonTextColor.green + "," + themeButtonTextColor.blue + "," + themeButtonTextColorAlpha + ")";
+        }
+        if (themeBoxShadow) {
             if (style3 != "") {
                 delimeter3 = "; ";
             }
             style3 += delimeter3 + "box-shadow: " + themeBoxShadowInset + " " + themeBoxShadowXOffset + "px " + themeBoxShadowYOffset + "px " + " rgba(" + themeBoxShadowColor.red + "," + themeBoxShadowColor.green + "," + themeBoxShadowColor.blue + "," +  themeBoxShadowColorAlpha + ")";
         }
+        if (themeBorderColor2) {
+            if (style4 != "") {
+                delimeter4 = "; ";
+            }
+            style4 += delimeter4 + "border-color: rgba(" + themeBorderColor2.red + "," + themeBorderColor2.green + "," + themeBorderColor2.blue + "," + themeBorderColor2Alpha + ")";
+        }
+        if (themeButtonTextColor2) {
+            if (style5 != "") {
+                delimeter5 = "; ";
+            }
+            style5 += delimeter5 + "color: rgba(" + themeButtonTextColor2.red + "," + themeButtonTextColor2.green + "," + themeButtonTextColor2.blue + "," + themeButtonTextColor2Alpha + ")";
+        }
+
+        this._style1 = style1;
+        this._style2 = style5;
 
         this.searchEntry.set_style(style1);
-        this.userGroupBox.set_style(style3);
-        this.viewModeBox.set_style(style3);
         this.recentCategory.actor.set_style(style1);
         this.webBookmarksCategory.actor.set_style(style1);
         this.placesCategory.actor.set_style(style1);
+        this.toggleStartupAppsView.actor.set_style(style1);
+        this.toggleListGridView.actor.set_style(style1);
 
-        // Menu boxes use secondary color from theme
-        let themeBorderColor2 = null;
-        let themeBorderColor2Alpha = "1";
-        if (this._dummyButton2.get_stage()) {
-            let themeNode = this._dummyButton2.get_theme_node();
-            themeBorderColor2 = themeNode.get_border_color(St.Side.TOP);
-            if (themeBorderColor2.alpha) {
-                themeBorderColor2Alpha = themeBorderColor2.alpha / 255;
-            }
+        this.userGroupBox.set_style(style3);
+        this.viewModeBox.set_style(style3);
 
-        }
-        let style4 = "border-color: rgba(" + themeBorderColor2.red + "," + themeBorderColor2.green + "," + themeBorderColor2.blue + "," + themeBorderColor2Alpha + ")";
         this.shortcutsScrollBox.set_style(style4);
         this.groupCategoriesWorkspacesScrollBox.set_style(style4);
         this.applicationsScrollBox.set_style(style4);
-
-
     },
 
     _calculateApplicationsBoxWidth: function() {
@@ -2152,6 +2189,7 @@ const PanelMenuButton = new Lang.Class({
         this._dummyButton2.opacity = 0;
         this._dummyButton2.set_size(0, 0);
 
+
         // mainbox holds the topPane and bottomPane
         this.mainBox = new St.BoxLayout({ name: 'gnomenuMenuMainbox', style_class: 'gnomenu-main-menu-box', vertical:true });
 
@@ -2196,11 +2234,17 @@ const PanelMenuButton = new Lang.Class({
             this.recentCategory.actor.add_style_class_name('selected');
             this.selectedAppTitle.set_text(this.recentCategory.label.get_text());
             this.selectedAppDescription.set_text('');
+            if (this.recentCategory._opened) {
+                if (this._style1) this.recentCategory.actor.set_style(this._style1);
+            }
         }));
         this.recentCategory.actor.connect('leave-event', Lang.bind(this, function() {
             this.recentCategory.actor.remove_style_class_name('selected');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
+            if (this.recentCategory._opened) {
+                if (this._style2) this.recentCategory.actor.set_style(this._style2);
+            }
         }));
         this.recentCategory.actor.connect('button-press-event', Lang.bind(this, function() {
             this.recentCategory.actor.add_style_pseudo_class('pressed');
@@ -2211,6 +2255,7 @@ const PanelMenuButton = new Lang.Class({
                 this.recentCategory._opened = false;
                 this.webBookmarksCategory._opened = false;
                 this.placesCategory._opened = false;
+                if (this._style1) this.recentCategory.actor.set_style(this._style1);
                 this.recentCategory.actor.remove_style_class_name('popup-sub-menu');
                 this.webBookmarksCategory.actor.remove_style_class_name('popup-sub-menu');
                 this.placesCategory.actor.remove_style_class_name('popup-sub-menu');
@@ -2221,8 +2266,11 @@ const PanelMenuButton = new Lang.Class({
                 this.webBookmarksCategory._opened = false;
                 this.placesCategory._opened = false;
                 this.recentCategory.actor.add_style_class_name('popup-sub-menu');
+                if (this._style2) this.recentCategory.actor.set_style(this._style2);
                 this.webBookmarksCategory.actor.remove_style_class_name('popup-sub-menu');
+                if (this._style1) this.webBookmarksCategory.actor.set_style(this._style1);
                 this.placesCategory.actor.remove_style_class_name('popup-sub-menu');
+                if (this._style1) this.placesCategory.actor.set_style(this._style1);
                 this._selectRecent(this.recentCategory);
                 this.selectedAppTitle.set_text(this.recentCategory.label.get_text());
                 this.selectedAppDescription.set_text('');
@@ -2235,11 +2283,17 @@ const PanelMenuButton = new Lang.Class({
             this.webBookmarksCategory.actor.add_style_class_name('selected');
             this.selectedAppTitle.set_text(this.webBookmarksCategory.label.get_text());
             this.selectedAppDescription.set_text('');
+            if (this.webBookmarksCategory._opened) {
+                if (this._style1) this.webBookmarksCategory.actor.set_style(this._style1);
+            }
         }));
         this.webBookmarksCategory.actor.connect('leave-event', Lang.bind(this, function() {
             this.webBookmarksCategory.actor.remove_style_class_name('selected');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
+            if (this.webBookmarksCategory._opened) {
+                if (this._style2) this.webBookmarksCategory.actor.set_style(this._style2);
+            }
         }));
         this.webBookmarksCategory.actor.connect('button-press-event', Lang.bind(this, function() {
             this.webBookmarksCategory.actor.add_style_pseudo_class('pressed');
@@ -2250,6 +2304,7 @@ const PanelMenuButton = new Lang.Class({
                 this.webBookmarksCategory._opened = false;
                 this.recentCategory._opened = false;
                 this.placesCategory._opened = false;
+                if (this._style1) this.webBookmarksCategory.actor.set_style(this._style1);
                 this.webBookmarksCategory.actor.remove_style_class_name('popup-sub-menu');
                 this.recentCategory.actor.remove_style_class_name('popup-sub-menu');
                 this.placesCategory.actor.remove_style_class_name('popup-sub-menu');
@@ -2260,8 +2315,11 @@ const PanelMenuButton = new Lang.Class({
                 this.recentCategory._opened = false;
                 this.placesCategory._opened = false;
                 this.webBookmarksCategory.actor.add_style_class_name('popup-sub-menu');
+                if (this._style2) this.webBookmarksCategory.actor.set_style(this._style2);
                 this.recentCategory.actor.remove_style_class_name('popup-sub-menu');
+                if (this._style1) this.recentCategory.actor.set_style(this._style1);
                 this.placesCategory.actor.remove_style_class_name('popup-sub-menu');
+                if (this._style1) this.placesCategory.actor.set_style(this._style1);
                 this._selectWebBookmarks(this.webBookmarksCategory);
                 this.selectedAppTitle.set_text(this.webBookmarksCategory.label.get_text());
                 this.selectedAppDescription.set_text('');
@@ -2278,11 +2336,17 @@ const PanelMenuButton = new Lang.Class({
             this.placesCategory.actor.add_style_class_name('selected');
             this.selectedAppTitle.set_text(this.placesCategory.label.get_text());
             this.selectedAppDescription.set_text('');
+            if (this.placesCategory._opened) {
+                if (this._style1) this.placesCategory.actor.set_style(this._style1);
+            }
         }));
         this.placesCategory.actor.connect('leave-event', Lang.bind(this, function() {
             this.placesCategory.actor.remove_style_class_name('selected');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
+            if (this.placesCategory._opened) {
+                if (this._style2) this.placesCategory.actor.set_style(this._style2);
+            }
         }));
         this.placesCategory.actor.connect('button-press-event', Lang.bind(this, function() {
             this.placesCategory.actor.add_style_pseudo_class('pressed');
@@ -2293,6 +2357,7 @@ const PanelMenuButton = new Lang.Class({
                 this.placesCategory._opened = false;
                 this.webBookmarksCategory._opened = false;
                 this.recentCategory._opened = false;
+                if (this._style1) this.placesCategory.actor.set_style(this._style1);
                 this.placesCategory.actor.remove_style_class_name('popup-sub-menu');
                 this.webBookmarksCategory.actor.remove_style_class_name('popup-sub-menu');
                 this.recentCategory.actor.remove_style_class_name('popup-sub-menu');
@@ -2303,8 +2368,11 @@ const PanelMenuButton = new Lang.Class({
                 this.webBookmarksCategory._opened = false;
                 this.recentCategory._opened = false;
                 this.placesCategory.actor.add_style_class_name('popup-sub-menu');
+                if (this._style2) this.placesCategory.actor.set_style(this._style2);
                 this.webBookmarksCategory.actor.remove_style_class_name('popup-sub-menu');
+                if (this._style1) this.webBookmarksCategory.actor.set_style(this._style1);
                 this.recentCategory.actor.remove_style_class_name('popup-sub-menu');
+                if (this._style1) this.recentCategory.actor.set_style(this._style1);
                 if (settings.get_enum('shortcuts-display') == ShortcutsDisplay.PLACES) {
                     this._selectFavorites(this.placesCategory);
                 } else {
