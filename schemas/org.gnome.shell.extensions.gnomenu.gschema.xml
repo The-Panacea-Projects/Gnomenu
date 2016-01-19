@@ -159,9 +159,14 @@
       <description>Hide the Categories Panel of the menu</description>
     </key>
     <key enum="org.gnome.shell.extensions.gnomenu.selectMethod" name="category-selection-method">
-      <default>'Click'</default>
+      <default>'Hover'</default>
       <summary>Method of selecting categories</summary>
       <description>Method of selecting categories</description>
+    </key>
+    <key type="i" name="category-hover-delay">
+      <default>150</default>
+      <summary>Delay (ms) before selecting category</summary>
+      <description>Delay in milliseconds before the category is selected when hovering</description>
     </key>
     <key type="i" name="shortcuts-icon-size">
       <default>32</default>

@@ -692,6 +692,7 @@ const PanelMenuButton = new Lang.Class({
 
         this._applicationsViewMode = settings.get_enum('startup-view-mode');
         this._appGridColumns = settings.get_int('apps-grid-column-count');
+        this._hoverTimeoutId = 0;
         this._searchTimeoutId = 0;
         this._searchIconClickedId = 0;
         this._selectedItemIndex = null;
@@ -1300,7 +1301,14 @@ const PanelMenuButton = new Lang.Class({
             res = [];
             for (let i in applist) {
                 let app = applist[i];
-                if (app.get_name().toLowerCase().indexOf(pattern)!=-1 || (app.get_description() && app.get_description().toLowerCase().indexOf(pattern)!=-1))
+                let info = Gio.DesktopAppInfo.new (app.get_id());
+                if (
+                    app.get_name().toLowerCase().indexOf(pattern)!=-1
+                    || (app.get_description() && app.get_description().toLowerCase().indexOf(pattern)!=-1)
+                    || (info && info.get_display_name() && info.get_display_name().toLowerCase().indexOf(pattern)!=-1)
+                    || (info && info.get_executable() && info.get_executable().toLowerCase().indexOf(pattern)!=-1)
+                    || (info && info.get_keywords() && info.get_keywords().toString().toLowerCase().indexOf(pattern)!=-1)
+                )
                     res.push(app);
             }
         } else {
@@ -2580,11 +2588,18 @@ const PanelMenuButton = new Lang.Class({
         let allAppCategory = new CategoryListButton('all', _('All Applications'));
         if (settings.get_enum('category-selection-method') == SelectMethod.HOVER ) {
             allAppCategory.actor.connect('enter-event', Lang.bind(this, function() {
-                this._selectCategory(allAppCategory);
-                this.selectedAppTitle.set_text(allAppCategory.label.get_text());
-                this.selectedAppDescription.set_text('');
+                let hoverDelay = settings.get_int('category-hover-delay');
+                this._hoverTimeoutId = Mainloop.timeout_add((hoverDelay >0) ? hoverDelay : 0, Lang.bind(this, function() {
+                    this._selectCategory(allAppCategory);
+                    this.selectedAppTitle.set_text(allAppCategory.label.get_text());
+                    this.selectedAppDescription.set_text('');
+                    this._hoverTimeoutId = 0;
+                }));
             }));
             allAppCategory.actor.connect('leave-event', Lang.bind(this, function() {
+                if (this._hoverTimeoutId > 0) {
+                    Mainloop.source_remove(this._hoverTimeoutId);
+                }
                 this.selectedAppTitle.set_text('');
                 this.selectedAppDescription.set_text('');
             }));
@@ -2617,11 +2632,18 @@ const PanelMenuButton = new Lang.Class({
         let freqAppCategory = new CategoryListButton('frequent', _('Frequent Apps'));
         if (settings.get_enum('category-selection-method') == SelectMethod.HOVER ) {
             freqAppCategory.actor.connect('enter-event', Lang.bind(this, function() {
-                this._selectCategory(freqAppCategory);
-                this.selectedAppTitle.set_text(freqAppCategory.label.get_text());
-                this.selectedAppDescription.set_text('');
+                let hoverDelay = settings.get_int('category-hover-delay');
+                this._hoverTimeoutId = Mainloop.timeout_add((hoverDelay >0) ? hoverDelay : 0, Lang.bind(this, function() {
+                    this._selectCategory(freqAppCategory);
+                    this.selectedAppTitle.set_text(freqAppCategory.label.get_text());
+                    this.selectedAppDescription.set_text('');
+                    this._hoverTimeoutId = 0;
+                 }));
             }));
             freqAppCategory.actor.connect('leave-event', Lang.bind(this, function() {
+                if (this._hoverTimeoutId > 0) {
+                    Mainloop.source_remove(this._hoverTimeoutId);
+                }
                 this.selectedAppTitle.set_text('');
                 this.selectedAppDescription.set_text('');
             }));
@@ -2654,11 +2676,18 @@ const PanelMenuButton = new Lang.Class({
         let favAppCategory = new CategoryListButton('favorites', _('Favorite Apps'));
         if (settings.get_enum('category-selection-method') == SelectMethod.HOVER ) {
             favAppCategory.actor.connect('enter-event', Lang.bind(this, function() {
-                this._selectCategory(favAppCategory);
-                this.selectedAppTitle.set_text(favAppCategory.label.get_text());
-                this.selectedAppDescription.set_text('');
+                let hoverDelay = settings.get_int('category-hover-delay');
+                this._hoverTimeoutId = Mainloop.timeout_add((hoverDelay >0) ? hoverDelay : 0, Lang.bind(this, function() {
+                    this._selectCategory(favAppCategory);
+                    this.selectedAppTitle.set_text(favAppCategory.label.get_text());
+                    this.selectedAppDescription.set_text('');
+                    this._hoverTimeoutId = 0;
+                }));
             }));
             favAppCategory.actor.connect('leave-event', Lang.bind(this, function() {
+                if (this._hoverTimeoutId > 0) {
+                    Mainloop.source_remove(this._hoverTimeoutId);
+                }
                 this.selectedAppTitle.set_text('');
                 this.selectedAppDescription.set_text('');
             }));
@@ -2703,11 +2732,18 @@ const PanelMenuButton = new Lang.Class({
                     let appCategory = new CategoryListButton(dir);
                     if (settings.get_enum('category-selection-method') == SelectMethod.HOVER) {
                         appCategory.actor.connect('enter-event', Lang.bind(this, function() {
-                            this._selectCategory(appCategory);
-                            this.selectedAppTitle.set_text(appCategory.label.get_text());
-                            this.selectedAppDescription.set_text('');
+                            let hoverDelay = settings.get_int('category-hover-delay');
+                            this._hoverTimeoutId = Mainloop.timeout_add((hoverDelay >0) ? hoverDelay : 0, Lang.bind(this, function() {
+                                this._selectCategory(appCategory);
+                                this.selectedAppTitle.set_text(appCategory.label.get_text());
+                                this.selectedAppDescription.set_text('');
+                                this._hoverTimeoutId = 0;
+                            }));
                         }));
                         appCategory.actor.connect('leave-event', Lang.bind(this, function() {
+                            if (this._hoverTimeoutId > 0) {
+                                Mainloop.source_remove(this._hoverTimeoutId);
+                            }
                             this.selectedAppTitle.set_text('');
                             this.selectedAppDescription.set_text('');
                         }));
