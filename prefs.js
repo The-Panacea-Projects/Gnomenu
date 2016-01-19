@@ -807,6 +807,29 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         appsGridIconSizeBox.add(appsGridIconSizeLabel);
         appsGridIconSizeBox.add(appsGridIconSizeCombo);
 
+        let appsGridButtonWidthBox = new Gtk.Box({
+            spacing: 20,
+            orientation: Gtk.Orientation.HORIZONTAL,
+            homogeneous: false,
+            margin_left: 20,
+            margin_top: 5,
+            margin_bottom: 5,
+            margin_right: 10
+        });
+        let appsGridButtonWidthLabel = new Gtk.Label({label: _("Width of App Grid Buttons"), hexpand:true, xalign:0});
+        let appsGridButtonWidthCombo = new Gtk.ComboBoxText({halign:Gtk.Align.END});
+            appsGridButtonWidthCombo.set_size_request(120, -1);
+            appsGridButtonWidthCombo.append_text(_('Narrow'));
+            appsGridButtonWidthCombo.append_text(_('Medium'));
+            appsGridButtonWidthCombo.append_text(_('Wide'));
+            appsGridButtonWidthCombo.set_active(this.settings.get_enum('apps-grid-button-width'));
+            appsGridButtonWidthCombo.connect('changed', Lang.bind (this, function(widget) {
+                    this.settings.set_enum('apps-grid-button-width', widget.get_active());
+            }));
+
+        appsGridButtonWidthBox.add(appsGridButtonWidthLabel);
+        appsGridButtonWidthBox.add(appsGridButtonWidthCombo);
+
         appsSettings.add(appsSettingsTitle);
         appsSettings.add(menuLayoutBox);
         appsSettings.add(hideUserOptionsBox);
@@ -821,12 +844,11 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         appsSettings.add(startupViewModeBox);
         appsSettings.add(appsGridColumnCountBox);
         appsSettings.add(appsGridIconSizeBox);
+        appsSettings.add(appsGridButtonWidthBox);
         appsSettings.add(appsListIconSizeBox);
-
 
         frame.add(panelSettings);
         frame.add(appsSettings);
-
 
         //this.add(frame);
 

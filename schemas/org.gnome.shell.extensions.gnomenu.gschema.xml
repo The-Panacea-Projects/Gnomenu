@@ -27,6 +27,11 @@
     <value value='0' nick='Hover'/>
     <value value='1' nick='Click'/>
   </enum>
+  <enum id='org.gnome.shell.extensions.gnomenu.appsGridButtonWidth'>
+    <value value='0' nick='Narrow'/>
+    <value value='1' nick='Medium'/>
+    <value value='2' nick='Wide'/>
+  </enum>
   <schema path="/org/gnome/shell/extensions/gnomenu/" id="org.gnome.shell.extensions.gnomenu">
     <key type="b" name="disable-activities-hotcorner">
       <default>false</default>
@@ -172,6 +177,11 @@
       <default>48</default>
       <summary>Applications grid icon size</summary>
       <description>Applications grid icon size</description>
+    </key>
+    <key enum="org.gnome.shell.extensions.gnomenu.appsGridButtonWidth" name="apps-grid-button-width">
+      <default>'Medium'</default>
+      <summary>Applications grid button width</summary>
+      <description>Applications grid button width</description>
     </key>
   </schema>
 </schemalist>
