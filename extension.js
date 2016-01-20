@@ -101,17 +101,14 @@ const ApplicationsViewMode = {
     GRID: 1
 };
 
-const AppsGridButtonWidth = {
-    NARROW: 0,
-    MEDIUM: 1,
-    WIDE: 2
-};
-
 const MenuButtonPosition = {
     LEFT: 0,
     CENTER: 1,
     RIGHT: 2
 }
+
+let buttonWidth = settings.get_int('apps-grid-label-width');
+
 
 /* =========================================================================
 /* name:    SearchWebBookmarks
@@ -416,37 +413,19 @@ const AppGridButton = new Lang.Class({
         this._app = app;
         this._type = appType;
         let styleButton = "popup-menu-item gnomenu-application-grid-button";
+
         let styleLabel = "gnomenu-application-grid-button-label";
-
-        // apps-grid button style to control button width set based on
-        //      number of columns.  NARROW width (formerly only choice)
-        //      would just use defaut of icon width (so not specified here).
-        if (settings.get_enum('apps-grid-button-width') == AppsGridButtonWidth.MEDIUM) {
-            if (settings.get_int('apps-grid-column-count') == 3) {
-                styleButton += " col3-med";
-            } else if (settings.get_int('apps-grid-column-count') == 4) {
-                styleButton += " col4-med"
-            } else if (settings.get_int('apps-grid-column-count') == 5) {
-                styleButton += " col5-med"
-            } else if (settings.get_int('apps-grid-column-count') == 6) {
-                styleButton += " col6-med"
-            } else if (settings.get_int('apps-grid-column-count') == 7) {
-                styleButton += " col7-med"
-            }
-        } else if (settings.get_enum('apps-grid-button-width') == AppsGridButtonWidth.WIDE) {
-            if (settings.get_int('apps-grid-column-count') == 3) {
-                styleButton += " col3-wide";
-            } else if (settings.get_int('apps-grid-column-count') == 4) {
-                styleButton += " col4-wide"
-            } else if (settings.get_int('apps-grid-column-count') == 5) {
-                styleButton += " col5-wide"
-            } else if (settings.get_int('apps-grid-column-count') == 6) {
-                styleButton += " col6-wide"
-            } else if (settings.get_int('apps-grid-column-count') == 7) {
-                styleButton += " col7-wide"
-            }  
-        }    
-
+        if (settings.get_int('apps-grid-column-count') == 3) {
+            styleButton += " col3";
+        } else if (settings.get_int('apps-grid-column-count') == 4) {
+            styleButton += " col4"
+        } else if (settings.get_int('apps-grid-column-count') == 5) {
+            styleButton += " col5"
+        } else if (settings.get_int('apps-grid-column-count') == 6) {
+            styleButton += " col6"
+        } else if (settings.get_int('apps-grid-column-count') == 7) {
+            styleButton += " col7"
+        }
         if (settings.get_boolean('hide-categories')) {
             styleButton += " no-categories";
             styleLabel += " no-categories";
@@ -1522,7 +1501,6 @@ const PanelMenuButton = new Lang.Class({
         let buttonMargin = {left:0,top:0,bottom:0,right:0};
         let buttonBorder = {left:0,top:0,bottom:0,right:0};
         let buttonPadding = {left:0,top:0,bottom:0,right:0};
-        let buttonWidth = 0;
         if (this.applicationsGridBox.get_stage()) {
             let themeNode = this.applicationsGridBox.get_theme_node();
             gridBoxBorder = {
@@ -1567,15 +1545,19 @@ const PanelMenuButton = new Lang.Class({
                         bottom: themeNode.get_padding(St.Side.BOTTOM),
                         right: themeNode.get_padding(St.Side.RIGHT),
                     };
-                    // load buttonWidth for later calcluation
-                    if (settings.get_enum('apps-grid-button-width') == AppsGridButtonWidth.NARROW) {
-                        // NARROW uses icon-size as button width
-                        buttonWidth = settings.get_int('apps-grid-icon-size');
-                    } else {
-                        // Retrieve MEDIUM or WIDE  button width sizes from theme
-                        buttonWidth = themeNode.get_width();
+
+                    // calculate optimal buttonWidth
+                    buttonWidth = settings.get_int('apps-grid-label-width')
+                    let tempSize = settings.get_int('apps-grid-icon-size');
+                    if ( buttonWidth < tempSize) {
+                      buttonWidth = tempSize;
                     }
-                    if (_DEBUG_) global.log("buttonWidth = "+buttonWidth);
+                    tempSize = themeNode.get_min_width();
+                    if ( buttonWidth < tempSize) {
+                      buttonWidth = tempSize;
+                    }
+
+                    if (_DEBUG_) global.log("buttonWidth = "+buttonWidth+" ["+settings.get_int('apps-grid-icon-size')+"]["+settings.get_int('apps-grid-label-width')+"]["+themeNode.get_min_width()+"]");
                 }
             }
         }
@@ -1597,14 +1579,14 @@ const PanelMenuButton = new Lang.Class({
                 right: themeNode.get_padding(St.Side.RIGHT),
             };
         }
-        
+
         let iconSize = buttonWidth + buttonMargin.left + buttonMargin.right + buttonBorder.left + buttonBorder.right + buttonPadding.left + buttonPadding.right;
-        if (_DEBUG_) global.log("icon size = "+iconSize);
+        if (_DEBUG_) global.log("icon size = "+iconSize +" ["+buttonWidth+"]["+buttonMargin.left+"]["+buttonMargin.right+"]["+buttonBorder.left+"]["+buttonBorder.right+"]["+buttonPadding.left+"]["+buttonPadding.right+"]");
         let gridWidth = (iconSize * this._appGridColumns) + gridBoxBorder.left + gridBoxBorder.right + gridBoxPadding.left + gridBoxPadding.right;
-        if (_DEBUG_) global.log("gridbox width = "+gridWidth);
+        if (_DEBUG_) global.log("gridbox width = "+gridWidth+" ["+this._appGridColumns+"] ["+gridBoxBorder.left+"]["+gridBoxBorder.right+"]["+gridBoxPadding.left+"]["+gridBoxPadding.right+"]");
         let scrollWidth = gridWidth + scrollBoxBorder.left + scrollBoxBorder.right + scrollBoxPadding.left + scrollBoxPadding.right;
 
-        if (_DEBUG_) global.log("scrollbox width = "+scrollWidth+" minWidth = "+minWidth);
+        if (_DEBUG_) global.log("scrollbox width = "+scrollWidth+" minWidth = "+minWidth +" ["+scrollBoxBorder.left+"]["+scrollBoxBorder.right+"]["+scrollBoxPadding.left+"]["+scrollBoxPadding.right+"]");
         if (scrollWidth >= minWidth) {
             this.applicationsScrollBox.width = scrollWidth;
         } else {
@@ -1687,7 +1669,9 @@ const PanelMenuButton = new Lang.Class({
                         }));
                         this.applicationsListBox.add_actor(appListButton.actor);
                     } else { // GridView
-                        let appGridButton = new AppGridButton(app, appType, true);
+                        let includeTextLabel = (settings.get_int('apps-grid-label-width') > 0) ? true : false;
+                        let appGridButton = new AppGridButton(app, appType, includeTextLabel);
+                        appGridButton.buttonbox.width = buttonWidth;
                         appGridButton.actor.connect('enter-event', Lang.bind(this, function() {
                           appGridButton.actor.add_style_class_name('selected');
                            this.selectedAppTitle.set_text(appGridButton._app.get_name());
@@ -1767,6 +1751,7 @@ const PanelMenuButton = new Lang.Class({
                         this.applicationsListBox.add_actor(appListButton.actor);
                     } else { // GridView
                         let appGridButton = new AppGridButton(app, appType, true);
+                        appGridButton.buttonbox.width = buttonWidth;
                         appGridButton.actor.connect('enter-event', Lang.bind(this, function() {
                           appGridButton.actor.add_style_class_name('selected');
                            this.selectedAppTitle.set_text(appGridButton._app.name);
@@ -1847,6 +1832,7 @@ const PanelMenuButton = new Lang.Class({
                         this.applicationsListBox.add_actor(appListButton.actor);
                     } else { // GridView
                         let appGridButton = new AppGridButton(app, appType, true);
+                        appGridButton.buttonbox.width = buttonWidth;
                         appGridButton.actor.connect('enter-event', Lang.bind(this, function() {
                           appGridButton.actor.add_style_class_name('selected');
                            this.selectedAppTitle.set_text(appGridButton._app.name);

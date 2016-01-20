@@ -211,74 +211,32 @@
 
     /*grid-buttons*/
 
-    /* default button style only used for apps-grid-button-width = NARROW */
 .gnomenu-application-grid-button {
     border-radius: 3px;
-    border-width: 1px;
-    padding: 5px 15px 5px; }
+    border-width: 1px }
 
-    /* MEDIUM apps-grid-button-width styles */
-    /* ==> MEDIUM attempts to match the default gnomenu grid width */
-.gnomenu-application-grid-button.col3-med {
-    border-radius: 3px;
-    border-width: 1px;
+.gnomenu-application-grid-button.col3 {
     padding: 5px 5px 5px;
-    width: 170px; }
-.gnomenu-application-grid-button.col4-med {
-    border-radius: 3px;
-    border-width: 1px;
+    min-width: 170px; }
+.gnomenu-application-grid-button.col4 {
     padding: 5px 5px 5px;
-    width: 125px; }
-.gnomenu-application-grid-button.col5-med {
-    border-radius: 3px;
-    border-width: 1px;
+    min-width: 125px; }
+.gnomenu-application-grid-button.col5 {
     padding: 5px 5px 5px;
-    width: 98px; }
-.gnomenu-application-grid-button.col6-med {
-    border-radius: 3px;
-    border-width: 1px;
+    min-width: 98px; }
+.gnomenu-application-grid-button.col6 {
     padding: 5px 5px 5px;
-    width: 80px; }
-.gnomenu-application-grid-button.col7-med {
-    border-radius: 3px;
-    border-width: 1px;
+    min-width: 80px; }
+.gnomenu-application-grid-button.col7 {
     padding: 5px 5px 5px;
-    width: 67px; }
-
-    /* WIDE apps-grid-button-width styles */
-    /* ==> WIDE expands the grid on higher column counts for name legibility */
-.gnomenu-application-grid-button.col3-wide {
-    border-radius: 3px;
-    border-width: 1px;
-    padding: 5px 5px 5px;
-    width: 170px; }
-.gnomenu-application-grid-button.col4-wide {
-    border-radius: 3px;
-    border-width: 1px;
-    padding: 5px 5px 5px;
-    width: 125px; }
-.gnomenu-application-grid-button.col5-wide {
-    border-radius: 3px;
-    border-width: 1px;
-    padding: 5px 5px 5px;
-    width: 110px; }
-.gnomenu-application-grid-button.col6-wide {
-    border-radius: 3px;
-    border-width: 1px;
-    padding: 5px 5px 5px;
-    width: 100px; }
-.gnomenu-application-grid-button.col7-wide {
-    border-radius: 3px;
-    border-width: 1px;
-    padding: 5px 5px 5px;
-    width: 90px; }
+    min-width: 67px; }
 
     /*grid-button-labels*/
 
 .gnomenu-application-grid-button-label {
     font-size: 7.5pt;
     font-weight: bold;
-    padding: 0px;
+    padding: 0;
     text-align: center; }
 
 /* :::::::::: SELECTED-APP-BOX  :::::::::::: */

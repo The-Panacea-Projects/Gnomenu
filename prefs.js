@@ -564,10 +564,16 @@ const GnoMenuPreferencesWidget = new GObject.Class({
                         favoritesIconSizeCombo.set_active(iconSizes.indexOf(24));
                         appsListIconSizeCombo.set_active(iconSizes.indexOf(16));
                         appsGridIconSizeCombo.set_active(iconSizes.indexOf(32));
+                        if (this.settings.get_int('apps-grid-label-width') > 64 ) {
+                            appsGridLabelWidthCombo.set_active(labelSizes.indexOf(64));
+                        }
                     } else {
                         favoritesIconSizeCombo.set_active(iconSizes.indexOf(32));
                         appsListIconSizeCombo.set_active(iconSizes.indexOf(24));
                         appsGridIconSizeCombo.set_active(iconSizes.indexOf(48));
+                        if (this.settings.get_int('apps-grid-label-width') < 88 ) {
+                            appsGridLabelWidthCombo.set_active(labelSizes.indexOf(88));
+                        }
                     }
             }));
 
@@ -836,7 +842,9 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         appsGridIconSizeBox.add(appsGridIconSizeLabel);
         appsGridIconSizeBox.add(appsGridIconSizeCombo);
 
-        let appsGridButtonWidthBox = new Gtk.Box({
+
+        let labelSizes = [0, 64, 88, 96, 110, 125];
+        let appsGridLabelWidthBox = new Gtk.Box({
             spacing: 20,
             orientation: Gtk.Orientation.HORIZONTAL,
             homogeneous: false,
@@ -845,19 +853,23 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             margin_bottom: 5,
             margin_right: 10
         });
-        let appsGridButtonWidthLabel = new Gtk.Label({label: _("Width of App Grid Buttons"), hexpand:true, xalign:0});
-        let appsGridButtonWidthCombo = new Gtk.ComboBoxText({halign:Gtk.Align.END});
-            appsGridButtonWidthCombo.set_size_request(120, -1);
-            appsGridButtonWidthCombo.append_text(_('Narrow'));
-            appsGridButtonWidthCombo.append_text(_('Medium'));
-            appsGridButtonWidthCombo.append_text(_('Wide'));
-            appsGridButtonWidthCombo.set_active(this.settings.get_enum('apps-grid-button-width'));
-            appsGridButtonWidthCombo.connect('changed', Lang.bind (this, function(widget) {
-                    this.settings.set_enum('apps-grid-button-width', widget.get_active());
+        let appsGridLabelWidthLabel = new Gtk.Label({label: _("Width of App Grid Labels"), hexpand:true, xalign:0});
+        let appsGridLabelWidthCombo = new Gtk.ComboBoxText({halign:Gtk.Align.END});
+            appsGridLabelWidthCombo.set_size_request(120, -1);
+            appsGridLabelWidthCombo.append_text(_('0'));
+            appsGridLabelWidthCombo.append_text(_('64'));
+            appsGridLabelWidthCombo.append_text(_('88'));
+            appsGridLabelWidthCombo.append_text(_('96'));
+            appsGridLabelWidthCombo.append_text(_('110'));
+            appsGridLabelWidthCombo.append_text(_('125'));
+            appsGridLabelWidthCombo.set_active(labelSizes.indexOf(this.settings.get_int('apps-grid-label-width')));
+            appsGridLabelWidthCombo.connect('changed', Lang.bind (this, function(widget) {
+                    this.settings.set_int('apps-grid-label-width', labelSizes[widget.get_active()]);
             }));
 
-        appsGridButtonWidthBox.add(appsGridButtonWidthLabel);
-        appsGridButtonWidthBox.add(appsGridButtonWidthCombo);
+        appsGridLabelWidthBox.add(appsGridLabelWidthLabel);
+        appsGridLabelWidthBox.add(appsGridLabelWidthCombo);
+
 
         appsSettings.add(appsSettingsTitle);
         appsSettings.add(menuLayoutBox);
@@ -874,11 +886,13 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         appsSettings.add(startupViewModeBox);
         appsSettings.add(appsGridColumnCountBox);
         appsSettings.add(appsGridIconSizeBox);
-        appsSettings.add(appsGridButtonWidthBox);
+        appsSettings.add(appsGridLabelWidthBox);
         appsSettings.add(appsListIconSizeBox);
+
 
         frame.add(panelSettings);
         frame.add(appsSettings);
+
 
         //this.add(frame);
 
