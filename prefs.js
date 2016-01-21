@@ -843,7 +843,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         appsGridIconSizeBox.add(appsGridIconSizeCombo);
 
 
-        let labelSizes = [0, 64, 88, 96, 110, 125];
+        let labelSizes = [0, 64, 88, 96, 110, 128];
         let appsGridLabelWidthBox = new Gtk.Box({
             spacing: 20,
             orientation: Gtk.Orientation.HORIZONTAL,
@@ -861,7 +861,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             appsGridLabelWidthCombo.append_text(_('88'));
             appsGridLabelWidthCombo.append_text(_('96'));
             appsGridLabelWidthCombo.append_text(_('110'));
-            appsGridLabelWidthCombo.append_text(_('125'));
+            appsGridLabelWidthCombo.append_text(_('128'));
             appsGridLabelWidthCombo.set_active(labelSizes.indexOf(this.settings.get_int('apps-grid-label-width')));
             appsGridLabelWidthCombo.connect('changed', Lang.bind (this, function(widget) {
                     this.settings.set_int('apps-grid-label-width', labelSizes[widget.get_active()]);
