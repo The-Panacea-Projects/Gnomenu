@@ -178,5 +178,10 @@
       <summary>Applications grid icon size</summary>
       <description>Applications grid icon size</description>
     </key>
+    <key type="i" name="apps-grid-label-width">
+      <default>96</default>
+      <summary>Applications grid label width</summary>
+      <description>Maximum width of the grid application's name</description>
+    </key>
   </schema>
 </schemalist>

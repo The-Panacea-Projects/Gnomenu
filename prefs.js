@@ -564,10 +564,16 @@ const GnoMenuPreferencesWidget = new GObject.Class({
                         favoritesIconSizeCombo.set_active(iconSizes.indexOf(24));
                         appsListIconSizeCombo.set_active(iconSizes.indexOf(16));
                         appsGridIconSizeCombo.set_active(iconSizes.indexOf(32));
+                        if (this.settings.get_int('apps-grid-label-width') > 64 ) {
+                            appsGridLabelWidthCombo.set_active(labelSizes.indexOf(64));
+                        }
                     } else {
                         favoritesIconSizeCombo.set_active(iconSizes.indexOf(32));
                         appsListIconSizeCombo.set_active(iconSizes.indexOf(24));
                         appsGridIconSizeCombo.set_active(iconSizes.indexOf(48));
+                        if (this.settings.get_int('apps-grid-label-width') < 88 ) {
+                            appsGridLabelWidthCombo.set_active(labelSizes.indexOf(96));
+                        }
                     }
             }));
 
@@ -836,6 +842,35 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         appsGridIconSizeBox.add(appsGridIconSizeLabel);
         appsGridIconSizeBox.add(appsGridIconSizeCombo);
 
+
+        let labelSizes = [0, 64, 88, 96, 110, 128];
+        let appsGridLabelWidthBox = new Gtk.Box({
+            spacing: 20,
+            orientation: Gtk.Orientation.HORIZONTAL,
+            homogeneous: false,
+            margin_left: 20,
+            margin_top: 5,
+            margin_bottom: 5,
+            margin_right: 10
+        });
+        let appsGridLabelWidthLabel = new Gtk.Label({label: _("Width of App Grid Labels"), hexpand:true, xalign:0});
+        let appsGridLabelWidthCombo = new Gtk.ComboBoxText({halign:Gtk.Align.END});
+            appsGridLabelWidthCombo.set_size_request(120, -1);
+            appsGridLabelWidthCombo.append_text(_('0'));
+            appsGridLabelWidthCombo.append_text(_('64'));
+            appsGridLabelWidthCombo.append_text(_('88'));
+            appsGridLabelWidthCombo.append_text(_('96'));
+            appsGridLabelWidthCombo.append_text(_('110'));
+            appsGridLabelWidthCombo.append_text(_('128'));
+            appsGridLabelWidthCombo.set_active(labelSizes.indexOf(this.settings.get_int('apps-grid-label-width')));
+            appsGridLabelWidthCombo.connect('changed', Lang.bind (this, function(widget) {
+                    this.settings.set_int('apps-grid-label-width', labelSizes[widget.get_active()]);
+            }));
+
+        appsGridLabelWidthBox.add(appsGridLabelWidthLabel);
+        appsGridLabelWidthBox.add(appsGridLabelWidthCombo);
+
+
         appsSettings.add(appsSettingsTitle);
         appsSettings.add(menuLayoutBox);
         appsSettings.add(hideUserOptionsBox);
@@ -851,6 +886,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         appsSettings.add(startupViewModeBox);
         appsSettings.add(appsGridColumnCountBox);
         appsSettings.add(appsGridIconSizeBox);
+        appsSettings.add(appsGridLabelWidthBox);
         appsSettings.add(appsListIconSizeBox);
 
 
