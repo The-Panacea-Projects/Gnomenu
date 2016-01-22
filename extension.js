@@ -107,9 +107,6 @@ const MenuButtonPosition = {
     RIGHT: 2
 }
 
-let buttonWidth = settings.get_int('apps-grid-label-width');
-
-
 /* =========================================================================
 /* name:    SearchWebBookmarks
  * @desc    Class to consolodate search of web browser(s) bookmarks
@@ -418,13 +415,13 @@ const AppGridButton = new Lang.Class({
         if (settings.get_int('apps-grid-column-count') == 3) {
             styleButton += " col3";
         } else if (settings.get_int('apps-grid-column-count') == 4) {
-            styleButton += " col4"
+            styleButton += " col4";
         } else if (settings.get_int('apps-grid-column-count') == 5) {
-            styleButton += " col5"
+            styleButton += " col5";
         } else if (settings.get_int('apps-grid-column-count') == 6) {
-            styleButton += " col6"
+            styleButton += " col6";
         } else if (settings.get_int('apps-grid-column-count') == 7) {
-            styleButton += " col7"
+            styleButton += " col7";
         }
         if (settings.get_boolean('hide-categories')) {
             styleButton += " no-categories";
@@ -671,6 +668,7 @@ const PanelMenuButton = new Lang.Class({
 
         this._applicationsViewMode = settings.get_enum('startup-view-mode');
         this._appGridColumns = settings.get_int('apps-grid-column-count');
+        this._appGridButtonWidth = settings.get_int('apps-grid-label-width');
         this._hoverTimeoutId = 0;
         this._searchTimeoutId = 0;
         this._searchIconClickedId = 0;
@@ -1583,18 +1581,18 @@ const PanelMenuButton = new Lang.Class({
                         right: themeNode.get_padding(St.Side.RIGHT),
                     };
 
-                    // calculate optimal buttonWidth
-                    buttonWidth = settings.get_int('apps-grid-label-width')
+                    // calculate optimal App Grid button width
+                    this._appGridButtonWidth = settings.get_int('apps-grid-label-width');
                     let tempSize = settings.get_int('apps-grid-icon-size');
-                    if ( buttonWidth < tempSize) {
-                      buttonWidth = tempSize;
+                    if ( this._appGridButtonWidth < tempSize) {
+                      this._appGridButtonWidth = tempSize;
                     }
                     tempSize = themeNode.get_min_width();
-                    if ( buttonWidth < tempSize) {
-                      buttonWidth = tempSize;
+                    if ( this._appGridButtonWidth < tempSize) {
+                      this._appGridButtonWidth = tempSize;
                     }
 
-                    if (_DEBUG_) global.log("buttonWidth = "+buttonWidth+" ["+settings.get_int('apps-grid-icon-size')+"]["+settings.get_int('apps-grid-label-width')+"]["+themeNode.get_min_width()+"]");
+                    if (_DEBUG_) global.log("buttonWidth = "+this._appGridButtonWidth+" ["+settings.get_int('apps-grid-icon-size')+"]["+settings.get_int('apps-grid-label-width')+"]["+themeNode.get_min_width()+"]");
                 }
             }
         }
@@ -1617,8 +1615,8 @@ const PanelMenuButton = new Lang.Class({
             };
         }
 
-        let iconSize = buttonWidth + buttonMargin.left + buttonMargin.right + buttonBorder.left + buttonBorder.right + buttonPadding.left + buttonPadding.right;
-        if (_DEBUG_) global.log("icon size = "+iconSize +" ["+buttonWidth+"]["+buttonMargin.left+"]["+buttonMargin.right+"]["+buttonBorder.left+"]["+buttonBorder.right+"]["+buttonPadding.left+"]["+buttonPadding.right+"]");
+        let iconSize = this._appGridButtonWidth + buttonMargin.left + buttonMargin.right + buttonBorder.left + buttonBorder.right + buttonPadding.left + buttonPadding.right;
+        if (_DEBUG_) global.log("icon size = "+iconSize +" ["+this._appGridButtonWidth+"]["+buttonMargin.left+"]["+buttonMargin.right+"]["+buttonBorder.left+"]["+buttonBorder.right+"]["+buttonPadding.left+"]["+buttonPadding.right+"]");
         let gridWidth = (iconSize * this._appGridColumns) + gridBoxBorder.left + gridBoxBorder.right + gridBoxPadding.left + gridBoxPadding.right;
         if (_DEBUG_) global.log("gridbox width = "+gridWidth+" ["+this._appGridColumns+"] ["+gridBoxBorder.left+"]["+gridBoxBorder.right+"]["+gridBoxPadding.left+"]["+gridBoxPadding.right+"]");
         let scrollWidth = gridWidth + scrollBoxBorder.left + scrollBoxBorder.right + scrollBoxPadding.left + scrollBoxPadding.right;
@@ -1708,7 +1706,7 @@ const PanelMenuButton = new Lang.Class({
                     } else { // GridView
                         let includeTextLabel = (settings.get_int('apps-grid-label-width') > 0) ? true : false;
                         let appGridButton = new AppGridButton(app, appType, includeTextLabel);
-                        appGridButton.buttonbox.width = buttonWidth;
+                        appGridButton.buttonbox.width = this._appGridButtonWidth;
                         appGridButton.actor.connect('enter-event', Lang.bind(this, function() {
                           appGridButton.actor.add_style_class_name('selected');
                            this.selectedAppTitle.set_text(appGridButton._app.get_name());
@@ -1788,7 +1786,7 @@ const PanelMenuButton = new Lang.Class({
                         this.applicationsListBox.add_actor(appListButton.actor);
                     } else { // GridView
                         let appGridButton = new AppGridButton(app, appType, true);
-                        appGridButton.buttonbox.width = buttonWidth;
+                        appGridButton.buttonbox.width = this._appGridButtonWidth;
                         appGridButton.actor.connect('enter-event', Lang.bind(this, function() {
                           appGridButton.actor.add_style_class_name('selected');
                            this.selectedAppTitle.set_text(appGridButton._app.name);
@@ -1869,7 +1867,7 @@ const PanelMenuButton = new Lang.Class({
                         this.applicationsListBox.add_actor(appListButton.actor);
                     } else { // GridView
                         let appGridButton = new AppGridButton(app, appType, true);
-                        appGridButton.buttonbox.width = buttonWidth;
+                        appGridButton.buttonbox.width = this._appGridButtonWidth;
                         appGridButton.actor.connect('enter-event', Lang.bind(this, function() {
                           appGridButton.actor.add_style_class_name('selected');
                            this.selectedAppTitle.set_text(appGridButton._app.name);

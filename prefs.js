@@ -853,7 +853,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             margin_bottom: 5,
             margin_right: 10
         });
-        let appsGridLabelWidthLabel = new Gtk.Label({label: _("Width of App Grid Labels"), hexpand:true, xalign:0});
+        let appsGridLabelWidthLabel = new Gtk.Label({label: _("Width of Application Grid labels"), hexpand:true, xalign:0});
         let appsGridLabelWidthCombo = new Gtk.ComboBoxText({halign:Gtk.Align.END});
             appsGridLabelWidthCombo.set_size_request(120, -1);
             appsGridLabelWidthCombo.append_text(_('0'));
