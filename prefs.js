@@ -564,15 +564,15 @@ const GnoMenuPreferencesWidget = new GObject.Class({
                         favoritesIconSizeCombo.set_active(iconSizes.indexOf(24));
                         appsListIconSizeCombo.set_active(iconSizes.indexOf(16));
                         appsGridIconSizeCombo.set_active(iconSizes.indexOf(32));
-                        if (this.settings.get_int('apps-grid-label-width') > 64 ) {
-                            appsGridLabelWidthCombo.set_active(labelSizes.indexOf(64));
+                        if (this.settings.get_int('apps-grid-label-width') > 48 ) {
+                            appsGridLabelWidthCombo.set_active(labelSizes.indexOf(48));
                         }
                     } else {
                         favoritesIconSizeCombo.set_active(iconSizes.indexOf(32));
                         appsListIconSizeCombo.set_active(iconSizes.indexOf(24));
                         appsGridIconSizeCombo.set_active(iconSizes.indexOf(48));
-                        if (this.settings.get_int('apps-grid-label-width') < 88 ) {
-                            appsGridLabelWidthCombo.set_active(labelSizes.indexOf(96));
+                        if (this.settings.get_int('apps-grid-label-width') < 64 ) {
+                            appsGridLabelWidthCombo.set_active(labelSizes.indexOf(64));
                         }
                     }
             }));
@@ -843,7 +843,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         appsGridIconSizeBox.add(appsGridIconSizeCombo);
 
 
-        let labelSizes = [0, 64, 88, 96, 110, 128];
+        let labelSizes = [0, 32, 48, 64, 80, 96, 112, 128];
         let appsGridLabelWidthBox = new Gtk.Box({
             spacing: 20,
             orientation: Gtk.Orientation.HORIZONTAL,
@@ -857,10 +857,12 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         let appsGridLabelWidthCombo = new Gtk.ComboBoxText({halign:Gtk.Align.END});
             appsGridLabelWidthCombo.set_size_request(120, -1);
             appsGridLabelWidthCombo.append_text(_('0'));
+            appsGridLabelWidthCombo.append_text(_('32'));
+            appsGridLabelWidthCombo.append_text(_('48'));
             appsGridLabelWidthCombo.append_text(_('64'));
-            appsGridLabelWidthCombo.append_text(_('88'));
+            appsGridLabelWidthCombo.append_text(_('80'));
             appsGridLabelWidthCombo.append_text(_('96'));
-            appsGridLabelWidthCombo.append_text(_('110'));
+            appsGridLabelWidthCombo.append_text(_('112'));
             appsGridLabelWidthCombo.append_text(_('128'));
             appsGridLabelWidthCombo.set_active(labelSizes.indexOf(this.settings.get_int('apps-grid-label-width')));
             appsGridLabelWidthCombo.connect('changed', Lang.bind (this, function(widget) {
