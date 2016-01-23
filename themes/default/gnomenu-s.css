@@ -218,24 +218,21 @@
     border-radius: 3px;
     border-width: 1px }
 
-.gnomenu-application-grid-button.x16 {
-   /* margin: 0 32px 12px;*/
-    padding: 5px 14px 3px }
-.gnomenu-application-grid-button.x22 {
-   /* margin: 0 26px 11px;*/
-    padding: 6px 16px 4px }
-.gnomenu-application-grid-button.x24 {
-    /*margin: 0 28px 9px;*/
-    padding: 6px 17px 4px }
-.gnomenu-application-grid-button.x32 {
-    /*margin: 0 22px 21px;*/
-    padding: 6px 18px 4px }
-.gnomenu-application-grid-button.x48 {
-    /*margin: 0 22px 21px;*/
-    padding: 6px 19px 4px }
-.gnomenu-application-grid-button.x64 {
-    /*margin: 0 30px 30px;*/
-    padding: 6px 20px 4px }
+.gnomenu-application-grid-button.col3 {
+    padding: 5px 5px 5px;
+    min-width: 132px; }
+.gnomenu-application-grid-button.col4 {
+    padding: 5px 5px 5px;
+    min-width: 96px; }
+.gnomenu-application-grid-button.col5 {
+    padding: 5px 5px 5px;
+    min-width: 74px; }
+.gnomenu-application-grid-button.col6 {
+    padding: 5px 5px 5px;
+    min-width: 60px; }
+.gnomenu-application-grid-button.col7 {
+    padding: 5px 5px 5px;
+    min-width: 50px; }
 
     /*grid-button-labels*/
 
@@ -244,24 +241,6 @@
     font-weight: bold;
     padding: 0;
     text-align: center; }
-
-.gnomenu-application-grid-button-label.x16 {
-    max-width: 16px; }
-
-.gnomenu-application-grid-button-label.x22 {
-    max-width: 22px; }
-
-.gnomenu-application-grid-button-label.x24 {
-    max-width: 24px; }
-
-.gnomenu-application-grid-button-label.x32 {
-    max-width: 32px; }
-
-.gnomenu-application-grid-button-label.x48 {
-    max-width: 48px; }
-
-.gnomenu-application-grid-button-label.x64 {
-    max-width: 64px; }
 
 /* :::::::::: SELECTED-APP-BOX  :::::::::::: */
 
@@ -278,11 +257,3 @@
 .gnomenu-selected-app-description {
     padding-right: 8px;
     font-size: 7pt }
-
-
-
-
-
-
-
-
