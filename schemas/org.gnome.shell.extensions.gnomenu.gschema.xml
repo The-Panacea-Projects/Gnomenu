@@ -108,6 +108,11 @@
       <summary>Disable the menu button keyboard shortcut</summary>
       <description>Disable the menu button keyboard shortcut</description>
     </key>
+    <key type="s" name="show-settings-to">
+      <default>'ALL'</default>
+      <summary>Don't hide the settings button from this group</summary>
+      <description>Show Gnomenu preferences button to NONE, ALL, unix-group</description>
+    </key>
     <key enum="org.gnome.shell.extensions.gnomenu.panelMenuPosition" name="panel-menu-position">
       <default>'Right'</default>
       <summary>Set the position of the menu button</summary>
