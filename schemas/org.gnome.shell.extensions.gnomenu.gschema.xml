@@ -98,6 +98,11 @@
       <summary>Disable the menu button hot spot</summary>
       <description>Disable the menu button hot spot</description>
     </key>
+    <key type="i" name="panel-menu-hotspot-delay">
+      <default>250</default>
+      <summary>Delay (ms) before showing menu popup</summary>
+      <description>Delay in milliseconds before the menu popup is show</description>
+    </key>
     <key type="b" name="disable-panel-menu-keyboard">
       <default>false</default>
       <summary>Disable the menu button keyboard shortcut</summary>

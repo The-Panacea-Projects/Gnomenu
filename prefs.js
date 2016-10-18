@@ -363,9 +363,66 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         customMenuIconBox.add(customMenuIcon);
         customMenuIconBox.add(customMenuIconEntry);
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         let panelMenuBox = new Gtk.Box({
             orientation: Gtk.Orientation.VERTICAL
         });
+
+
+
+
+        let menuHotspotHoverDelays = [0, 100, 150, 175, 200, 250, 300, 350, 400];
+        let menuHotspotHoverDelayBox = new Gtk.Box({
+            spacing: 20,
+            orientation: Gtk.Orientation.HORIZONTAL,
+            homogeneous: false,
+            margin_left: 20,
+            margin_top: 0,
+            margin_bottom: 5,
+            margin_right: 10
+        });
+        let menuHotspotHoverDelayLabel = new Gtk.Label({
+            label: _("Menu button hot spot hover delay"),
+            margin_left: 40,
+            hexpand:true,
+            halign: Gtk.Align.START
+        });
+        let menuHotspotHoverDelayCombo = new Gtk.ComboBoxText({halign:Gtk.Align.END});
+            menuHotspotHoverDelayCombo.set_size_request(120, -1);
+            menuHotspotHoverDelayCombo.append_text(_('0'));
+            menuHotspotHoverDelayCombo.append_text(_('100'));
+            menuHotspotHoverDelayCombo.append_text(_('150'));
+            menuHotspotHoverDelayCombo.append_text(_('175'));
+            menuHotspotHoverDelayCombo.append_text(_('200'));
+            menuHotspotHoverDelayCombo.append_text(_('250'));
+            menuHotspotHoverDelayCombo.append_text(_('300'));
+            menuHotspotHoverDelayCombo.append_text(_('350'));
+            menuHotspotHoverDelayCombo.append_text(_('400'));
+            menuHotspotHoverDelayCombo.set_active(menuHotspotHoverDelays.indexOf(this.settings.get_int('panel-menu-hotspot-delay')));
+            menuHotspotHoverDelayCombo.connect('changed', Lang.bind (this, function(widget) {
+                    this.settings.set_int('panel-menu-hotspot-delay', menuHotspotHoverDelays[widget.get_active()]);
+            }));
+
+        menuHotspotHoverDelayBox.add(menuHotspotHoverDelayLabel);
+        menuHotspotHoverDelayBox.add(menuHotspotHoverDelayCombo);
+
+
+
+
 
         let disableMenuHotSpotBox = new Gtk.Box({
             spacing: 20,
@@ -461,6 +518,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         panelMenuBox.add(customMenuLabelBox);
         panelMenuBox.add(menuButtonPositionBox);
         panelMenuBox.add(customMenuIconBox);
+        panelMenuBox.add(menuHotspotHoverDelayBox);
         panelMenuBox.add(disableMenuHotSpotBox);
         panelMenuBox.add(disableMenuKeyboardAccelBox);
 

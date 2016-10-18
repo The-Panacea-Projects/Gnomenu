@@ -636,6 +636,7 @@ const PanelMenuButton = new Lang.Class({
             this._hotspot.height = 1;
             this._bin.add_child(this._hotspot);
             this._hotspot.connect('enter-event', Lang.bind(this, this._onHotSpotEntered));
+            this._hotspot.connect('leave-event', Lang.bind(this, this._onHotSpotExited));
         }
 
         // Add icon to button
@@ -690,11 +691,23 @@ const PanelMenuButton = new Lang.Class({
         this._searchWebBookmarks.destroy();
     },
 
-    // handler for when PanelMenuButton hotspot entered
+    // handler for when PanelMenuButton hotspot enter event
     _onHotSpotEntered: function() {
         if (_DEBUG_) global.log("PanelMenuButton: _onHotSpotEntered");
-        if (!this.menu.isOpen) {
-            this.menu.toggle();
+        let hoverDelay = settings.get_int('panel-menu-hotspot-delay');
+        this._hoverTimeoutId = Mainloop.timeout_add((hoverDelay >0) ? hoverDelay : 0, Lang.bind(this, function() {
+            //if (!this.menu.isOpen) {
+                this.menu.toggle();
+            //}
+            this._hoverTimeoutId = 0;
+         }));
+    },
+
+    // handler for when PanelMenuButton hotspot leave event
+    _onHotSpotExited: function() {
+        if (_DEBUG_) global.log("PanelMenuButton: _onHotSpotExited");
+        if (this._hoverTimeoutId > 0) {
+            Mainloop.source_remove(this._hoverTimeoutId);
         }
     },
 
