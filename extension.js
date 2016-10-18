@@ -154,6 +154,12 @@ const CategoryListButton = new Lang.Class({
     Name: 'GnoMenu.CategoryListButton',
 
     _init: function (dir, altNameText, altIconName) {
+        this.buttonEnterCallback = null;
+        this.buttonLeaveCallback = null;
+        this.buttonPressCallback = null;
+        this.buttonReleaseCallback = null;
+        this._ignoreHoverSelect = null;
+
         let style = "popup-menu-item popup-submenu-menu-item gnomenu-category-button";
         this.actor = new St.Button({ reactive: true, style_class: style, x_align: St.Align.START, y_align: St.Align.START });
         this.actor._delegate = this;
@@ -180,6 +186,41 @@ const CategoryListButton = new Lang.Class({
         this.buttonbox.add(this.label, {x_fill: false, y_fill: true, x_align: St.Align.START, y_align: St.Align.MIDDLE});
 
         this.actor.set_child(this.buttonbox);
+    },
+
+    setButtonEnterCallback: function(cb) {
+        this.buttonEnterCallback = cb;
+        this.actor.connect('enter-event', Lang.bind(this, this.buttonEnterCallback));
+    },
+
+    setButtonLeaveCallback: function(cb) {
+        this.buttonLeaveCallback = cb;
+        this.actor.connect('leave-event', Lang.bind(this, this.buttonLeaveCallback));
+    },
+
+    setButtonPressCallback: function(cb) {
+        this.buttonPressCallback = cb;
+        this.actor.connect('button-press-event', Lang.bind(this, this.buttonPressCallback));
+    },
+
+    setButtonReleaseCallback: function(cb) {
+        this.buttonReleaseCallback = cb;
+        this.actor.connect('button-release-event', Lang.bind(this, this.buttonReleaseCallback));
+    },
+
+    select: function() {
+        this._ignoreHoverSelect = true;
+        this.buttonEnterCallback.call();
+    },
+
+    unSelect: function() {
+        this._ignoreHoverSelect = false;
+        this.buttonLeaveCallback.call();
+    },
+
+    click: function() {
+        this.buttonPressCallback.call();
+        this.buttonReleaseCallback.call();
     }
 });
 
@@ -535,6 +576,10 @@ const GroupButton = new Lang.Class({
 
     _init: function(iconName, iconSize, labelText, params) {
         this._opened = false;
+        this.buttonEnterCallback = null;
+        this.buttonLeaveCallback = null;
+        this.buttonPressCallback = null;
+        this.buttonReleaseCallback = null;
         let style = "popup-menu-item popup-submenu-menu-item";
         this.actor = new St.Button({ reactive: true, style_class: style, x_align: St.Align.MIDDLE, y_align: St.Align.MIDDLE });
         this.actor.add_style_class_name(params.style_class);
@@ -563,6 +608,39 @@ const GroupButton = new Lang.Class({
         this.buttonbox.replace_child(this.icon, newIcon);
         this.icon.destroy();
         this.icon = newIcon;
+    },
+
+    setButtonEnterCallback: function(cb) {
+        this.buttonEnterCallback = cb;
+        this.actor.connect('enter-event', Lang.bind(this, this.buttonEnterCallback));
+    },
+
+    setButtonLeaveCallback: function(cb) {
+        this.buttonLeaveCallback = cb;
+        this.actor.connect('leave-event', Lang.bind(this, this.buttonLeaveCallback));
+    },
+
+    setButtonPressCallback: function(cb) {
+        this.buttonPressCallback = cb;
+        this.actor.connect('button-press-event', Lang.bind(this, this.buttonPressCallback));
+    },
+
+    setButtonReleaseCallback: function(cb) {
+        this.buttonReleaseCallback = cb;
+        this.actor.connect('button-release-event', Lang.bind(this, this.buttonReleaseCallback));
+    },
+
+    select: function() {
+        this.buttonEnterCallback.call();
+    },
+
+    unSelect: function() {
+        this.buttonLeaveCallback.call();
+    },
+
+    click: function() {
+        this.buttonPressCallback.call();
+        this.buttonReleaseCallback.call();
     }
 });
 Signals.addSignalMethods(GroupButton.prototype);
@@ -743,7 +821,7 @@ const PanelMenuButton = new Lang.Class({
             if (this._menuToggleTimeoutId > 0)
                 Mainloop.source_remove(this._menuToggleTimeoutId);
 
-            this._menuToggleTimeoutId = Mainloop.timeout_add(100, Lang.bind(this, this.resetSearch));
+            this._menuToggleTimeoutId = Mainloop.timeout_add(100, Lang.bind(this, this.resetSearchWithFocus));
 
             // Load Startup Applications category
             this._selectedItemIndex = null;
@@ -867,7 +945,8 @@ const PanelMenuButton = new Lang.Class({
             this.resetSearch();
             this._clearCategorySelections(this.categoriesBox);
             this._clearUserGroupButtons();
-            this._clearApplicationSelections();
+            this._clearTabFocusSelections();
+            this._clearActiveContainerSelections();
             this._clearApplicationsBox();
             global.stage.set_key_focus(null);
 
@@ -1036,7 +1115,6 @@ const PanelMenuButton = new Lang.Class({
         this.resetSearch();
         this._clearApplicationsBox(button);
 
-
         let recent = this._listRecent();
         this._displayApplications(null, null, recent);
 
@@ -1066,7 +1144,7 @@ const PanelMenuButton = new Lang.Class({
         }
 
         // switch activeContainer and reset _selectedItemIndex for keyboard navigation
-        if (this._activeContainer == null || this._activeContainer == this.applicationsListBox || this._activeContainer == this.applicationsGridBox) {
+        if (this._activeContainer == this.applicationsListBox || this._activeContainer == this.applicationsGridBox) {
 
             // reset active container
             this._activeContainer = (mode == 0) ? this.applicationsListBox : this.applicationsGridBox;
@@ -1107,6 +1185,75 @@ const PanelMenuButton = new Lang.Class({
         this.placesCategory._opened = false;
     },
 
+    _clearTabFocusSelections: function(selectedBox, resetSearch) {
+        this._selectedItemIndex = -1;
+        this._clearActiveContainerSelections();
+        this._adjustThemeForCompatibility();
+
+        if (!selectedBox)
+            return;
+
+        // let focusStyle = "border-width:1px; border-color: rgba(304,89,41,1)";
+        // if (selectedBox == this.applicationsGridBox || selectedBox == this.applicationsListBox) {
+        //     let wrapper = this.applicationsBoxWrapper;
+        //     wrapper.set_style(focusStyle);
+        // } else if (selectedBox == this.categoriesBox) {
+        //     let wrapper = this.groupCategoriesWorkspacesScrollBox;
+        //     wrapper.set_style(focusStyle);
+        // } else if (selectedBox == this.thumbnailsBox) {
+        //     let wrapper = this.groupCategoriesWorkspacesScrollBox;
+        //     wrapper.set_style(focusStyle);
+        // } else if (selectedBox == this.shortcutsBox) {
+        //     let wrapper = this.shortcutsScrollBox;
+        //     wrapper.set_style(focusStyle);
+        // } else if (selectedBox == this.powerGroupBox) {
+        //     let wrapper = this.bottomPane;
+        //     wrapper.set_style(focusStyle);
+        // } else {
+        //     selectedBox.set_style(focusStyle);
+        // }
+
+        if (selectedBox!=this.searchBox && resetSearch)
+            this.resetSearch();
+    },
+
+    _clearActiveContainerSelections: function(selectedContainerActor) {
+        if (!this._activeContainer)
+            return;
+
+        // Deal with extensionPreferences actor separately
+        // because it's not in any of the activeContainer objects
+        if (this.extensionPreferences == selectedContainerActor) {
+            this.extensionPreferences.actor.add_style_class_name('selected');
+            if (this.extensionPreferences.actor._delegate && this.extensionPreferences.actor._delegate.select) {
+                this.extensionPreferences.actor._delegate.select();
+            }
+        } else {
+            this.extensionPreferences.actor.remove_style_class_name('selected');
+        }
+
+        // Return if activeContainer has no children
+        // Such is the case with the thumbnailsBox
+        if (!this._activeContainer.get_children)
+            return;
+
+        this._activeContainer.get_children().forEach(function(actor) {
+            if (selectedContainerActor) {
+                if (selectedContainerActor && (actor == selectedContainerActor)) {
+                    actor.add_style_class_name('selected');
+                    if (actor._delegate && actor._delegate.select)
+                        actor._delegate.select();
+                } else {
+                    actor.remove_style_class_name('selected');
+                }
+            } else {
+                actor.remove_style_class_name('selected');
+                if (actor._delegate && actor._delegate.unSelect)
+                    actor._delegate.unSelect();
+            }
+        });
+    },
+
     _clearApplicationSelections: function(selectedApplication) {
         this.applicationsListBox.get_children().forEach(function(actor) {
             if (selectedApplication && (actor == selectedApplication)) {
@@ -1126,7 +1273,6 @@ const PanelMenuButton = new Lang.Class({
     },
 
     _clearApplicationsBox: function(selectedCategory, refresh){
-        this._selectedItemIndex = -1;
         let listActors = this.applicationsListBox.get_children();
         if (listActors) {
             for (let i=0; i<listActors.length; i++) {
@@ -1446,6 +1592,10 @@ const PanelMenuButton = new Lang.Class({
         this.shortcutsScrollBox.set_style(style4);
         this.groupCategoriesWorkspacesScrollBox.set_style(style4);
         this.applicationsScrollBox.set_style(style4);
+
+        this.bottomPane.set_style(null);
+        this.applicationsBoxWrapper.set_style(null);
+        this.searchBox.set_style(null);
     },
 
     _calculateApplicationsBoxWidth: function() {
@@ -1918,12 +2068,21 @@ const PanelMenuButton = new Lang.Class({
 
     },
 
-    _scrollToApplicationButton: function(buttonActor) {
-        let vscroll = this.applicationsScrollBox.get_vscroll_bar();
+    _scrollToActiveContainerButton: function(buttonActor) {
+        let sBox;
+        if (this._activeContainer == this.shortcutsBox) {
+            sBox = this.shortcutsScrollBox;
+        } else if (this._activeContainer == this.applicationsListBox || this._activeContainer == this.applicationsGridBox) {
+            sBox = this.applicationsScrollBox;
+        } else {
+            return;
+        }
+
+        let vscroll = sBox.get_vscroll_bar();
         let buttonBox = buttonActor.get_allocation_box();
 
         var current_scroll_value = vscroll.get_adjustment().get_value();
-        var box_height = this.applicationsScrollBox.get_allocation_box().y2-this.applicationsScrollBox.get_allocation_box().y1;
+        var box_height = sBox.get_allocation_box().y2-sBox.get_allocation_box().y1;
         var new_scroll_value = current_scroll_value;
 
         if (current_scroll_value > buttonBox.y1-20) new_scroll_value = buttonBox.y1-20;
@@ -1933,23 +2092,131 @@ const PanelMenuButton = new Lang.Class({
 
     _onMenuKeyPress: function(actor, event) {
         let symbol = event.get_key_symbol();
+        let code = event.get_key_code();
+        let modifiers = event.get_state();
+        let shift = modifiers & Clutter.ModifierType.SHIFT_MASK;
         let viewMode = this._applicationsViewMode;
+        let categoryMode = this._categoryWorkspaceMode;
 
-        // Set initial active container (default is this.applicationsListBox or this.applicationsGridBox)
-        if (this._activeContainer === null && symbol == Clutter.KEY_Up) {
-            this._activeContainer = (viewMode == ApplicationsViewMode.LIST) ? this.applicationsListBox : this.applicationsGridBox;
-        } else if (this._activeContainer === null && symbol == Clutter.KEY_Down) {
-            this._activeContainer = (viewMode == ApplicationsViewMode.LIST) ? this.applicationsListBox : this.applicationsGridBox;
-        } else if (this._activeContainer === null && symbol == Clutter.KEY_Left) {
-            this._activeContainer = this.categoriesBox;
-        } else if (this._activeContainer === null && symbol == Clutter.KEY_Right) {
-            this._activeContainer = (viewMode == ApplicationsViewMode.LIST) ? this.applicationsListBox : this.applicationsGridBox;
-        } else if (this._activeContainer === null) {
-            this._activeContainer = (viewMode == ApplicationsViewMode.LIST) ? this.applicationsListBox : this.applicationsGridBox;
+        let reverse;
+        if (code == 23 && shift)
+            reverse = true;
+
+        // Tab navigation
+        if (code == 23) {
+            if (this._activeContainer) {
+                this._clearActiveContainerSelections();
+            }
+            switch (this._activeContainer) {
+                case this.userGroupBox:
+                    if (reverse) {
+                        this._activeContainer = this.powerGroupBox;
+                    } else {
+                        this._activeContainer = this.viewModeBox;
+                    }
+                    break;
+                case this.viewModeBox:
+                    if (reverse) {
+                        this._activeContainer = this.userGroupBox;
+                    } else {
+                        this._activeContainer = this.shortcutsBox;
+                    }
+                    break;
+                case this.shortcutsBox:
+                    if (reverse) {
+                        this._activeContainer = this.viewModeBox;
+                    } else {
+                        this._activeContainer = (categoryMode == CategoryWorkspaceMode.CATEGORY) ? this.categoriesBox : this.thumbnailsBox;
+                    }
+                    break;
+
+                case this.categoriesBox:
+                    if (reverse) {
+                        this._activeContainer = this.shortcutsBox;
+                    } else {
+                        this._activeContainer = (viewMode == ApplicationsViewMode.LIST) ? this.applicationsListBox : this.applicationsGridBox;
+                    }
+                    break;
+                case this.thumbnailsBox:
+                    if (reverse) {
+                        this._activeContainer = this.shortcutsBox;
+                    } else {
+                        this._activeContainer = (viewMode == ApplicationsViewMode.LIST) ? this.applicationsListBox : this.applicationsGridBox;
+                    }
+                    break;
+                case this.applicationsListBox:
+                    if (reverse) {
+                        // this._activeContainer = this.categoriesBox;
+                        this._activeContainer = (categoryMode == CategoryWorkspaceMode.CATEGORY) ? this.categoriesBox : this.thumbnailsBox;
+                    } else {
+                        this._activeContainer = this.powerGroupBox;
+                    }
+                    break;
+                case this.applicationsGridBox:
+                    if (reverse) {
+                        // this._activeContainer = this.categoriesBox;
+                        this._activeContainer = (categoryMode == CategoryWorkspaceMode.CATEGORY) ? this.categoriesBox : this.thumbnailsBox;
+                    } else {
+                        this._activeContainer = this.powerGroupBox;
+                    }
+                    break;
+                case this.powerGroupBox:
+                    if (reverse) {
+                        this._activeContainer = (viewMode == ApplicationsViewMode.LIST) ? this.applicationsListBox : this.applicationsGridBox;
+                    } else {
+                        this._activeContainer = this.userGroupBox;
+                    }
+                    break;
+                default:
+                    if (reverse) {
+                        this._activeContainer = this.powerGroupBox;
+                    } else {
+                        this._activeContainer = this.userGroupBox;
+                    }
+            }
+            this._clearTabFocusSelections(this._activeContainer, true);
+            this.selectActiveContainerItem(symbol, code);
+            return true;
         }
 
+        // Set initial active container (default is this.applicationsListBox or this.applicationsGridBox)
+        if (this._activeContainer === null && (symbol == Clutter.KEY_Up || symbol == Clutter.KEY_Down)) {
+            this._activeContainer = (viewMode == ApplicationsViewMode.LIST) ? this.applicationsListBox : this.applicationsGridBox;
+        } else if (this._activeContainer === null && (symbol == Clutter.KEY_Left || symbol == Clutter.KEY_Right)) {
+            this._activeContainer = (viewMode == ApplicationsViewMode.LIST) ? this.applicationsListBox : this.applicationsGridBox;
+        } else if (this._activeContainer === null) {
+            return true;
+        }
+
+        if (this._activeContainer == this.thumbnailsBox) {
+            let direction;
+            if (symbol == Clutter.KEY_Up || symbol == Clutter.KEY_Left) {
+                direction = Meta.MotionDirection.UP;
+            }
+            if (symbol == Clutter.KEY_Down || symbol == Clutter.KEY_Right) {
+                direction = Meta.MotionDirection.DOWN;
+            }
+            let activeWs = global.screen.get_active_workspace();
+            let ws = activeWs.get_neighbor(direction);
+            Main.wm.actionMoveWorkspace(ws);
+            this._clearTabFocusSelections(this._activeContainer, true);
+            return true;
+        }
+
+        if (this.selectActiveContainerItem(symbol, code)) {
+            return true;
+        } else {
+            this._clearActiveContainerSelections();
+            return false;
+        }
+    },
+
+    selectActiveContainerItem: function(symbol, code) {
         // Any items in container?
-        let children = this._activeContainer.get_children();
+        let children = new Array();
+        if (this._activeContainer.get_children) {
+            children = this._activeContainer.get_children();
+        }
         if (children.length==0){
             this._selectedItemIndex = -1;
         }
@@ -1958,85 +2225,111 @@ const PanelMenuButton = new Lang.Class({
         let index = this._selectedItemIndex;
         this._previousSelectedItemIndex = this._selectedItemIndex;
 
-        // Navigate the applicationsListBox/applicationsGridBox containers
-        if (this._activeContainer == this.applicationsListBox || this._activeContainer == this.applicationsGridBox) {
-                if (symbol == Clutter.KEY_Up) {
-                    if (this._selectedItemIndex != null && this._selectedItemIndex > -1) {
-                        if (viewMode == ApplicationsViewMode.LIST) {
-                            index = (this._selectedItemIndex - 1 < 0) ? this._selectedItemIndex : this._selectedItemIndex - 1;
-                        } else {
-                            var columns = this._appGridColumns;
-                            index = (this._selectedItemIndex - columns < 0) ? this._selectedItemIndex : this._selectedItemIndex - columns;
-                        }
-                    }
-                } else if (symbol == Clutter.KEY_Down) {
-                    if (this._selectedItemIndex == null || this._selectedItemIndex < 0) {
-                        index = 0;
-                    } else {
-                        if (viewMode == ApplicationsViewMode.LIST) {
-                            index = (this._selectedItemIndex + 1 == children.length) ? children.length - 1 : this._selectedItemIndex + 1;
-                        } else {
-                            var columns = this._appGridColumns;
-                            index = (this._selectedItemIndex + columns >= children.length) ? this._selectedItemIndex : this._selectedItemIndex + columns;
-                        }
-                    }
-                } else if (symbol == Clutter.KEY_Left) {
-                    if (this._selectedItemIndex != null && this._selectedItemIndex > 0) {
-                        if (viewMode == ApplicationsViewMode.LIST) {
-                            // Move to categoriesBox
-
-                        } else {
-                            var columns = this._appGridColumns;
-                            var row = Math.floor(this._selectedItemIndex/columns);
-                            var firstCol = (row * columns);
-                            index = (this._selectedItemIndex - 1 < firstCol) ? firstCol : this._selectedItemIndex - 1;
-                        }
-                    }
-                } else if (symbol == Clutter.KEY_Right) {
-                    if (this._selectedItemIndex == null || this._selectedItemIndex < 0) {
-                        index = 0;
-                    } else {
-                        if (viewMode == ApplicationsViewMode.LIST) {
-                            // Do nothing
-                        } else {
-                            var columns = this._appGridColumns;
-                            var row = Math.floor(this._selectedItemIndex/columns);
-                            var lastCol = (row * columns) + columns;
-                            lastCol = (lastCol > children.length) ? children.length : lastCol;
-                            index = (this._selectedItemIndex + 1 >= lastCol) ? index : this._selectedItemIndex + 1;
-                        }
-                    }
-                } else if (symbol == Clutter.KEY_space || symbol == Clutter.KEY_Return || symbol == Clutter.KP_Enter) {
-                    // Launch application or Nautilus place or Recent document
-                    let item_actor = children[this._selectedItemIndex];
-                    if (item_actor._delegate._type == ApplicationType.APPLICATION) {
-                        this.menu.close();
-                        item_actor._delegate._app.open_new_window(-1);
-                    } else if (item_actor._delegate._type == ApplicationType.PLACE) {
-                        this.menu.close();
-                        if (item_actor._delegate._app.uri) {
-                           item_actor._delegate._app.app.launch_uris([item_actor._delegate._app.uri], null);
-                        } else {
-                           item_actor._delegate._app.launch();
-                        }
-                    } else if (item_actor._delegate._type == ApplicationType.RECENT) {
-                        this.menu.close();
-                        Gio.app_info_launch_default_for_uri(item_actor._delegate._app.uri, global.create_app_launch_context(0, -1));
-                    }
-                    return true;
+        // Navigate the active container
+        if (symbol && symbol == Clutter.KEY_Up) {
+            if (this._selectedItemIndex == null || this._selectedItemIndex < 0) {
+                index = 0;
+            } else if (this._selectedItemIndex != null && this._selectedItemIndex > -1) {
+                if (this._activeContainer == this.applicationsGridBox) {
+                    var columns = this._appGridColumns;
+                    index = (this._selectedItemIndex - columns < 0) ? this._selectedItemIndex : this._selectedItemIndex - columns;
                 } else {
-                    return false;
+                    index = (this._selectedItemIndex - 1 < 0) ? this._selectedItemIndex : this._selectedItemIndex - 1;
                 }
+            }
+        } else if (symbol && symbol == Clutter.KEY_Down) {
+            if (this._selectedItemIndex == null || this._selectedItemIndex < 0) {
+                index = 0;
+            } else {
+                if (this._activeContainer == this.applicationsGridBox) {
+                    var columns = this._appGridColumns;
+                    index = (this._selectedItemIndex + columns >= children.length) ? this._selectedItemIndex : this._selectedItemIndex + columns;
+                } else {
+                    index = (this._selectedItemIndex + 1 == children.length) ? children.length : this._selectedItemIndex + 1;
+                }
+            }
+        } else if (symbol && symbol == Clutter.KEY_Left) {
+            if (this._selectedItemIndex == null || this._selectedItemIndex < 0) {
+                index = 0;
+            } else if (this._selectedItemIndex != null && this._selectedItemIndex > 0) {
+                if (this._activeContainer == this.applicationsGridBox) {
+                    var columns = this._appGridColumns;
+                    var row = Math.floor(this._selectedItemIndex/columns);
+                    var firstCol = (row * columns);
+                    index = (this._selectedItemIndex - 1 < firstCol) ? firstCol : this._selectedItemIndex - 1;
+                } else {
+                    index = (this._selectedItemIndex - 1 < 0) ? this._selectedItemIndex : this._selectedItemIndex - 1;
+                }
+            }
+        } else if (symbol && symbol == Clutter.KEY_Right) {
+            if (this._selectedItemIndex == null || this._selectedItemIndex < 0) {
+                index = 0;
+            } else {
+                if (this._activeContainer == this.applicationsGridBox) {
+                    var columns = this._appGridColumns;
+                    var row = Math.floor(this._selectedItemIndex/columns);
+                    var lastCol = (row * columns) + columns;
+                    lastCol = (lastCol > children.length) ? children.length : lastCol;
+                    index = (this._selectedItemIndex + 1 >= lastCol) ? index : this._selectedItemIndex + 1;
+                } else {
+                    index = (this._selectedItemIndex + 1 == children.length) ? children.length : this._selectedItemIndex + 1;
+                }
+            }
+        } else if (symbol && symbol == Clutter.KEY_space || symbol == Clutter.KEY_Return || symbol == Clutter.KP_Enter) {
+            if (this._activeContainer == this.applicationsListBox || this._activeContainer == this.applicationsGridBox || this._activeContainer == this.shortcutsBox) {
+                // Launch application or Nautilus place or Recent document
+                let item_actor = children[this._selectedItemIndex];
+                if (item_actor._delegate._type == ApplicationType.APPLICATION) {
+                    this.menu.close();
+                    item_actor._delegate._app.open_new_window(-1);
+                } else if (item_actor._delegate._type == ApplicationType.PLACE) {
+                    this.menu.close();
+                    if (item_actor._delegate._app.uri) {
+                       item_actor._delegate._app.app.launch_uris([item_actor._delegate._app.uri], null);
+                    } else {
+                       item_actor._delegate._app.launch();
+                    }
+                } else if (item_actor._delegate._type == ApplicationType.RECENT) {
+                    this.menu.close();
+                    Gio.app_info_launch_default_for_uri(item_actor._delegate._app.uri, global.create_app_launch_context(0, -1));
+                }
+                return true;
+            } else if (this._activeContainer == this.userGroupBox || this._activeContainer == this.viewModeBox || this._activeContainer == this.powerGroupBox || this._activeContainer == this.categoriesBox) {
+                // Simulate button click
+                if (index>=children.length) {
+                    if (this._activeContainer == this.powerGroupBox) {
+                        let prefButton = this.extensionPreferences;
+                        prefButton.actor._delegate.click();
+                    } else {
+                        return false;
+                    }
+                } else {
+                    let item_actor = children[this._selectedItemIndex];
+                    item_actor._delegate.click();
+                }
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            if (code && code == 23) {
+                // Continue
+                index = 0;
+            } else {
+                return false;
+            }
         }
 
-        // Check for any change in position
-        if (index == this._selectedItemIndex) {
-            return true;
-        }
 
         // Check if position reached its end
-        if (index>=children.length) index = children.length-1;
-
+        if (index>=children.length) {
+            if (this._activeContainer == this.powerGroupBox) {
+                // allow index to be 1 greater to accommodate pref button
+                index = children.length;
+            } else {
+                index = children.length-1;
+            }
+        }
 
         // All good .. now get item actor in container
         this._selectedItemIndex = index;
@@ -2044,37 +2337,48 @@ const PanelMenuButton = new Lang.Class({
 
         // Check if item actor is valid
         if (!itemActor || itemActor === this.searchEntry) {
-            return false;
+            if (this._activeContainer == this.powerGroupBox) {
+                itemActor = this.extensionPreferences;
+            } else {
+                return false;
+            }
         }
 
         // Clear out container and select item actor
-        this._clearApplicationSelections(itemActor);
+        this._clearActiveContainerSelections(itemActor);
 
         // Set selected app name/description
-        let itemActor = children[this._selectedItemIndex];
-        if (itemActor._delegate._type == ApplicationType.APPLICATION) {
-           this.selectedAppTitle.set_text(itemActor._delegate._app.get_name());
-           if (itemActor._delegate._app.get_description()) this.selectedAppDescription.set_text(itemActor._delegate._app.get_description());
-           else this.selectedAppDescription.set_text("");
-        } else if (itemActor._delegate._type == ApplicationType.PLACE) {
-           this.selectedAppTitle.set_text(itemActor._delegate._app.name);
-           if (itemActor._delegate._app.description) this.selectedAppDescription.set_text(itemActor._delegate._app.description);
-           else this.selectedAppDescription.set_text("");
-        } else if (itemActor._delegate._type == ApplicationType.RECENT) {
-           this.selectedAppTitle.set_text(itemActor._delegate._app.name);
-           if (itemActor._delegate._app.description) this.selectedAppDescription.set_text(itemActor._delegate._app.description);
-           else this.selectedAppDescription.set_text("");
+        if (this._activeContainer == this.shortcutsBox || this._activeContainer == this.applicationsListBox || this._activeContainer == this.applicationsGridBox) {
+            if (itemActor._delegate._type == ApplicationType.APPLICATION) {
+               this.selectedAppTitle.set_text(itemActor._delegate._app.get_name());
+               if (itemActor._delegate._app.get_description()) this.selectedAppDescription.set_text(itemActor._delegate._app.get_description());
+               else this.selectedAppDescription.set_text("");
+            } else if (itemActor._delegate._type == ApplicationType.PLACE) {
+               this.selectedAppTitle.set_text(itemActor._delegate._app.name);
+               if (itemActor._delegate._app.description) this.selectedAppDescription.set_text(itemActor._delegate._app.description);
+               else this.selectedAppDescription.set_text("");
+            } else if (itemActor._delegate._type == ApplicationType.RECENT) {
+               this.selectedAppTitle.set_text(itemActor._delegate._app.name);
+               if (itemActor._delegate._app.description) this.selectedAppDescription.set_text(itemActor._delegate._app.description);
+               else this.selectedAppDescription.set_text("");
+            }
+
+            // Scroll to item actor if hidden from view
+            this._scrollToActiveContainerButton(itemActor);
         }
 
-        // Scroll to item actor if hidden from view
-        this._scrollToApplicationButton(itemActor);
         return true;
     },
 
     resetSearch: function(){
         this.searchEntry.set_text("");
         this.searchActive = false;
+    },
+
+    resetSearchWithFocus: function(){
         global.stage.set_key_focus(this.searchEntry);
+        this.searchEntry.set_text("");
+        this.searchActive = false;
     },
 
     _onSearchTextChanged: function (se, prop) {
@@ -2087,8 +2391,7 @@ const PanelMenuButton = new Lang.Class({
                 this._clearUserGroupButtons();
             }
         }
-        this._clearApplicationSelections();
-        this._selectedItemIndex = -1;
+        this._clearActiveContainerSelections();
         this.selectedAppTitle.set_text("");
         this.selectedAppDescription.set_text("");
 
@@ -2100,7 +2403,7 @@ const PanelMenuButton = new Lang.Class({
 
             if (this._searchIconClickedId == 0) {
                 this._searchIconClickedId = this.searchEntry.connect('secondary-icon-clicked', Lang.bind(this, function() {
-                    this.resetSearch();
+                    this.resetSearchWithFocus();
                     this._resetDisplayApplicationsToStartup();
                 }));
             }
@@ -2113,8 +2416,8 @@ const PanelMenuButton = new Lang.Class({
         }
         if (!this.searchActive) {
             if (this._searchTimeoutId > 0) {
-            Mainloop.source_remove(this._searchTimeoutId);
-            this._searchTimeoutId = 0;
+                Mainloop.source_remove(this._searchTimeoutId);
+                this._searchTimeoutId = 0;
             }
             return;
         }
@@ -2131,8 +2434,9 @@ const PanelMenuButton = new Lang.Class({
         this._previousSearchPattern = pattern;
 
         this._activeContainer = null;
-        this._selectedItemIndex = null;
+        this._selectedItemIndex = -1;
         this._previousSelectedItemIndex = null;
+        this._clearTabFocusSelections();
 
         // _listApplications returns all the applications when the search
         // string is zero length. This will happend if you type a space
@@ -2164,37 +2468,6 @@ const PanelMenuButton = new Lang.Class({
         this._clearApplicationsBox();
         this._displayApplications(appResults, placesResults, recentResults);
 
-        // Set active container
-        let viewMode = this._applicationsViewMode;
-        this._activeContainer = (viewMode == ApplicationsViewMode.LIST) ? this.applicationsListBox : this.applicationsGridBox;
-
-        // Any items in container?
-        let children = this._activeContainer.get_children();
-        if (children.length > 0){
-            // Set selected app name/description
-            this._selectedItemIndex = 0;
-            let itemActor = children[this._selectedItemIndex];
-            if (itemActor._delegate._type == ApplicationType.APPLICATION) {
-               this.selectedAppTitle.set_text(itemActor._delegate._app.get_name());
-               if (itemActor._delegate._app.get_description()) this.selectedAppDescription.set_text(itemActor._delegate._app.get_description());
-               else this.selectedAppDescription.set_text("");
-            } else if (itemActor._delegate._type == ApplicationType.PLACE) {
-               this.selectedAppTitle.set_text(itemActor._delegate._app.name);
-               if (itemActor._delegate._app.description) this.selectedAppDescription.set_text(itemActor._delegate._app.description);
-               else this.selectedAppDescription.set_text("");
-            } else if (itemActor._delegate._type == ApplicationType.RECENT) {
-               this.selectedAppTitle.set_text(itemActor._delegate._app.name);
-               if (itemActor._delegate._app.description) this.selectedAppDescription.set_text(itemActor._delegate._app.description);
-               else this.selectedAppDescription.set_text("");
-            }
-            // Clear out container and select item actor
-            this._clearApplicationSelections(itemActor);
-        } else {
-            this._selectedItemIndex = -1;
-            this.selectedAppTitle.set_text("");
-            this.selectedAppDescription.set_text("");
-        }
-
         return false;
     },
 
@@ -2223,7 +2496,7 @@ const PanelMenuButton = new Lang.Class({
         let middlePane = new St.BoxLayout({ style_class: 'gnomenu-menu-middle-pane' });
 
         // Bottom pane holds power group and selected app description (packed horizontally)
-        let bottomPane = new St.BoxLayout({ style_class: 'gnomenu-menu-bottom-pane' });
+        this.bottomPane = new St.BoxLayout({ style_class: 'gnomenu-menu-bottom-pane' });
 
         // groupCategoriesWorkspacesWrapper bin wraps categories and workspaces
         this.groupCategoriesWorkspacesWrapper = new St.BoxLayout({ style_class: 'gnomenu-categories-workspaces-wrapper', vertical: false});
@@ -2247,13 +2520,19 @@ const PanelMenuButton = new Lang.Class({
             }
         }));
 
+        // selectedAppBox
+        this.selectedAppBox = new St.BoxLayout({ style_class: 'gnomenu-selected-app-box', vertical: true });
+        this.selectedAppTitle = new St.Label({ style_class: 'gnomenu-selected-app-title', text: "" });
+        this.selectedAppBox.add_actor(this.selectedAppTitle);
+        this.selectedAppDescription = new St.Label({ style_class: 'gnomenu-selected-app-description', text: "" });
+        this.selectedAppBox.add_actor(this.selectedAppDescription);
 
         // UserGroupBox
         this.userGroupBox = new St.BoxLayout({ style_class: 'gnomenu-user-group-box' });
 
         // Create 'recent' category button
         this.recentCategory = new GroupButton( null, null, _('Recent'), {style_class: 'gnomenu-user-group-button'});
-        this.recentCategory.actor.connect('enter-event', Lang.bind(this, function() {
+        this.recentCategory.setButtonEnterCallback(Lang.bind(this, function() {
             this.recentCategory.actor.add_style_class_name('selected');
             this.selectedAppTitle.set_text(this.recentCategory.label.get_text());
             this.selectedAppDescription.set_text('');
@@ -2261,7 +2540,7 @@ const PanelMenuButton = new Lang.Class({
                 if (this._style1) this.recentCategory.actor.set_style(this._style1);
             }
         }));
-        this.recentCategory.actor.connect('leave-event', Lang.bind(this, function() {
+        this.recentCategory.setButtonLeaveCallback(Lang.bind(this, function() {
             this.recentCategory.actor.remove_style_class_name('selected');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
@@ -2269,10 +2548,10 @@ const PanelMenuButton = new Lang.Class({
                 if (this._style2) this.recentCategory.actor.set_style(this._style2);
             }
         }));
-        this.recentCategory.actor.connect('button-press-event', Lang.bind(this, function() {
+        this.recentCategory.setButtonPressCallback(Lang.bind(this, function() {
             this.recentCategory.actor.add_style_pseudo_class('pressed');
         }));
-        this.recentCategory.actor.connect('button-release-event', Lang.bind(this, function() {
+        this.recentCategory.setButtonReleaseCallback(Lang.bind(this, function() {
             this.recentCategory.actor.remove_style_pseudo_class('pressed');
             if (this.recentCategory._opened) {
                 this.recentCategory._opened = false;
@@ -2302,7 +2581,7 @@ const PanelMenuButton = new Lang.Class({
 
         // Create 'webBookmarks' category button
         this.webBookmarksCategory = new GroupButton( null, null, _('Webmarks'), {style_class: 'gnomenu-user-group-button'});
-        this.webBookmarksCategory.actor.connect('enter-event', Lang.bind(this, function() {
+        this.webBookmarksCategory.setButtonEnterCallback(Lang.bind(this, function() {
             this.webBookmarksCategory.actor.add_style_class_name('selected');
             this.selectedAppTitle.set_text(this.webBookmarksCategory.label.get_text());
             this.selectedAppDescription.set_text('');
@@ -2310,7 +2589,7 @@ const PanelMenuButton = new Lang.Class({
                 if (this._style1) this.webBookmarksCategory.actor.set_style(this._style1);
             }
         }));
-        this.webBookmarksCategory.actor.connect('leave-event', Lang.bind(this, function() {
+        this.webBookmarksCategory.setButtonLeaveCallback(Lang.bind(this, function() {
             this.webBookmarksCategory.actor.remove_style_class_name('selected');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
@@ -2318,10 +2597,10 @@ const PanelMenuButton = new Lang.Class({
                 if (this._style2) this.webBookmarksCategory.actor.set_style(this._style2);
             }
         }));
-        this.webBookmarksCategory.actor.connect('button-press-event', Lang.bind(this, function() {
+        this.webBookmarksCategory.setButtonPressCallback(Lang.bind(this, function() {
             this.webBookmarksCategory.actor.add_style_pseudo_class('pressed');
         }));
-        this.webBookmarksCategory.actor.connect('button-release-event', Lang.bind(this, function() {
+        this.webBookmarksCategory.setButtonReleaseCallback(Lang.bind(this, function() {
             this.webBookmarksCategory.actor.remove_style_pseudo_class('pressed');
             if (this.webBookmarksCategory._opened) {
                 this.webBookmarksCategory._opened = false;
@@ -2355,7 +2634,7 @@ const PanelMenuButton = new Lang.Class({
         } else {
             this.placesCategory = new GroupButton( null, null, _('Places'), {style_class: 'gnomenu-user-group-button'});
         }
-        this.placesCategory.actor.connect('enter-event', Lang.bind(this, function() {
+        this.placesCategory.setButtonEnterCallback(Lang.bind(this, function() {
             this.placesCategory.actor.add_style_class_name('selected');
             this.selectedAppTitle.set_text(this.placesCategory.label.get_text());
             this.selectedAppDescription.set_text('');
@@ -2363,7 +2642,7 @@ const PanelMenuButton = new Lang.Class({
                 if (this._style1) this.placesCategory.actor.set_style(this._style1);
             }
         }));
-        this.placesCategory.actor.connect('leave-event', Lang.bind(this, function() {
+        this.placesCategory.setButtonLeaveCallback(Lang.bind(this, function() {
             this.placesCategory.actor.remove_style_class_name('selected');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
@@ -2371,10 +2650,10 @@ const PanelMenuButton = new Lang.Class({
                 if (this._style2) this.placesCategory.actor.set_style(this._style2);
             }
         }));
-        this.placesCategory.actor.connect('button-press-event', Lang.bind(this, function() {
+        this.placesCategory.setButtonPressCallback(Lang.bind(this, function() {
             this.placesCategory.actor.add_style_pseudo_class('pressed');
         }));
-        this.placesCategory.actor.connect('button-release-event', Lang.bind(this, function() {
+        this.placesCategory.setButtonReleaseCallback(Lang.bind(this, function() {
             this.placesCategory.actor.remove_style_pseudo_class('pressed');
             if (this.placesCategory._opened) {
                 this.placesCategory._opened = false;
@@ -2408,12 +2687,8 @@ const PanelMenuButton = new Lang.Class({
 
 
 
-        let userGroupBoxSpacer1 = new St.Label({text: ''});
-        let userGroupBoxSpacer2 = new St.Label({text: ''});
         this.userGroupBox.add(this.recentCategory.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
-        this.userGroupBox.add(userGroupBoxSpacer1, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         this.userGroupBox.add(this.webBookmarksCategory.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
-        // this.userGroupBox.add(userGroupBoxSpacer2, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         // this.userGroupBox.add(this.placesCategory.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
 
         if (settings.get_boolean('hide-useroptions')) {
@@ -2441,20 +2716,20 @@ const PanelMenuButton = new Lang.Class({
         this.viewModeBox = new St.BoxLayout({ style_class: 'gnomenu-view-mode-box'+viewModeAdditionalStyle });
 
         this.toggleStartupAppsView = new GroupButton("view-toggle-apps-symbolic", viewModeButtonIconSize, null, {style_class: 'gnomenu-view-mode-button'});
-        this.toggleStartupAppsView.actor.connect('enter-event', Lang.bind(this, function() {
+        this.toggleStartupAppsView.setButtonEnterCallback(Lang.bind(this, function() {
             this.toggleStartupAppsView.actor.add_style_class_name('selected');
             this.selectedAppTitle.set_text(_('Toggle Startup Apps View'));
             this.selectedAppDescription.set_text('');
         }));
-        this.toggleStartupAppsView.actor.connect('leave-event', Lang.bind(this, function() {
+        this.toggleStartupAppsView.setButtonLeaveCallback(Lang.bind(this, function() {
             this.toggleStartupAppsView.actor.remove_style_class_name('selected');
             this.selectedAppTitle.set_text(_('Toggle Startup Apps View'));
             this.selectedAppDescription.set_text('');
         }));
-        this.toggleStartupAppsView.actor.connect('button-press-event', Lang.bind(this, function() {
+        this.toggleStartupAppsView.setButtonPressCallback(Lang.bind(this, function() {
             this.toggleStartupAppsView.actor.add_style_pseudo_class('pressed');
         }));
-        this.toggleStartupAppsView.actor.connect('button-release-event', Lang.bind(this, function() {
+        this.toggleStartupAppsView.setButtonReleaseCallback(Lang.bind(this, function() {
             this.toggleStartupAppsView.actor.remove_style_pseudo_class('pressed');
             this.selectedAppTitle.set_text(_('Toggle Startup Apps View'));
             this.selectedAppDescription.set_text('');
@@ -2467,20 +2742,20 @@ const PanelMenuButton = new Lang.Class({
 
 
         this.toggleListGridView = new GroupButton(viewModeButtonIcon, viewModeButtonIconSize, null, {style_class: 'gnomenu-view-mode-button'});
-        this.toggleListGridView.actor.connect('enter-event', Lang.bind(this, function() {
+        this.toggleListGridView.setButtonEnterCallback(Lang.bind(this, function() {
             this.toggleListGridView.actor.add_style_class_name('selected');
             this.selectedAppTitle.set_text(_('List View'));
             this.selectedAppDescription.set_text('');
         }));
-        this.toggleListGridView.actor.connect('leave-event', Lang.bind(this, function() {
+        this.toggleListGridView.setButtonLeaveCallback(Lang.bind(this, function() {
             this.toggleListGridView.actor.remove_style_class_name('selected');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
         }));
-        this.toggleListGridView.actor.connect('button-press-event', Lang.bind(this, function() {
+        this.toggleListGridView.setButtonPressCallback(Lang.bind(this, function() {
             this.toggleListGridView.actor.add_style_pseudo_class('pressed');
         }));
-        this.toggleListGridView.actor.connect('button-release-event', Lang.bind(this, function() {
+        this.toggleListGridView.setButtonReleaseCallback(Lang.bind(this, function() {
             this.toggleListGridView.actor.remove_style_pseudo_class('pressed');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
@@ -2521,7 +2796,7 @@ const PanelMenuButton = new Lang.Class({
         this.searchBox = new St.BoxLayout({ style_class: 'gnomenu-search-box'+searchEntryAdditionalStyle });
         this.searchEntry = new St.Entry({ name: 'gnomenuSearchEntry',
                                      style_class: 'gnomenu-search-entry'+searchEntryAdditionalStyle,
-                                     hint_text: _("Type to search..."),
+                                     hint_text: "",
                                      track_hover: true,
                                      can_focus: true });
 
@@ -2651,134 +2926,128 @@ const PanelMenuButton = new Lang.Class({
 
         // Load 'all applications' category
         let allAppCategory = new CategoryListButton('all', _('All Applications'));
-        if (settings.get_enum('category-selection-method') == SelectMethod.HOVER ) {
-            allAppCategory.actor.connect('enter-event', Lang.bind(this, function() {
+        allAppCategory.setButtonEnterCallback(Lang.bind(this, function() {
+            allAppCategory.actor.add_style_class_name('selected');
+            this.selectedAppTitle.set_text(allAppCategory.label.get_text());
+            this.selectedAppDescription.set_text('');
+
+            if (allAppCategory._ignoreHoverSelect)
+                return;
+
+            if (settings.get_enum('category-selection-method') == SelectMethod.HOVER ) {
                 let hoverDelay = settings.get_int('category-hover-delay');
                 this._hoverTimeoutId = Mainloop.timeout_add((hoverDelay >0) ? hoverDelay : 0, Lang.bind(this, function() {
                     this._selectCategory(allAppCategory);
-                    this.selectedAppTitle.set_text(allAppCategory.label.get_text());
-                    this.selectedAppDescription.set_text('');
                     this._hoverTimeoutId = 0;
                 }));
-            }));
-            allAppCategory.actor.connect('leave-event', Lang.bind(this, function() {
+            }
+        }));
+        allAppCategory.setButtonLeaveCallback(Lang.bind(this, function() {
+            allAppCategory.actor.remove_style_class_name('selected');
+            this.selectedAppTitle.set_text('');
+            this.selectedAppDescription.set_text('');
+
+            if (settings.get_enum('category-selection-method') == SelectMethod.HOVER ) {
                 if (this._hoverTimeoutId > 0) {
                     Mainloop.source_remove(this._hoverTimeoutId);
                 }
-                this.selectedAppTitle.set_text('');
-                this.selectedAppDescription.set_text('');
-            }));
-        } else {
-            allAppCategory.actor.connect('enter-event', Lang.bind(this, function() {
-                allAppCategory.actor.add_style_class_name('selected');
-                this.selectedAppTitle.set_text(allAppCategory.label.get_text());
-                this.selectedAppDescription.set_text('');
-            }));
-            allAppCategory.actor.connect('leave-event', Lang.bind(this, function() {
-                allAppCategory.actor.remove_style_class_name('selected');
-                this.selectedAppTitle.set_text('');
-                this.selectedAppDescription.set_text('');
-            }));
-            allAppCategory.actor.connect('button-press-event', Lang.bind(this, function() {
-                allAppCategory.actor.add_style_pseudo_class('pressed');
-            }));
-            allAppCategory.actor.connect('button-release-event', Lang.bind(this, function() {
-                allAppCategory.actor.remove_style_pseudo_class('pressed');
-                allAppCategory.actor.remove_style_class_name('selected');
-                this._startupAppsView = StartupAppsDisplay.ALL;
-                this._selectCategory(allAppCategory);
-                this.selectedAppTitle.set_text(allAppCategory.label.get_text());
-                this.selectedAppDescription.set_text('');
-            }));
-        }
+            }
+        }));
+        allAppCategory.setButtonPressCallback(Lang.bind(this, function() {
+            allAppCategory.actor.add_style_pseudo_class('pressed');
+        }));
+        allAppCategory.setButtonReleaseCallback(Lang.bind(this, function() {
+            allAppCategory.actor.remove_style_pseudo_class('pressed');
+            allAppCategory.actor.remove_style_class_name('selected');
+            this._startupAppsView = StartupAppsDisplay.ALL;
+            this._selectCategory(allAppCategory);
+            this.selectedAppTitle.set_text(allAppCategory.label.get_text());
+            this.selectedAppDescription.set_text('');
+        }));
         this.categoriesBox.add_actor(allAppCategory.actor);
 
         // Load 'frequent applications' category
         let freqAppCategory = new CategoryListButton('frequent', _('Frequent Apps'));
-        if (settings.get_enum('category-selection-method') == SelectMethod.HOVER ) {
-            freqAppCategory.actor.connect('enter-event', Lang.bind(this, function() {
+        freqAppCategory.setButtonEnterCallback(Lang.bind(this, function() {
+            freqAppCategory.actor.add_style_class_name('selected');
+            this.selectedAppTitle.set_text(freqAppCategory.label.get_text());
+            this.selectedAppDescription.set_text('');
+
+            if (freqAppCategory._ignoreHoverSelect)
+                return;
+
+            if (settings.get_enum('category-selection-method') == SelectMethod.HOVER ) {
                 let hoverDelay = settings.get_int('category-hover-delay');
                 this._hoverTimeoutId = Mainloop.timeout_add((hoverDelay >0) ? hoverDelay : 0, Lang.bind(this, function() {
                     this._selectCategory(freqAppCategory);
-                    this.selectedAppTitle.set_text(freqAppCategory.label.get_text());
-                    this.selectedAppDescription.set_text('');
                     this._hoverTimeoutId = 0;
                  }));
-            }));
-            freqAppCategory.actor.connect('leave-event', Lang.bind(this, function() {
+            }
+        }));
+        freqAppCategory.setButtonLeaveCallback(Lang.bind(this, function() {
+            freqAppCategory.actor.remove_style_class_name('selected');
+            this.selectedAppTitle.set_text('');
+            this.selectedAppDescription.set_text('');
+
+            if (settings.get_enum('category-selection-method') == SelectMethod.HOVER ) {
                 if (this._hoverTimeoutId > 0) {
                     Mainloop.source_remove(this._hoverTimeoutId);
                 }
-                this.selectedAppTitle.set_text('');
-                this.selectedAppDescription.set_text('');
-            }));
-        } else {
-            freqAppCategory.actor.connect('enter-event', Lang.bind(this, function() {
-                freqAppCategory.actor.add_style_class_name('selected');
-                this.selectedAppTitle.set_text(freqAppCategory.label.get_text());
-                this.selectedAppDescription.set_text('');
-            }));
-            freqAppCategory.actor.connect('leave-event', Lang.bind(this, function() {
-                freqAppCategory.actor.remove_style_class_name('selected');
-                this.selectedAppTitle.set_text('');
-                this.selectedAppDescription.set_text('');
-            }));
-            freqAppCategory.actor.connect('button-press-event', Lang.bind(this, function() {
-                freqAppCategory.actor.add_style_pseudo_class('pressed');
-            }));
-            freqAppCategory.actor.connect('button-release-event', Lang.bind(this, function() {
-                freqAppCategory.actor.remove_style_pseudo_class('pressed');
-                freqAppCategory.actor.remove_style_class_name('selected');
-                this._startupAppsView = StartupAppsDisplay.FREQUENT;
-                this._selectCategory(freqAppCategory);
-                this.selectedAppTitle.set_text(freqAppCategory.label.get_text());
-                this.selectedAppDescription.set_text('');
-            }));
-        }
+            }
+        }));
+        freqAppCategory.setButtonPressCallback(Lang.bind(this, function() {
+            freqAppCategory.actor.add_style_pseudo_class('pressed');
+        }));
+        freqAppCategory.setButtonReleaseCallback(Lang.bind(this, function() {
+            freqAppCategory.actor.remove_style_pseudo_class('pressed');
+            freqAppCategory.actor.remove_style_class_name('selected');
+            this._startupAppsView = StartupAppsDisplay.FREQUENT;
+            this._selectCategory(freqAppCategory);
+            this.selectedAppTitle.set_text(freqAppCategory.label.get_text());
+            this.selectedAppDescription.set_text('');
+        }));
         this.categoriesBox.add_actor(freqAppCategory.actor);
 
         // Load 'favorite applications' category
         let favAppCategory = new CategoryListButton('favorites', _('Favorite Apps'));
-        if (settings.get_enum('category-selection-method') == SelectMethod.HOVER ) {
-            favAppCategory.actor.connect('enter-event', Lang.bind(this, function() {
+        favAppCategory.setButtonEnterCallback(Lang.bind(this, function() {
+            favAppCategory.actor.add_style_class_name('selected');
+            this.selectedAppTitle.set_text(favAppCategory.label.get_text());
+            this.selectedAppDescription.set_text('');
+
+            if (favAppCategory._ignoreHoverSelect)
+                return;
+
+            if (settings.get_enum('category-selection-method') == SelectMethod.HOVER ) {
                 let hoverDelay = settings.get_int('category-hover-delay');
                 this._hoverTimeoutId = Mainloop.timeout_add((hoverDelay >0) ? hoverDelay : 0, Lang.bind(this, function() {
                     this._selectCategory(favAppCategory);
-                    this.selectedAppTitle.set_text(favAppCategory.label.get_text());
-                    this.selectedAppDescription.set_text('');
                     this._hoverTimeoutId = 0;
                 }));
-            }));
-            favAppCategory.actor.connect('leave-event', Lang.bind(this, function() {
+            }
+        }));
+        favAppCategory.setButtonLeaveCallback(Lang.bind(this, function() {
+            favAppCategory.actor.remove_style_class_name('selected');
+            this.selectedAppTitle.set_text('');
+            this.selectedAppDescription.set_text('');
+
+            if (settings.get_enum('category-selection-method') == SelectMethod.HOVER ) {
                 if (this._hoverTimeoutId > 0) {
                     Mainloop.source_remove(this._hoverTimeoutId);
                 }
-                this.selectedAppTitle.set_text('');
-                this.selectedAppDescription.set_text('');
-            }));
-        } else {
-            favAppCategory.actor.connect('enter-event', Lang.bind(this, function() {
-                favAppCategory.actor.add_style_class_name('selected');
-                this.selectedAppTitle.set_text(favAppCategory.label.get_text());
-                this.selectedAppDescription.set_text('');
-            }));
-            favAppCategory.actor.connect('leave-event', Lang.bind(this, function() {
-                favAppCategory.actor.remove_style_class_name('selected');
-                this.selectedAppTitle.set_text('');
-                this.selectedAppDescription.set_text('');
-            }));
-            favAppCategory.actor.connect('button-press-event', Lang.bind(this, function() {
-                favAppCategory.actor.add_style_pseudo_class('pressed');
-            }));
-            favAppCategory.actor.connect('button-release-event', Lang.bind(this, function() {
-                favAppCategory.actor.remove_style_pseudo_class('pressed');
-                favAppCategory.actor.remove_style_class_name('selected');
-                this._startupAppsView = StartupAppsDisplay.FAVORITES;
-                this._selectCategory(favAppCategory);
-                this.selectedAppTitle.set_text(favAppCategory.label.get_text());
-                this.selectedAppDescription.set_text('');
-            }));
-        }
+            }
+        }));
+        favAppCategory.setButtonPressCallback(Lang.bind(this, function() {
+            favAppCategory.actor.add_style_pseudo_class('pressed');
+        }));
+        favAppCategory.setButtonReleaseCallback(Lang.bind(this, function() {
+            favAppCategory.actor.remove_style_pseudo_class('pressed');
+            favAppCategory.actor.remove_style_class_name('selected');
+            this._startupAppsView = StartupAppsDisplay.FAVORITES;
+            this._selectCategory(favAppCategory);
+            this.selectedAppTitle.set_text(favAppCategory.label.get_text());
+            this.selectedAppDescription.set_text('');
+        }));
         this.categoriesBox.add_actor(favAppCategory.actor);
 
         // Load rest of categories
@@ -2795,45 +3064,43 @@ const PanelMenuButton = new Lang.Class({
                 this._loadCategories(dir);
                 if (this.applicationsByCategory[dir.get_menu_id()].length>0){
                     let appCategory = new CategoryListButton(dir);
-                    if (settings.get_enum('category-selection-method') == SelectMethod.HOVER) {
-                        appCategory.actor.connect('enter-event', Lang.bind(this, function() {
+                    appCategory.setButtonEnterCallback(Lang.bind(this, function() {
+                        appCategory.actor.add_style_class_name('selected');
+                        this.selectedAppTitle.set_text(appCategory.label.get_text());
+                        this.selectedAppDescription.set_text('');
+
+                        if (appCategory._ignoreHoverSelect)
+                            return;
+
+                        if (settings.get_enum('category-selection-method') == SelectMethod.HOVER ) {
                             let hoverDelay = settings.get_int('category-hover-delay');
                             this._hoverTimeoutId = Mainloop.timeout_add((hoverDelay >0) ? hoverDelay : 0, Lang.bind(this, function() {
                                 this._selectCategory(appCategory);
-                                this.selectedAppTitle.set_text(appCategory.label.get_text());
-                                this.selectedAppDescription.set_text('');
                                 this._hoverTimeoutId = 0;
                             }));
-                        }));
-                        appCategory.actor.connect('leave-event', Lang.bind(this, function() {
+                        }
+                    }));
+                    appCategory.setButtonLeaveCallback(Lang.bind(this, function() {
+                        appCategory.actor.remove_style_class_name('selected');
+                        this.selectedAppTitle.set_text('');
+                        this.selectedAppDescription.set_text('');
+
+                        if (settings.get_enum('category-selection-method') == SelectMethod.HOVER ) {
                             if (this._hoverTimeoutId > 0) {
                                 Mainloop.source_remove(this._hoverTimeoutId);
                             }
-                            this.selectedAppTitle.set_text('');
-                            this.selectedAppDescription.set_text('');
-                        }));
-                    } else {
-                        appCategory.actor.connect('enter-event', Lang.bind(this, function() {
-                            appCategory.actor.add_style_class_name('selected');
-                            this.selectedAppTitle.set_text(appCategory.label.get_text());
-                            this.selectedAppDescription.set_text('');
-                        }));
-                        appCategory.actor.connect('leave-event', Lang.bind(this, function() {
-                            appCategory.actor.remove_style_class_name('selected');
-                            this.selectedAppTitle.set_text('');
-                            this.selectedAppDescription.set_text('');
-                        }));
-                        appCategory.actor.connect('button-press-event', Lang.bind(this, function() {
-                            appCategory.actor.add_style_pseudo_class('pressed');
-                        }));
-                        appCategory.actor.connect('button-release-event', Lang.bind(this, function() {
-                            appCategory.actor.remove_style_pseudo_class('pressed');
-                            appCategory.actor.remove_style_class_name('selected');
-                            this._selectCategory(appCategory);
-                            this.selectedAppTitle.set_text(appCategory.label.get_text());
-                            this.selectedAppDescription.set_text('');
-                        }));
-                    }
+                        }
+                    }));
+                    appCategory.setButtonPressCallback(Lang.bind(this, function() {
+                        appCategory.actor.add_style_pseudo_class('pressed');
+                    }));
+                    appCategory.setButtonReleaseCallback(Lang.bind(this, function() {
+                        appCategory.actor.remove_style_pseudo_class('pressed');
+                        appCategory.actor.remove_style_class_name('selected');
+                        this._selectCategory(appCategory);
+                        this.selectedAppTitle.set_text(appCategory.label.get_text());
+                        this.selectedAppDescription.set_text('');
+                    }));
                     this.categoriesBox.add_actor(appCategory.actor);
                 }
             }
@@ -2847,20 +3114,20 @@ const PanelMenuButton = new Lang.Class({
             powerGroupButtonIconSize = 16;
 
         let systemRestart = new GroupButton('refresh-symbolic', powerGroupButtonIconSize, null, {style_class: 'gnomenu-power-group-button'});
-        systemRestart.actor.connect('enter-event', Lang.bind(this, function() {
+        systemRestart.setButtonEnterCallback(Lang.bind(this, function() {
             systemRestart.actor.add_style_class_name('selected');
             this.selectedAppTitle.set_text(_('Restart Shell'));
             this.selectedAppDescription.set_text('');
         }));
-        systemRestart.actor.connect('leave-event', Lang.bind(this, function() {
+        systemRestart.setButtonLeaveCallback(Lang.bind(this, function() {
             systemRestart.actor.remove_style_class_name('selected');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
         }));
-        systemRestart.actor.connect('button-press-event', Lang.bind(this, function() {
+        systemRestart.setButtonPressCallback(Lang.bind(this, function() {
             systemRestart.actor.add_style_pseudo_class('pressed');
         }));
-        systemRestart.actor.connect('button-release-event', Lang.bind(this, function() {
+        systemRestart.setButtonReleaseCallback(Lang.bind(this, function() {
             // code to refresh shell
             systemRestart.actor.remove_style_pseudo_class('pressed');
             systemRestart.actor.remove_style_class_name('selected');
@@ -2870,20 +3137,20 @@ const PanelMenuButton = new Lang.Class({
             global.reexec_self();
         }));
         let systemSuspend = new GroupButton('suspend-symbolic', powerGroupButtonIconSize, null, {style_class: 'gnomenu-power-group-button'});
-        systemSuspend.actor.connect('enter-event', Lang.bind(this, function() {
+        systemSuspend.setButtonEnterCallback(Lang.bind(this, function() {
             systemSuspend.actor.add_style_class_name('selected');
             this.selectedAppTitle.set_text(_('Suspend'));
             this.selectedAppDescription.set_text('');
         }));
-        systemSuspend.actor.connect('leave-event', Lang.bind(this, function() {
+        systemSuspend.setButtonLeaveCallback(Lang.bind(this, function() {
             systemSuspend.actor.remove_style_class_name('selected');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
         }));
-        systemSuspend.actor.connect('button-press-event', Lang.bind(this, function() {
+        systemSuspend.setButtonPressCallback(Lang.bind(this, function() {
             systemSuspend.actor.add_style_pseudo_class('pressed');
         }));
-        systemSuspend.actor.connect('button-release-event', Lang.bind(this, function() {
+        systemSuspend.setButtonReleaseCallback(Lang.bind(this, function() {
             // code to suspend
             systemSuspend.actor.remove_style_pseudo_class('pressed');
             systemSuspend.actor.remove_style_class_name('selected');
@@ -2902,20 +3169,20 @@ const PanelMenuButton = new Lang.Class({
             }));
         }));
         let systemShutdown = new GroupButton('shutdown-symbolic', powerGroupButtonIconSize, null, {style_class: 'gnomenu-power-group-button'});
-        systemShutdown.actor.connect('enter-event', Lang.bind(this, function() {
+        systemShutdown.setButtonEnterCallback(Lang.bind(this, function() {
             systemShutdown.actor.add_style_class_name('selected');
             this.selectedAppTitle.set_text(_('Shutdown'));
             this.selectedAppDescription.set_text('');
         }));
-        systemShutdown.actor.connect('leave-event', Lang.bind(this, function() {
+        systemShutdown.setButtonLeaveCallback(Lang.bind(this, function() {
             systemShutdown.actor.remove_style_class_name('selected');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
         }));
-        systemShutdown.actor.connect('button-press-event', Lang.bind(this, function() {
+        systemShutdown.setButtonPressCallback(Lang.bind(this, function() {
             systemShutdown.actor.add_style_pseudo_class('pressed');
         }));
-        systemShutdown.actor.connect('button-release-event', Lang.bind(this, function() {
+        systemShutdown.setButtonReleaseCallback(Lang.bind(this, function() {
             // code to shutdown (power off)
             // ToDo: GS38 itterates through SystemLoginSession to check for open sessions
             // and displays an openSessionWarnDialog
@@ -2927,20 +3194,20 @@ const PanelMenuButton = new Lang.Class({
             this._session.ShutdownRemote();
         }));
         let logoutUser = new GroupButton('user-logout-symbolic', powerGroupButtonIconSize, null, {style_class: 'gnomenu-power-group-button'});
-        logoutUser.actor.connect('enter-event', Lang.bind(this, function() {
+        logoutUser.setButtonEnterCallback(Lang.bind(this, function() {
             logoutUser.actor.add_style_class_name('selected');
             this.selectedAppTitle.set_text(_('Logout User'));
             this.selectedAppDescription.set_text('');
         }));
-        logoutUser.actor.connect('leave-event', Lang.bind(this, function() {
+        logoutUser.setButtonLeaveCallback(Lang.bind(this, function() {
             logoutUser.actor.remove_style_class_name('selected');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
         }));
-        logoutUser.actor.connect('button-press-event', Lang.bind(this, function() {
+        logoutUser.setButtonPressCallback(Lang.bind(this, function() {
             logoutUser.actor.add_style_pseudo_class('pressed');
         }));
-        logoutUser.actor.connect('button-release-event', Lang.bind(this, function() {
+        logoutUser.setButtonReleaseCallback(Lang.bind(this, function() {
             // code to logout user
             logoutUser.actor.remove_style_pseudo_class('pressed');
             logoutUser.actor.remove_style_class_name('selected');
@@ -2950,20 +3217,20 @@ const PanelMenuButton = new Lang.Class({
             this._session.LogoutRemote(0);
         }));
         let lockScreen = new GroupButton('user-lock-symbolic', powerGroupButtonIconSize, null, {style_class: 'gnomenu-power-group-button'});
-        lockScreen.actor.connect('enter-event', Lang.bind(this, function() {
+        lockScreen.setButtonEnterCallback(Lang.bind(this, function() {
             lockScreen.actor.add_style_class_name('selected');
             this.selectedAppTitle.set_text(_('Lock Screen'));
             this.selectedAppDescription.set_text('');
         }));
-        lockScreen.actor.connect('leave-event', Lang.bind(this, function() {
+        lockScreen.setButtonLeaveCallback(Lang.bind(this, function() {
             lockScreen.actor.remove_style_class_name('selected');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
         }));
-        lockScreen.actor.connect('button-press-event', Lang.bind(this, function() {
+        lockScreen.setButtonPressCallback(Lang.bind(this, function() {
             lockScreen.actor.add_style_pseudo_class('pressed');
         }));
-        lockScreen.actor.connect('button-release-event', Lang.bind(this, function() {
+        lockScreen.setButtonReleaseCallback(Lang.bind(this, function() {
             // code for lock options
             lockScreen.actor.remove_style_pseudo_class('pressed');
             lockScreen.actor.remove_style_class_name('selected');
@@ -2974,22 +3241,13 @@ const PanelMenuButton = new Lang.Class({
             Main.screenShield.lock(true);
         }));
 
-        let powerGroupBoxSpacer1 = new St.Label({text: ''});
-        let powerGroupBoxSpacer2 = new St.Label({text: ''});
-        let powerGroupBoxSpacer3 = new St.Label({text: ''});
-        let powerGroupBoxSpacer4 = new St.Label({text: ''});
         this.powerGroupBox.add(systemRestart.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
-        this.powerGroupBox.add(powerGroupBoxSpacer1, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         this.powerGroupBox.add(systemSuspend.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
-        this.powerGroupBox.add(powerGroupBoxSpacer2, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         this.powerGroupBox.add(systemShutdown.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
-        this.powerGroupBox.add(powerGroupBoxSpacer3, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         this.powerGroupBox.add(logoutUser.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
-        this.powerGroupBox.add(powerGroupBoxSpacer4, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         this.powerGroupBox.add(lockScreen.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
 
         // ApplicationsBox (ListView / GridView)
-        // this.applicationsScrollBox = new St.ScrollView({ x_expand: true, x_fill: true, y_fill: false, y_align: St.Align.START, style_class: 'vfade gnomenu-applications-scrollbox' });
         this.applicationsScrollBox = new St.ScrollView({ x_fill: true, y_fill: false, y_align: St.Align.START, style_class: 'vfade gnomenu-applications-scrollbox' });
         let vscrollApplications = this.applicationsScrollBox.get_vscroll_bar();
         vscrollApplications.connect('scroll-start', Lang.bind(this, function() {
@@ -3009,32 +3267,25 @@ const PanelMenuButton = new Lang.Class({
         this.applicationsScrollBox.set_mouse_scrolling(true);
 
 
-        // selectedAppBox
-        this.selectedAppBox = new St.BoxLayout({ style_class: 'gnomenu-selected-app-box', vertical: true });
-        this.selectedAppTitle = new St.Label({ style_class: 'gnomenu-selected-app-title', text: "" });
-        this.selectedAppBox.add_actor(this.selectedAppTitle);
-        this.selectedAppDescription = new St.Label({ style_class: 'gnomenu-selected-app-description', text: "" });
-        this.selectedAppBox.add_actor(this.selectedAppDescription);
-
         // Extension Preferences
-        let extensionPreferences = new GroupButton('control-center-alt-symbolic', powerGroupButtonIconSize, null, {style_class: 'gnomenu-power-group-button'});
-        extensionPreferences.actor.connect('enter-event', Lang.bind(this, function() {
-            extensionPreferences.actor.add_style_class_name('selected');
+        this.extensionPreferences = new GroupButton('control-center-alt-symbolic', powerGroupButtonIconSize, null, {style_class: 'gnomenu-power-group-button'});
+        this.extensionPreferences.setButtonEnterCallback(Lang.bind(this, function() {
+            this.extensionPreferences.actor.add_style_class_name('selected');
             this.selectedAppTitle.set_text(_('Preferences'));
             this.selectedAppDescription.set_text('');
         }));
-        extensionPreferences.actor.connect('leave-event', Lang.bind(this, function() {
-            extensionPreferences.actor.remove_style_class_name('selected');
+        this.extensionPreferences.setButtonLeaveCallback(Lang.bind(this, function() {
+            this.extensionPreferences.actor.remove_style_class_name('selected');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
         }));
-        extensionPreferences.actor.connect('button-press-event', Lang.bind(this, function() {
-            extensionPreferences.actor.add_style_pseudo_class('pressed');
+        this.extensionPreferences.setButtonPressCallback(Lang.bind(this, function() {
+            this.extensionPreferences.actor.add_style_pseudo_class('pressed');
         }));
-        extensionPreferences.actor.connect('button-release-event', Lang.bind(this, function() {
+        this.extensionPreferences.setButtonReleaseCallback(Lang.bind(this, function() {
             // code to show extension preferences
-            extensionPreferences.actor.remove_style_pseudo_class('pressed');
-            extensionPreferences.actor.remove_style_class_name('selected');
+            this.extensionPreferences.actor.remove_style_pseudo_class('pressed');
+            this.extensionPreferences.actor.remove_style_class_name('selected');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
             Main.Util.trySpawnCommandLine(PREFS_DIALOG);
@@ -3047,12 +3298,8 @@ const PanelMenuButton = new Lang.Class({
         // ----------------------------------------------------------------------
 
         // topPane packs horizontally
-        let topPaneSpacer1 = new St.Label({text: ''});
-        let topPaneSpacer2 = new St.Label({text: ''});
         this.topPane.add(this.userGroupBox);
-        // topPane.add(topPaneSpacer1, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         this.topPane.add(this.viewModeBoxWrapper, {x_align:St.Align.START, y_align:St.Align.MIDDLE});
-        // topPane.add(topPaneSpacer2, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         this.topPane.add(this.searchBox, {expand: true, x_align:St.Align.END, y_align:St.Align.MIDDLE});
 
         this.groupCategoriesWorkspacesWrapper.add(this.thumbnailsBoxFiller, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
@@ -3072,11 +3319,11 @@ const PanelMenuButton = new Lang.Class({
 
         // bottomPane packs horizontally
         let bottomPaneSpacer1 = new St.Label({text: ''});
-        bottomPane.add(this._dummyButton);
-        bottomPane.add(this._dummyButton2);
-        bottomPane.add(this.powerGroupBox, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
-        bottomPane.add(bottomPaneSpacer1, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
-        bottomPane.add(this.selectedAppBox, {expand: true, x_align:St.Align.END, y_align:St.Align.MIDDLE});
+        this.bottomPane.add(this._dummyButton);
+        this.bottomPane.add(this._dummyButton2);
+        this.bottomPane.add(this.powerGroupBox, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
+        this.bottomPane.add(bottomPaneSpacer1, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
+        this.bottomPane.add(this.selectedAppBox, {expand: true, x_align:St.Align.END, y_align:St.Align.MIDDLE});
 
         let bShowPreferences = true;
         try {
@@ -3094,14 +3341,14 @@ const PanelMenuButton = new Lang.Class({
             global.log(err.message.toString());
         }
         if (bShowPreferences) {
-            bottomPane.add(extensionPreferences.actor, {x_fill:false, y_fill: false, x_align:St.Align.END, y_align:St.Align.MIDDLE});
+            this.bottomPane.add(this.extensionPreferences.actor, {x_fill:false, y_fill: false, x_align:St.Align.END, y_align:St.Align.MIDDLE});
         }
 
 
         // mainbox packs vertically
         this.mainBox.add_actor(this.topPane);
         this.mainBox.add_actor(middlePane);
-        this.mainBox.add_actor(bottomPane);
+        this.mainBox.add_actor(this.bottomPane);
 
         // add all to section
         section.actor.add_actor(this.mainBox);
