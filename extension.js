@@ -1464,6 +1464,7 @@ const PanelMenuButton = new Lang.Class({
         // Certain menu objects get color, border, etc from theme
         let themeBorderColor = null, themeBorderColorAlpha = "1";
         let themeBorderColor2 = null, themeBorderColor2Alpha = "1";
+        let themeBorderColor3 = null, themeBorderColor3Alpha = "1";
         let themeBackgroundColor = null, themeBackgroundColorAlpha = "1";
         let themeTextColor = null, themeTextColorAlpha = "1";
         let themeButtonTextColor = null, themeButtonTextColorAlpha = "1";
@@ -1519,9 +1520,16 @@ const PanelMenuButton = new Lang.Class({
                 themeButtonTextColor2Alpha = themeButtonTextColor2.alpha / 255;
             }
         }
+        if (this._dummySeparator._separator.get_stage()) {
+            let themeNode = this._dummySeparator._separator.get_theme_node();
+            themeBorderColor3 = themeNode.get_border_color(St.Side.TOP);
+            if (themeBorderColor3.alpha) {
+                themeBorderColor3Alpha = themeBorderColor3.alpha / 255;
+            }
+        }
 
-        let style1 = "", style2 = "", style3 = "", style4 = "", style5 = "";
-        let delimeter1 = "", delimeter2 = "", delimeter3 = "", delimeter4 = "", delimeter5 = "";
+        let style1 = "", style2 = "", style3 = "", style4 = "", style5 = "", style6 = "";
+        let delimeter1 = "", delimeter2 = "", delimeter3 = "", delimeter4 = "", delimeter5 = "", delimeter6 = "";
         if (themeBorderColor) {
             if (style1 != "") {
                 delimeter1 = "; ";
@@ -1576,6 +1584,12 @@ const PanelMenuButton = new Lang.Class({
             }
             style5 += delimeter5 + "color: rgba(" + themeButtonTextColor2.red + "," + themeButtonTextColor2.green + "," + themeButtonTextColor2.blue + "," + themeButtonTextColor2Alpha + ")";
         }
+        if (themeBorderColor3) {
+            if (style6 != "") {
+                delimeter6 = "; ";
+            }
+            style6 += delimeter6 + "border-color: rgba(" + themeBorderColor3.red + "," + themeBorderColor3.green + "," + themeBorderColor3.blue + "," + themeBorderColor3Alpha + ")";
+        }
 
         this._style1 = style1;
         this._style2 = style5;
@@ -1590,9 +1604,12 @@ const PanelMenuButton = new Lang.Class({
         this.userGroupBox.set_style(style3);
         this.viewModeBox.set_style(style3);
 
-        this.shortcutsScrollBox.set_style(style4);
-        this.groupCategoriesWorkspacesScrollBox.set_style(style4);
-        this.applicationsScrollBox.set_style(style4);
+        // this.shortcutsScrollBox.set_style(style4);
+        // this.groupCategoriesWorkspacesScrollBox.set_style(style4);
+        // this.applicationsScrollBox.set_style(style4);
+        this.shortcutsScrollBox.set_style(style6);
+        this.groupCategoriesWorkspacesScrollBox.set_style(style6);
+        this.applicationsScrollBox.set_style(style6);
 
         this.bottomPane.set_style(null);
         this.applicationsBoxWrapper.set_style(null);
