@@ -3413,7 +3413,6 @@ const GnoMenuButton = new Lang.Class({
         if (_DEBUG_) global.log("GnoMenuButton: refresh");
         this._clearAll();
         this._display();
-        Main.panel._updatePanel();
     },
 
     _clearAll: function() {
@@ -3931,7 +3930,6 @@ function enable() {
     GnoMenu = new GnoMenuButton();
     Main.panel.statusArea['gnomenubutton'] = GnoMenu;
     Main.panel._leftBox.insert_child_at_index(GnoMenu.actor, 0);
-    Main.panel._updatePanel();
 }
 
 function disable() {
