@@ -876,8 +876,9 @@ const PanelMenuButton = new Lang.Class({
                     this.thumbnailsBox.actor.width = categoryWidth;
                     this.thumbnailsBox._actualThumbnailWidth = categoryWidth;
                 } else {
-                    if (this.userGroupBox.width > this.groupCategoriesWorkspacesScrollBox.width) {
-                        let categoryWidth = this.userGroupBox.width;
+                    if (this.powerGroupBox.width > this.groupCategoriesWorkspacesScrollBox.width) {
+                        let categoryWidth = this.powerGroupBox.width;
+                        this.userGroupBox.width = categoryWidth;
                         this.groupCategoriesWorkspacesScrollBox.width = categoryWidth;
                         this.categoriesBox.width = categoryWidth;
                         this._widthCategoriesBox = categoryWidth;
