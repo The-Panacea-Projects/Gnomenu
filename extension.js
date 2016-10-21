@@ -2135,45 +2135,82 @@ const PanelMenuButton = new Lang.Class({
                     break;
                 case this.viewModeBox:
                     if (reverse) {
-                        this._activeContainer = this.userGroupBox;
+                        if (settings.get_boolean('hide-useroptions')) {
+                            this._activeContainer = this.powerGroupBox;
+                        } else {
+                            this._activeContainer = this.userGroupBox;
+                        }
                     } else {
-                        this._activeContainer = this.shortcutsBox;
+                        if (settings.get_boolean('hide-shortcuts')) {
+                            if (settings.get_boolean('hide-categories')) {
+                                this._activeContainer = (viewMode == ApplicationsViewMode.LIST) ? this.applicationsListBox : this.applicationsGridBox;
+                            } else {
+                                this._activeContainer = (categoryMode == CategoryWorkspaceMode.CATEGORY) ? this.categoriesBox : this.thumbnailsBox;
+                            }
+                        } else {
+                            this._activeContainer = this.shortcutsBox;
+                        }
                     }
                     break;
                 case this.shortcutsBox:
                     if (reverse) {
                         this._activeContainer = this.viewModeBox;
                     } else {
-                        this._activeContainer = (categoryMode == CategoryWorkspaceMode.CATEGORY) ? this.categoriesBox : this.thumbnailsBox;
+                        if (settings.get_boolean('hide-categories')) {
+                            this._activeContainer = (viewMode == ApplicationsViewMode.LIST) ? this.applicationsListBox : this.applicationsGridBox;
+                        } else {
+                            this._activeContainer = (categoryMode == CategoryWorkspaceMode.CATEGORY) ? this.categoriesBox : this.thumbnailsBox;
+                        }
                     }
                     break;
-
                 case this.categoriesBox:
                     if (reverse) {
-                        this._activeContainer = this.shortcutsBox;
+                        if (settings.get_boolean('hide-shortcuts')) {
+                            this._activeContainer = this.viewModeBox;
+                        } else {
+                            this._activeContainer = this.shortcutsBox;
+                        }
                     } else {
                         this._activeContainer = (viewMode == ApplicationsViewMode.LIST) ? this.applicationsListBox : this.applicationsGridBox;
                     }
                     break;
                 case this.thumbnailsBox:
                     if (reverse) {
-                        this._activeContainer = this.shortcutsBox;
+                        if (settings.get_boolean('hide-shortcuts')) {
+                            this._activeContainer = this.viewModeBox;
+                        } else {
+                            this._activeContainer = this.shortcutsBox;
+                        }
                     } else {
                         this._activeContainer = (viewMode == ApplicationsViewMode.LIST) ? this.applicationsListBox : this.applicationsGridBox;
                     }
                     break;
                 case this.applicationsListBox:
                     if (reverse) {
-                        // this._activeContainer = this.categoriesBox;
-                        this._activeContainer = (categoryMode == CategoryWorkspaceMode.CATEGORY) ? this.categoriesBox : this.thumbnailsBox;
+                        if (settings.get_boolean('hide-categories')) {
+                            if (settings.get_boolean('hide-shortcuts')) {
+                                this._activeContainer = this.viewModeBox;
+                            } else {
+                                this._activeContainer = this.shortcutsBox;
+                            }
+                        } else {
+                            this._activeContainer = (categoryMode == CategoryWorkspaceMode.CATEGORY) ? this.categoriesBox : this.thumbnailsBox;
+                        }
                     } else {
                         this._activeContainer = this.powerGroupBox;
                     }
                     break;
                 case this.applicationsGridBox:
                     if (reverse) {
-                        // this._activeContainer = this.categoriesBox;
-                        this._activeContainer = (categoryMode == CategoryWorkspaceMode.CATEGORY) ? this.categoriesBox : this.thumbnailsBox;
+                        if (settings.get_boolean('hide-categories')) {
+                            if (settings.get_boolean('hide-shortcuts')) {
+                                this._activeContainer = this.viewModeBox;
+                            } else {
+                                this._activeContainer = this.shortcutsBox;
+                            }
+                        } else {
+                            this._activeContainer = (categoryMode == CategoryWorkspaceMode.CATEGORY) ? this.categoriesBox : this.thumbnailsBox;
+                        }
                     } else {
                         this._activeContainer = this.powerGroupBox;
                     }
@@ -2182,14 +2219,22 @@ const PanelMenuButton = new Lang.Class({
                     if (reverse) {
                         this._activeContainer = (viewMode == ApplicationsViewMode.LIST) ? this.applicationsListBox : this.applicationsGridBox;
                     } else {
-                        this._activeContainer = this.userGroupBox;
+                        if (settings.get_boolean('hide-useroptions')) {
+                            this._activeContainer = this.viewModeBox;
+                        } else {
+                            this._activeContainer = this.userGroupBox;
+                        }
                     }
                     break;
                 default:
                     if (reverse) {
                         this._activeContainer = this.powerGroupBox;
                     } else {
-                        this._activeContainer = this.userGroupBox;
+                        if (settings.get_boolean('hide-useroptions')) {
+                            this._activeContainer = this.viewModeBox;
+                        } else {
+                            this._activeContainer = this.userGroupBox;
+                        }
                     }
             }
             this._clearTabFocusSelections(this._activeContainer, true);
@@ -2203,7 +2248,7 @@ const PanelMenuButton = new Lang.Class({
         } else if (this._activeContainer === null && (symbol == Clutter.KEY_Left || symbol == Clutter.KEY_Right)) {
             this._activeContainer = (viewMode == ApplicationsViewMode.LIST) ? this.applicationsListBox : this.applicationsGridBox;
         } else if (this._activeContainer === null) {
-            return true;
+            return false;
         }
 
         if (this._activeContainer == this.thumbnailsBox) {
@@ -2293,7 +2338,7 @@ const PanelMenuButton = new Lang.Class({
                     index = (this._selectedItemIndex + 1 == children.length) ? children.length : this._selectedItemIndex + 1;
                 }
             }
-        } else if (symbol && symbol == Clutter.KEY_space || symbol == Clutter.KEY_Return || symbol == Clutter.KP_Enter) {
+        } else if (symbol && symbol == Clutter.KEY_Return || symbol == Clutter.KP_Enter) {
             if (this._activeContainer == this.applicationsListBox || this._activeContainer == this.applicationsGridBox || this._activeContainer == this.shortcutsBox) {
                 // Launch application or Nautilus place or Recent document
                 let item_actor = children[this._selectedItemIndex];
