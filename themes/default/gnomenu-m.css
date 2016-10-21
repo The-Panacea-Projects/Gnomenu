@@ -32,6 +32,7 @@
 /*  user-group-buttons  */
 
 .gnomenu-user-group-button {
+    border-radius: 0;
     border-width: 0;
     padding: 0 10px;
     min-width: 88px }
@@ -65,6 +66,7 @@
     spacing: 0 }
 
 .gnomenu-view-mode-button {
+    border-radius: 0;
     border-width: 0;
     padding: 0 10px;
     min-width: 24px }
@@ -83,6 +85,9 @@
     padding-left: 9px }
 
 /* ::::::::::  SEARCH-ENTRY :::::::::::: */
+
+#gnomenuMenuMainbox StEntry {
+    padding: 6px 7px }
 
 .gnomenu-search-entry {
     min-width: 464px;
@@ -152,7 +157,7 @@
     padding: 0 }
 
 .gnomenu-category-button-label {
-    padding: 3px 10px 4px }
+    padding: 6px 10px }
 
 .gnomenu-category-button.popup-sub-menu {
     font-weight: bold;
@@ -177,16 +182,17 @@
 /*  scrollbar  */
 
 #gnomenuMenuMainbox StScrollView StScrollBar {
-    min-width: 4px;
-    min-height: 30px }
+    min-width: 0px;
+    min-height: 0px }
 
-#gnomenuMenuMainbox StScrollBar StButton#vhandle {
-    margin-top: 0 }
+#gnomenuMenuMainbox StScrollBar StButton#vhandle, 
+#gnomenuMenuMainbox StScrollBar StButton#hhandle {
+    margin: 0 }
 
 /* :::::::::: APPLICATIONS-LIST-BOX  :::::::::::: */
 
 .gnomenu-applications-list-box {
-    padding-right: 15px;
+    padding-right: 0;
     padding-left: 15px;
     spacing: 5px }
 
@@ -195,18 +201,18 @@
 .gnomenu-application-list-button {
     border-radius: 3px;
     border-width: 1px;
-    padding: 2px 8px }
+    padding: 0 8px }
 
 .gnomenu-application-list-button-label {
     padding-left: 16px }
 
 .gnomenu-application-list-button-icon {
-    padding-top: 5px }
+    padding-top: 3px }
 
 /* :::::::::: APPLICATIONS-GRID-BOX  :::::::::::: */
 
 .gnomenu-applications-grid-box {
-    padding-right: 15px;
+    padding-right: 0;
     padding-left: 15px }
 
     /*grid-buttons*/
