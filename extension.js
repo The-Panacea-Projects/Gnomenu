@@ -345,6 +345,7 @@ const AppListButton = new Lang.Class({
     _init: function (app, appType) {
         this._app = app;
         this._type = appType;
+        this._stateChangedId = 0;
         let style = "popup-menu-item gnomenu-application-list-button";
         this.actor = new St.Button({ reactive: true, style_class: style, x_align: St.Align.START, y_align: St.Align.MIDDLE});
         this.actor._delegate = this;
@@ -365,12 +366,30 @@ const AppListButton = new Lang.Class({
             this.label = new St.Label({ text: app.name, style_class: 'gnomenu-application-list-button-label' });
         }
 
+        this._dot = new St.Widget({ style_class: 'app-well-app-running-dot',
+                                    layout_manager: new Clutter.BinLayout(),
+                                    x_expand: true, y_expand: true,
+                                    x_align: Clutter.ActorAlign.CENTER,
+                                    y_align: Clutter.ActorAlign.END });
+
+        this._iconContainer = new St.BoxLayout({vertical: true});
+        this._iconContainer.add_style_class_name('gnomenu-application-list-button-icon');
+
+        this._iconContainer.add(this.icon, {x_fill: false, y_fill: false, x_align: St.Align.END, y_align: St.Align.END});
+        this._iconContainer.add(this._dot, {x_fill: false, y_fill: false, x_align: St.Align.END, y_align: St.Align.END});
+
         this.buttonbox = new St.BoxLayout();
-        this.buttonbox.add(this.icon, {x_fill: false, y_fill: false, x_align: St.Align.START, y_align: St.Align.MIDDLE});
+        this.buttonbox.add(this._iconContainer, {x_fill: false, y_fill: false, x_align: St.Align.START, y_align: St.Align.MIDDLE});
         this.buttonbox.add(this.label, {x_fill: false, y_fill: false, x_align: St.Align.START, y_align: St.Align.MIDDLE});
 
         this.actor.set_child(this.buttonbox);
 
+        // Connect signals
+        if (appType == ApplicationType.APPLICATION) {
+            this._stateChangedId = this._app.connect('notify::state', Lang.bind(this, this._onStateChanged));
+        }
+
+        // Connect drag-n-drop signals
         this._draggable = DND.makeDraggable(this.actor);
         this._draggable.connect('drag-begin', Lang.bind(this,
             function () {
@@ -389,6 +408,20 @@ const AppListButton = new Lang.Class({
             function () {
                Main.overview.endItemDrag(this);
             }));
+
+        // Check if running state
+        this._dot.opacity = 0;
+        this._onStateChanged();
+    },
+
+    _onStateChanged: function() {
+        if (this._type == ApplicationType.APPLICATION) {
+            if (this._app.state != Shell.AppState.STOPPED) {
+                this._dot.opacity = 255;
+            } else {
+                this._dot.opacity = 0;
+            }
+        }
     },
 
     getDragActor: function() {
@@ -450,6 +483,7 @@ const AppGridButton = new Lang.Class({
     _init: function(app, appType, includeText) {
         this._app = app;
         this._type = appType;
+        this._stateChangedId = 0;
         let styleButton = "popup-menu-item gnomenu-application-grid-button";
 
         let styleLabel = "gnomenu-application-grid-button-label";
@@ -488,6 +522,12 @@ const AppGridButton = new Lang.Class({
             this.label = new St.Label({ text: app.name, style_class: styleLabel });
         }
 
+        this._dot = new St.Widget({ style_class: 'app-well-app-running-dot',
+                                    layout_manager: new Clutter.BinLayout(),
+                                    x_expand: true, y_expand: true,
+                                    x_align: Clutter.ActorAlign.CENTER,
+                                    y_align: Clutter.ActorAlign.END });
+
         this.buttonbox = new St.BoxLayout({vertical: true});
         this.buttonbox.add(this.icon, {x_fill: false, y_fill: false,x_align: St.Align.MIDDLE, y_align: St.Align.START});
         if(includeText){
@@ -496,8 +536,15 @@ const AppGridButton = new Lang.Class({
             //this.label.clutter_text.line_wrap = true;
             this.buttonbox.add(this.label, {x_fill: false, y_fill: true,x_align: St.Align.MIDDLE, y_align: St.Align.MIDDLE});
         }
+        this.buttonbox.add(this._dot, {x_fill: false, y_fill: false,x_align: St.Align.MIDDLE, y_align: St.Align.START});
         this.actor.set_child(this.buttonbox);
 
+        // Connect signals
+        if (appType == ApplicationType.APPLICATION) {
+            this._stateChangedId = this._app.connect('notify::state', Lang.bind(this, this._onStateChanged));
+        }
+
+        // Connect drag-n-drop signals
         this._draggable = DND.makeDraggable(this.actor);
         this._draggable.connect('drag-begin', Lang.bind(this,
             function () {
@@ -516,6 +563,20 @@ const AppGridButton = new Lang.Class({
             function () {
                Main.overview.endItemDrag(this);
             }));
+
+        // Check if running state
+        this._dot.opacity = 0;
+        this._onStateChanged();
+    },
+
+    _onStateChanged: function() {
+        if (this._type == ApplicationType.APPLICATION) {
+            if (this._app.state != Shell.AppState.STOPPED) {
+                this._dot.opacity = 255;
+            } else {
+                this._dot.opacity = 0;
+            }
+        }
     },
 
     getDragActor: function() {

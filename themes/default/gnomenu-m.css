@@ -200,6 +200,9 @@
 .gnomenu-application-list-button-label {
     padding-left: 16px }
 
+.gnomenu-application-list-button-icon {
+    padding-top: 5px }
+
 /* :::::::::: APPLICATIONS-GRID-BOX  :::::::::::: */
 
 .gnomenu-applications-grid-box {
