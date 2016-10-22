@@ -186,6 +186,9 @@ const CategoryListButton = new Lang.Class({
         this.buttonbox.add(this.label, {x_fill: false, y_fill: true, x_align: St.Align.START, y_align: St.Align.MIDDLE});
 
         this.actor.set_child(this.buttonbox);
+
+        // Connect signals
+        this.actor.connect('touch-event', Lang.bind(this, this._onTouchEvent));
     },
 
     setButtonEnterCallback: function(cb) {
@@ -221,6 +224,10 @@ const CategoryListButton = new Lang.Class({
     click: function() {
         this.buttonPressCallback.call();
         this.buttonReleaseCallback.call();
+    },
+
+    _onTouchEvent : function (actor, event) {
+        return Clutter.EVENT_PROPAGATE;
     }
 });
 
