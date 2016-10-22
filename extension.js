@@ -267,6 +267,10 @@ const ShortcutButton = new Lang.Class({
 
         this.actor.set_child(this.buttonbox);
 
+        // Connect signals
+        this.actor.connect('touch-event', Lang.bind(this, this._onTouchEvent));
+
+        // Connect drag-n-drop signals
         this._draggable = DND.makeDraggable(this.actor);
         this._draggable.connect('drag-begin', Lang.bind(this,
             function () {
@@ -285,6 +289,10 @@ const ShortcutButton = new Lang.Class({
             function () {
                Main.overview.endItemDrag(this);
             }));
+    },
+
+    _onTouchEvent : function (actor, event) {
+        return Clutter.EVENT_PROPAGATE;
     },
 
     getDragActor: function() {
@@ -385,6 +393,7 @@ const AppListButton = new Lang.Class({
         this.actor.set_child(this.buttonbox);
 
         // Connect signals
+        this.actor.connect('touch-event', Lang.bind(this, this._onTouchEvent));
         if (appType == ApplicationType.APPLICATION) {
             this._stateChangedId = this._app.connect('notify::state', Lang.bind(this, this._onStateChanged));
         }
@@ -412,6 +421,10 @@ const AppListButton = new Lang.Class({
         // Check if running state
         this._dot.opacity = 0;
         this._onStateChanged();
+    },
+
+    _onTouchEvent : function (actor, event) {
+        return Clutter.EVENT_PROPAGATE;
     },
 
     _onStateChanged: function() {
@@ -540,6 +553,7 @@ const AppGridButton = new Lang.Class({
         this.actor.set_child(this.buttonbox);
 
         // Connect signals
+        this.actor.connect('touch-event', Lang.bind(this, this._onTouchEvent));
         if (appType == ApplicationType.APPLICATION) {
             this._stateChangedId = this._app.connect('notify::state', Lang.bind(this, this._onStateChanged));
         }
@@ -567,6 +581,10 @@ const AppGridButton = new Lang.Class({
         // Check if running state
         this._dot.opacity = 0;
         this._onStateChanged();
+    },
+
+    _onTouchEvent : function (actor, event) {
+        return Clutter.EVENT_PROPAGATE;
     },
 
     _onStateChanged: function() {
@@ -662,6 +680,9 @@ const GroupButton = new Lang.Class({
             this.buttonbox.add(this.label, {x_fill: false, y_fill: false, x_align: St.Align.MIDDLE, y_align: St.Align.MIDDLE});
         }
         this.actor.set_child(this.buttonbox);
+
+        // Connect signals
+        this.actor.connect('touch-event', Lang.bind(this, this._onTouchEvent));
     },
 
     setIcon: function(iconName) {
@@ -702,6 +723,10 @@ const GroupButton = new Lang.Class({
     click: function() {
         this.buttonPressCallback.call();
         this.buttonReleaseCallback.call();
+    },
+
+    _onTouchEvent : function (actor, event) {
+        return Clutter.EVENT_PROPAGATE;
     }
 });
 Signals.addSignalMethods(GroupButton.prototype);
