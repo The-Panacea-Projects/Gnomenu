@@ -2367,7 +2367,7 @@ const PanelMenuButton = new Lang.Class({
         }
     },
 
-    selectActiveContainerItem: function(symbol, code) {
+    selectActiveContainerItem: function(symbol, code, isFromSearch) {
         // Any items in container?
         let children = new Array();
         if (this._activeContainer.get_children) {
@@ -2468,7 +2468,7 @@ const PanelMenuButton = new Lang.Class({
                 return false;
             }
         } else {
-            if (code && code == 23) {
+            if ((code && code == 23) || isFromSearch) {
                 // Continue
                 index = 0;
             } else {
@@ -2623,6 +2623,9 @@ const PanelMenuButton = new Lang.Class({
 
         this._clearApplicationsBox();
         this._displayApplications(appResults, placesResults, recentResults);
+
+        this._activeContainer = (this._applicationsViewMode == ApplicationsViewMode.LIST) ? this.applicationsListBox : this.applicationsGridBox;
+        this.selectActiveContainerItem(null, null, true);
 
         return false;
     },
