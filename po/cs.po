@@ -11,7 +11,7 @@ msgstr ""
 "X-Generator: Poedit 1.8.8\n"
 "Last-Translator: Milan Zink <zeten30@gmail.com>\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"Language: sk\n"
+"Language: cs\n"
 
 #: convenience.js extension.js
 msgid "Gno-Menu: Search Firefox bookmarks disabled"
