@@ -1,0 +1,240 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Gno-Menu\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2017-02-27 15:15+0200\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.8\n"
+"Last-Translator: Milan Zink <zeten30@gmail.com>\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"Language: sk\n"
+
+#: convenience.js extension.js
+msgid "Gno-Menu: Search Firefox bookmarks disabled"
+msgstr "Gno-Menu: Vyhledávání záložek Firefoxu je zakázané"
+
+msgid ""
+"If you want to search Firefox bookmarks, you must install the required "
+"pacakages: libgir1.2-gda-5.0 [Ubuntu] or libgda-sqlite [Fedora]"
+msgstr ""
+"Pokud chcete vyhledávat v záložkách Firefoxu, musíte nainstalovat "
+"balíky: libgir1.2-gda-5.0 [Ubuntu] nebo libgda-sqlite [Fedora]"
+
+msgid "Gno-Menu: Search Midori bookmarks disabled"
+msgstr "Gno-Menu: Vyhledávání záložek Midori je zakázané"
+
+msgid ""
+"If you want to search Midori bookmarks, you must install the required "
+"pacakages: libgir1.2-gda-5.0 [Ubuntu] or libgda-sqlite [Fedora]"
+msgstr ""
+"Pokud chcete vyhledávat v záložkách Midori, musíte nainstalovat "
+"balíky: libgir1.2-gda-5.0 [Ubuntu] nebo libgda-sqlite [Fedora]"
+
+msgid "Recent"
+msgstr "Nedávné"
+
+msgid "Webmarks"
+msgstr "Záložky"
+
+msgid "Favorites"
+msgstr "Oblíbené"
+
+msgid "Places"
+msgstr "Místa"
+
+msgid "Toggle Startup Apps View"
+msgstr "Přepnout vychozí zobrazení aplikací"
+
+msgid "List View"
+msgstr "Zobrazit seznam"
+
+msgid "Grid View"
+msgstr "Zobrazenie mriežky"
+
+msgid "Type to search..."
+msgstr "Vyhledávejte psaním..."
+
+msgid "All Applications"
+msgstr "Všechny aplikace"
+
+msgid "Frequent Apps"
+msgstr "Často používané aplikace"
+
+msgid "Favorite Apps"
+msgstr "Oblíbené aplikace"
+
+msgid "Restart Shell"
+msgstr "Restartovat Shell"
+
+msgid "Suspend"
+msgstr "Uspat"
+
+msgid "Shutdown"
+msgstr "Vypnout"
+
+msgid "Logout User"
+msgstr "Odhlásit uživatele"
+
+msgid "Lock Screen"
+msgstr "Zamknout obrazovku"
+
+msgid "Preferences"
+msgstr "Nastavení"
+
+msgid "No GnoMenu stylesheet found"
+msgstr "Styl rozšíření GnoMenu nenalezen"
+
+#: placeDisplay.js
+msgid "Failed to launch \"%s\""
+msgstr "Chyba při spouštění aplikace „%s“"
+
+msgid "Home"
+msgstr "Domov"
+
+msgid "Computer"
+msgstr "Počítač"
+
+msgid "Browse network"
+msgstr "Procházet síť"
+
+#: prefs.js
+msgid "<b>Panel Settings</b>"
+msgstr "<b>Nastavení panelu</b>"
+
+msgid "Disable activities hot corner"
+msgstr "Zakázat aktívní horní roh"
+
+msgid "Remove View button from panel"
+msgstr "Odstranit tlačítko zobrazení z panelu"
+
+msgid "Label for View button"
+msgstr "Text tlačítka zobrazení"
+
+msgid "Use icon with View button"
+msgstr "Použít ikonu tlačítka zobrazení"
+
+msgid "Remove Apps button from panel"
+msgstr "Odstranit tlačítko aplikácí z panelu"
+
+msgid "Label for Apps button"
+msgstr "Text tlačítka aplikácí"
+
+msgid "Use icon with Apps button"
+msgstr "Použít ikonu tlačítka aplikácí"
+
+msgid "Remove Menu button from panel"
+msgstr "Odstranit tlačítko nabídky z panelu"
+
+msgid "Label for Menu button"
+msgstr "Text tlačítka nabídky"
+
+msgid "Use icon with Menu button"
+msgstr "Použít ikonu tlačítka nabídky"
+
+msgid "Disable Menu button hot spot"
+msgstr "Zakázat aktivní bod tlačítka nabídky"
+
+msgid "Disable Menu button shortcut key"
+msgstr "Zakázat klávesovou zkratku tlačítka nabídky"
+
+msgid "Invalid accelerator. Try F12, <Super>space, <Ctrl><Alt><Shift>a, etc."
+msgstr ""
+"Neplatná klávesová zkratka. Zkuste F12, <Super>mezerník, <Ctrl><Alt><Shift>a, "
+"atd."
+
+msgid "Set Menu button position"
+msgstr "Nastavení pozice tlačítka nabídky"
+
+msgid "Left"
+msgstr "Vlevo"
+
+msgid "Center"
+msgstr "Uprostřed"
+
+msgid "Right"
+msgstr "Vpravo"
+
+msgid "<b>Menu Settings</b>"
+msgstr "<b>Nastavení nabídky</b>"
+
+msgid "Hide User Options Panel"
+msgstr "Skrýt panel voleb uživatele"
+
+msgid "Hide Shortcuts Panel"
+msgstr "Skrýt panel záložek"
+
+msgid "Menu layout size"
+msgstr "Velikost nabídky"
+
+msgid "Normal"
+msgstr "Normální"
+
+msgid "Compact"
+msgstr "Kompaktní"
+
+msgid "Icons to display on Shortcuts Panel"
+msgstr "Ikony v panelu záložek"
+
+msgid "Applications to display at startup"
+msgstr "Aplikace, které se zobrazí po otevření"
+
+msgid "All"
+msgstr "Všechny"
+
+msgid "Frequent"
+msgstr "Často používané"
+
+msgid "None"
+msgstr "Žádné"
+
+msgid "Number of columns in Application Grid"
+msgstr "Počet sloupců v mřížce aplikací"
+
+msgid "3"
+msgstr "3"
+
+msgid "4"
+msgstr "4"
+
+msgid "5"
+msgstr "5"
+
+msgid "6"
+msgstr "6"
+
+msgid "7"
+msgstr "7"
+
+msgid "Default view mode for applications"
+msgstr "Předvolený režim zobrazení aplikací"
+
+msgid "List"
+msgstr "Seznam"
+
+msgid "Grid"
+msgstr "Mřížka"
+
+msgid "Hide Categories Panel"
+msgstr "Skrýt panel kategorií"
+
+msgid "Category selection method"
+msgstr "Způsob výběru kategorie"
+
+msgid "Hover"
+msgstr "Pod kurzorem myši"
+
+msgid "Click"
+msgstr "Kliknutí"
+
+msgid "Size of Shortcuts Panel icons"
+msgstr "Velikost ikon panelu záložek"
+
+msgid "Size of Application List icons"
+msgstr "Velikost ikon seznamu aplikací"
+
+msgid "Size of Application Grid icons"
+msgstr "Velikost ikon mřížky aplikací"
