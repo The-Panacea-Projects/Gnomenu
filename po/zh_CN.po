@@ -1,0 +1,259 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Gno-Menu\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2017-04-23 15:06:07+0800\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+
+#: convenience.js
+
+
+#: extension.js
+
+msgid "Gno-Menu: Search Firefox bookmarks disabled"
+msgstr "关闭 Firefox 书签搜索"
+
+msgid "If you want to search Firefox bookmarks, you must install the required pacakages: libgir1.2-gda-5.0 [Ubuntu] or libgda-sqlite [Fedora]"
+msgstr "如果您想使用 Firefox 书签搜索功能，请安装以下依赖包：libgir1.2-gda-5.0 [Ubuntu] 或 libgda-sqlite [Fedora]"
+
+msgid "Gno-Menu: Search Midori bookmarks disabled"
+msgstr "关闭 Midori 书签搜索"
+
+msgid "If you want to search Midori bookmarks, you must install the required pacakages: libgir1.2-gda-5.0 [Ubuntu] or libgda-sqlite [Fedora]"
+msgstr "如果您想使用 Midori 书签搜索功能，请安装以下依赖包：libgir1.2-gda-5.0 [Ubuntu] 或 libgda-sqlite [Fedora]"
+
+msgid "Recent"
+msgstr "最近"
+
+msgid "Webmarks"
+msgstr "书签"
+
+msgid "Favorites"
+msgstr "收藏夹"
+
+msgid "Places"
+msgstr "位置"
+
+msgid "Toggle Startup Apps View"
+msgstr "切换起始页面视图"
+
+msgid "List View"
+msgstr "列表视图"
+
+msgid "Grid View"
+msgstr "网格视图"
+
+msgid "Type to search..."
+msgstr "输入以搜索..."
+
+msgid "All Applications"
+msgstr "所有应用程序"
+
+msgid "Frequent Apps"
+msgstr "常用应用程序"
+
+msgid "Favorite Apps"
+msgstr "收藏夹"
+
+msgid "Restart Shell"
+msgstr "重启 Shell"
+
+msgid "Suspend"
+msgstr "挂起"
+
+msgid "Shutdown"
+msgstr "关机"
+
+msgid "Logout User"
+msgstr "注销"
+
+msgid "Lock Screen"
+msgstr "锁屏"
+
+msgid "Preferences"
+msgstr "设置"
+
+msgid "No GnoMenu stylesheet found"
+msgstr ""
+
+
+#: placeDisplay.js
+
+msgid "Failed to launch \"%s\""
+msgstr ""
+
+msgid "Home"
+msgstr ""
+
+msgid "Computer"
+msgstr "计算机"
+
+msgid "Browse network"
+msgstr "浏览网络"
+
+
+#: prefs.js
+
+msgid "<b>Panel Settings</b>"
+msgstr "<b>面板设置</b>"
+
+msgid "Disable activities hot corner"
+msgstr "禁用活动热区"
+
+msgid "Remove View button from panel"
+msgstr "从面板移除 View 按钮"
+
+msgid "Label for View button"
+msgstr "View 按钮显示文字"
+
+msgid "Use icon with View button"
+msgstr "在 View 按钮显示图标"
+
+msgid "Remove Apps button from panel"
+msgstr "从面板移除 Apps 按钮"
+
+msgid "Label for Apps button"
+msgstr "Apps 按钮显示文字"
+
+msgid "Use icon with Apps button"
+msgstr "在 Apps 按钮显示图标"
+
+msgid "Remove Menu button from panel"
+msgstr "从面板移除 Menu 按钮"
+
+msgid "Label for Menu button"
+msgstr "Menu 按钮显示文字"
+
+msgid "Use icon with Menu button"
+msgstr "为 Menu 按钮显示图标"
+
+msgid "Disable Menu button hot spot"
+msgstr "禁用 Menu 按钮触发热区"
+
+msgid "Disable Menu button shortcut key"
+msgstr "禁用 Menu 按钮快捷键"
+
+msgid "Invalid accelerator. Try F12, <Super>space, <Ctrl><Alt><Shift>a, etc."
+msgstr ""
+
+msgid "Set Menu button position"
+msgstr "Menu 按钮显示位置"
+
+msgid "Left"
+msgstr "左"
+
+msgid "Center"
+msgstr "中间"
+
+msgid "Right"
+msgstr "右"
+
+msgid "<b>Menu Settings</b>"
+msgstr "<b>菜单设置</b>"
+
+msgid "Hide User Options Panel"
+msgstr "隐藏用户选项面板"
+
+msgid "Hide Shortcuts Panel"
+msgstr "隐藏快捷方式面板"
+
+msgid "Menu layout size"
+msgstr "菜单布局大小"
+
+msgid "Normal"
+msgstr "正常"
+
+msgid "Compact"
+msgstr "紧凑"
+
+msgid "Icons to display on Shortcuts Panel"
+msgstr "在快捷方式面板显示"
+
+msgid "Applications to display at startup"
+msgstr "在起始页面显示的应用程序"
+
+msgid "All"
+msgstr "全部"
+
+msgid "Frequent"
+msgstr "常用"
+
+msgid "None"
+msgstr "无"
+
+msgid "Number of columns in Application Grid"
+msgstr "网格视图下应用程序行数"
+
+msgid "3"
+msgstr "3"
+
+msgid "4"
+msgstr "4"
+
+msgid "5"
+msgstr "5"
+
+msgid "6"
+msgstr "6"
+
+msgid "7"
+msgstr "7"
+
+msgid "Default view mode for applications"
+msgstr "默认应用程序显示方式"
+
+msgid "List"
+msgstr "列表"
+
+msgid "Grid"
+msgstr "网格"
+
+msgid "Hide Categories Panel"
+msgstr "隐藏标签栏"
+
+msgid "Category selection method"
+msgstr "标签栏切换模式"
+
+msgid "Hover"
+msgstr "悬停"
+
+msgid "Click"
+msgstr "点击"
+
+msgid "Size of Shortcuts Panel icons"
+msgstr "快捷方式面板图标大小"
+
+msgid "Size of Application List icons"
+msgstr "列表视图下应用程序图标大小"
+
+msgid "Size of Application Grid icons"
+msgstr "网格视图下应用程序图标大小"
+
+
+#: webChromium.js
+
+
+#: webEpiphany.js
+
+
+#: webFirefox.js
+
+
+#: webGoogleChrome.js
+
+
+#: webMidori.js
+
+
+#: webOpera.js
+
+
+#: workspaceThumbnail.js
+
