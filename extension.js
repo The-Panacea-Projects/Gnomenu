@@ -821,10 +821,12 @@ const PanelMenuButton = new Lang.Class({
 
         // Add label to button
         let labelText = settings.get_strv('panel-menu-label-text')[0];
-        let label = new St.Label({ text: ' '+labelText});
-        let labelWrapper = new St.Bin();
-        labelWrapper.set_child(label);
-        this._box.add(labelWrapper, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
+        if (labelText.length > 0) {
+            let label = new St.Label({ text: ' '+labelText});
+            let labelWrapper = new St.Bin();
+            labelWrapper.set_child(label);
+            this._box.add(labelWrapper, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
+        }
 
         // Add arrow to button
         this._box.add(PopupMenu.arrowIcon(St.Side.BOTTOM));
