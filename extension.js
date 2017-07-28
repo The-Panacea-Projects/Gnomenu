@@ -760,14 +760,15 @@ const PanelButton = new Lang.Class({
             let icon = new St.Icon({ gicon: null, style_class: 'system-status-icon gnomenu-panel-menu-icon' });
             this._box.add(icon, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
             icon.icon_name = iconName;
-            nameText = ' '+nameText;
         }
 
         // Add label to button
-        let label = new St.Label({ text: nameText});
-        let labelWrapper = new St.Bin();
-        labelWrapper.set_child(label);
-        this._box.add(labelWrapper, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
+        if (nameText.length > 0) {
+                let label = new St.Label({ text: ' '+nameText});
+                let labelWrapper = new St.Bin();
+                labelWrapper.set_child(label);
+                this._box.add(labelWrapper, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
+	}
     },
 
     // Override _onStyleChanged function
