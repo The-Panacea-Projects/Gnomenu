@@ -2,7 +2,7 @@
   "name": "Gno-Menu",
   "description": "Gno-Menu is a traditional styled full featured Gnome-Shell apps menu, that aims to offer all the essentials in a simple uncluttered intuitive interface.",
   "shell-version": [
-    "3.26"
+    "3.28"
   ],
   "uuid": "gnomenu@panacier.gmail.com",
   "url": "https://github.com/The-Panacea-Projects/Gnomenu",
