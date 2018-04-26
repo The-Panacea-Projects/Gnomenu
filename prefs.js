@@ -677,6 +677,8 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             startupAppsDisplayCombo.append_text(_('All'));
             startupAppsDisplayCombo.append_text(_('Frequent'));
             startupAppsDisplayCombo.append_text(_('Favorites'));
+            startupAppsDisplayCombo.append_text(_('Recent'));
+            startupAppsDisplayCombo.append_text(_('WebBookmarks'));
             startupAppsDisplayCombo.append_text(_('None'));
             startupAppsDisplayCombo.set_active(this.settings.get_enum('startup-apps-display'));
             startupAppsDisplayCombo.connect('changed', Lang.bind (this, function(widget) {
@@ -931,6 +933,35 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         appsGridLabelWidthBox.add(appsGridLabelWidthCombo);
 
 
+
+        let hideThumbnailsBox = new Gtk.Box({
+            spacing: 20,
+            orientation: Gtk.Orientation.HORIZONTAL,
+            homogeneous: false,
+            margin_left: 20,
+            margin_top: 5,
+            margin_bottom: 5,
+            margin_right: 10
+        });
+        let hideThumbnailsLabel = new Gtk.Label({
+            label: _("Hide Workspace Thumbnails Panel"),
+            use_markup: true,
+            xalign: 0,
+            hexpand: true
+        });
+        let hideThumbnailsSwitch = new Gtk.Switch ({
+            halign: Gtk.Align.END
+        });
+        hideThumbnailsSwitch.set_active(this.settings.get_boolean('hide-workspaces'));
+        hideThumbnailsSwitch.connect("notify::active", Lang.bind(this, function(check) {
+            this.settings.set_boolean('hide-workspaces', check.get_active());
+        }));
+
+        hideThumbnailsBox.add(hideThumbnailsLabel);
+        hideThumbnailsBox.add(hideThumbnailsSwitch);
+
+
+
         appsSettings.add(appsSettingsTitle);
         appsSettings.add(menuLayoutBox);
         appsSettings.add(hideUserOptionsBox);
@@ -948,6 +979,8 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         appsSettings.add(appsGridIconSizeBox);
         appsSettings.add(appsGridLabelWidthBox);
         appsSettings.add(appsListIconSizeBox);
+
+        appsSettings.add(hideThumbnailsBox);
 
 
         frame.add(panelSettings);

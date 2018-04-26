@@ -21,7 +21,9 @@
     <value value='0' nick='All'/>
     <value value='1' nick='Frequent'/>
     <value value='2' nick='Favorites'/>
-    <value value='3' nick='None'/>
+    <value value='3' nick='Recent'/>
+    <value value='4' nick='WebBookmarks'/>
+    <value value='5' nick='None'/>
   </enum>
   <enum id='org.gnome.shell.extensions.gnomenu.selectMethod'>
     <value value='0' nick='Hover'/>
@@ -119,7 +121,7 @@
       <description>Show Gnomenu preferences button to NONE, ALL, unix-group</description>
     </key>
     <key enum="org.gnome.shell.extensions.gnomenu.panelMenuPosition" name="panel-menu-position">
-      <default>'Right'</default>
+      <default>'Center'</default>
       <summary>Set the position of the menu button</summary>
       <description>Set the position of the menu button</description>
     </key>
@@ -192,6 +194,11 @@
       <default>96</default>
       <summary>Applications grid label width</summary>
       <description>Maximum width of the grid application's name</description>
+    </key>
+    <key type="b" name="hide-workspaces">
+      <default>false</default>
+      <summary>Hide the Workspace Thumbnails Panel of the menu</summary>
+      <description>Hide the Workspace Thumbnails Panel of the menu</description>
     </key>
   </schema>
 </schemalist>

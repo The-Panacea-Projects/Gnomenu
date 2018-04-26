@@ -31,8 +31,13 @@ const Gettext = imports.gettext.domain(Me.metadata['gettext-domain']);
 const _ = Gettext.gettext;
 
 // The maximum size of a thumbnail is 1/8 the width and height of the screen
-let MAX_THUMBNAIL_SCALE = 1/6.;
-let INIT_THUMBNAIL_WIDTH = 200;
+let MAX_THUMBNAIL_SCALE = 1/11.;
+let MAX_THUMBNAIL_SCALE_COMPACT = 1/14.;
+
+const MenuLayout = {
+    NORMAL: 0,
+    COMPACT: 1
+};
 
 // When we create workspaces by dragging, we add a "cut" into the top and
 // bottom of each workspace so that the user doesn't have to hit the
@@ -58,7 +63,8 @@ const myWindowClone = new Lang.Class({
     Name: 'GnoMenu.myWindowClone',
     Extends: WorkspaceThumbnail.WindowClone,
 
-    _init : function(realWindow) {
+    _init : function(realWindow, parentMenu) {
+        this._parentMenu = parentMenu;
         this.parent(realWindow);
     },
 
@@ -68,6 +74,7 @@ const myWindowClone = new Lang.Class({
             return false;
         }
 
+        this._parentMenu.actor.grab_key_focus();
         this.emit('selected', event.get_time());
         return Clutter.EVENT_STOP;
     }
@@ -77,15 +84,16 @@ const myWorkspaceThumbnail = new Lang.Class({
     Name: 'GnoMenu.myWorkspaceThumbnail',
     Extends: WorkspaceThumbnail.WorkspaceThumbnail,
 
-    _init : function(metaWorkspace, gsVersion) {
+    _init : function(metaWorkspace, parentMenu, gsVersion) {
         if (_DEBUG_) global.log("myWorkspaceThumbnail: init");
+        this._parentMenu = parentMenu;
         this._gsCurrentVersion = gsVersion;
         this.parent(metaWorkspace);
     },
 
     // Create a clone of a (non-desktop) window and add it to the window list
     _addWindowClone : function(win) {
-        let clone = new myWindowClone(win);
+        let clone = new myWindowClone(win, this._parentMenu);
 
         clone.connect('selected',
                       Lang.bind(this, function(clone, time) {
@@ -121,12 +129,12 @@ const myThumbnailsBox = new Lang.Class({
     Name: 'GnoMenu.myThumbnailsBox',
     Extends: WorkspaceThumbnail.ThumbnailsBox,
 
-    _init: function(gsVersion, settings, filler) {
+    _init: function(gsVersion, settings, parentMenu, filler) {
         if (_DEBUG_) global.log("myThumbnailsBox: init");
         this._gsCurrentVersion = gsVersion;
         this._mySettings = settings;
+        this._parentMenu = parentMenu;
         this._thumbnailsBoxFiller = filler;
-        this._actualThumbnailWidth = 0;
 
         // override _init to remove create/destroy thumbnails when showing/hiding overview
         this.actor = new Shell.GenericContainer({ reactive: true,
@@ -245,7 +253,7 @@ const myThumbnailsBox = new Lang.Class({
         this._ensurePorthole();
         for (let k = start; k < start + count; k++) {
             let metaWorkspace = global.screen.get_workspace_by_index(k);
-            let thumbnail = new myWorkspaceThumbnail(metaWorkspace, this._gsCurrentVersion);
+            let thumbnail = new myWorkspaceThumbnail(metaWorkspace, this._parentMenu, this._gsCurrentVersion);
             thumbnail.setPorthole(this._porthole.x, this._porthole.y,
                                   this._porthole.width, this._porthole.height);
             this._thumbnails.push(thumbnail);
@@ -291,6 +299,7 @@ const myThumbnailsBox = new Lang.Class({
             if (y >= thumbnail.actor.y && y <= thumbnail.actor.y + h) {
                 //thumbnail.activate(event.time);
                 thumbnail.activate(event.get_time());
+                this._parentMenu.actor.grab_key_focus();
                 break;
             }
         }
@@ -306,15 +315,18 @@ const myThumbnailsBox = new Lang.Class({
         if (this._thumbnails.length == 0)
             return;
 
-        if (_DEBUG_) global.log("myThumbnailsBox: _getPreferredWidth - actualThumbnailWidth = "+this._actualThumbnailWidth);
-        let scale;
-        if (this._actualThumbnailWidth > 0) {
-            scale = this._actualThumbnailWidth / this._porthole.width;
+        let spacing = this.actor.get_theme_node().get_length('spacing');
+        let nWorkspaces = global.screen.n_workspaces;
+        let totalSpacing = (nWorkspaces - 1) * spacing;
+
+        let avail = forHeight - totalSpacing;
+
+        let scale = (avail / nWorkspaces) / this._porthole.height;
+        if (this._mySettings.get_enum('menu-layout') == MenuLayout.COMPACT) {
+            scale = Math.min(scale, MAX_THUMBNAIL_SCALE_COMPACT);
         } else {
-            scale = INIT_THUMBNAIL_WIDTH / this._porthole.width;
+            scale = Math.min(scale, MAX_THUMBNAIL_SCALE);
         }
-        if (_DEBUG_) global.log ("myThumbnailsBox: _getPreferredWidth - scale is min of thumbnailWidth scale = "+scale+" vs MAX_THUMBNAIL_SCALE = "+MAX_THUMBNAIL_SCALE);
-        scale = Math.min(scale, MAX_THUMBNAIL_SCALE);
 
         let width = Math.round(this._porthole.width * scale);
         alloc.min_size = width;
@@ -336,18 +348,24 @@ const myThumbnailsBox = new Lang.Class({
         let nWorkspaces = global.screen.n_workspaces;
         let totalSpacing = (nWorkspaces - 1) * spacing;
 
-        if (_DEBUG_) global.log("myThumbnailsBox: _getPreferredHeight - actualThumbnailWidth = "+this._actualThumbnailWidth);
         let scale;
-        if (this._actualThumbnailWidth > 0) {
-            scale = this._actualThumbnailWidth / this._porthole.width;
+        if (this._mySettings.get_enum('menu-layout') == MenuLayout.COMPACT) {
+            scale = MAX_THUMBNAIL_SCALE_COMPACT;
         } else {
-            scale = INIT_THUMBNAIL_WIDTH / this._porthole.width;
+            scale = MAX_THUMBNAIL_SCALE;
         }
-        if (_DEBUG_) global.log ("myThumbnailsBox: _getPreferredHeight - scale is min of thumbnailWidth scale = "+scale+" vs MAX_THUMBNAIL_SCALE = "+MAX_THUMBNAIL_SCALE);
-        scale = Math.min(scale, MAX_THUMBNAIL_SCALE);
 
         alloc.min_size = totalSpacing;
         alloc.natural_size = totalSpacing + nWorkspaces * this._porthole.height * scale;
+    },
+
+    getIndicatorBorders: function() {
+        let indicatorThemeNode = this._indicator.get_theme_node();
+
+        let indicatorTopFullBorder = indicatorThemeNode.get_padding(St.Side.TOP) + indicatorThemeNode.get_border_width(St.Side.TOP);
+        let indicatorBottomFullBorder = indicatorThemeNode.get_padding(St.Side.BOTTOM) + indicatorThemeNode.get_border_width(St.Side.BOTTOM);
+
+        return [indicatorTopFullBorder, indicatorBottomFullBorder];
     },
 
     _allocate: function(actor, box, flags) {
@@ -358,8 +376,6 @@ const myThumbnailsBox = new Lang.Class({
 
         let themeNode = this.actor.get_theme_node();
 
-        this._actualThumbnailWidth = box.x2 - box.x1;
-
         let portholeWidth = this._porthole.width;
         let portholeHeight = this._porthole.height;
         let spacing = themeNode.get_length('spacing');
@@ -368,7 +384,7 @@ const myThumbnailsBox = new Lang.Class({
         let nWorkspaces = global.screen.n_workspaces;
         let totalSpacing = (nWorkspaces - 1) * spacing;
         let avail = (box.y2 - box.y1) - totalSpacing;
-        
+
         let newScale = (box.x2 - box.x1) / portholeWidth;
         newScale = Math.min(newScale, MAX_THUMBNAIL_SCALE);
 
@@ -416,7 +432,7 @@ const myThumbnailsBox = new Lang.Class({
         }
 
         let childBox = new Clutter.ActorBox();
-        
+
         for (let i = 0; i < this._thumbnails.length; i++) {
             let thumbnail = this._thumbnails[i];
 
