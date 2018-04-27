@@ -824,7 +824,9 @@ const PanelMenuButton = new Lang.Class({
         }
 
         // Add arrow to button
-        this._box.add(PopupMenu.arrowIcon(St.Side.BOTTOM));
+        if (!settings.get_boolean('hide-panel-menu-arrow')) {
+            this._box.add(PopupMenu.arrowIcon(St.Side.BOTTOM));
+        }
 
         this.menu.connect('open-state-changed', Lang.bind(this, this._onOpenStateToggled));
         this.actor.connect('key-press-event', Lang.bind(this, this._onPanelMenuKeyPress));
@@ -3769,6 +3771,7 @@ const GnoMenuButton = new Lang.Class({
         settings.connect('changed::disable-panel-menu-keyboard', Lang.bind(this, this.refresh));
         settings.connect('changed::panel-menu-label-text', Lang.bind(this, this.refresh));
         settings.connect('changed::use-panel-menu-icon', Lang.bind(this, this.refresh));
+        settings.connect('changed::hide-panel-menu-arrow', Lang.bind(this, this.refresh));
         settings.connect('changed::panel-menu-icon-name', Lang.bind(this, this.refresh));
         settings.connect('changed::disable-panel-menu-hotspot', Lang.bind(this, this.refresh));
         settings.connect('changed::panel-menu-position', Lang.bind(this, this.refresh));

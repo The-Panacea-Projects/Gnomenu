@@ -85,7 +85,6 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             margin_bottom: 5
         });
 
-
         let disableHotCornerBox = new Gtk.Box({
             spacing: 20,
             orientation: Gtk.Orientation.HORIZONTAL,
@@ -111,7 +110,6 @@ const GnoMenuPreferencesWidget = new GObject.Class({
 
         disableHotCornerBox.add(disableHotCornerLabel);
         disableHotCornerBox.add(disableHotCornerSwitch);
-
 
         let hidePanelViewBox = new Gtk.Box({
             spacing: 20,
@@ -413,6 +411,26 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             orientation: Gtk.Orientation.VERTICAL
         });
 
+        let hideMenuArrowBox = new Gtk.Box({
+            spacing: 20,
+            orientation: Gtk.Orientation.HORIZONTAL,
+            homogeneous: false,
+            margin_left: 20,
+            margin_top: 0,
+            margin_bottom: 5,
+            margin_right: 10
+        });
+        let hideMenuArrow = new Gtk.CheckButton({
+            label: _("Hide Menu button arrow"),
+            margin_left: 40
+        });
+        hideMenuArrow.set_active(this.settings.get_boolean('hide-panel-menu-arrow'));
+        hideMenuArrow.connect('toggled', Lang.bind(this, function(check) {
+            this.settings.set_boolean('hide-panel-menu-arrow', check.get_active());
+        }));
+
+        hideMenuArrowBox.add(hideMenuArrow);
+
         let disableMenuHotSpotBox = new Gtk.Box({
             spacing: 20,
             orientation: Gtk.Orientation.HORIZONTAL,
@@ -546,6 +564,7 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         panelMenuBox.add(customMenuLabelBox);
         panelMenuBox.add(menuButtonPositionBox);
         panelMenuBox.add(customMenuIconBox);
+        panelMenuBox.add(hideMenuArrowBox);
         panelMenuBox.add(disableMenuHotSpotBox);
         panelMenuBox.add(menuHotspotHoverDelayBox);
         panelMenuBox.add(disableMenuKeyboardAccelBox);

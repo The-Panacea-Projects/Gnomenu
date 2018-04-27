@@ -80,6 +80,11 @@
       <summary>Remove the menu button from the panel</summary>
       <description>Remove the menu button from the panel</description>
     </key>
+    <key type="b" name="hide-panel-menu-arrow">
+      <default>false</default>
+      <summary>Hide the menu button dropdown arrow</summary>
+      <description>Hide the menu button dropdown arrow</description>
+    </key>
     <key type="as" name="panel-menu-label-text">
         <default><![CDATA[['Menu']]]></default>
       <summary>Set the custom menu button icon name</summary>
