@@ -1531,9 +1531,9 @@ const PanelMenuButton = new Lang.Class({
     _calculateApplicationsBoxWidth: function() {
         // Calculate visible menu boxes and adjust application scroll box width accordingly
         let minWidth = this.topPane.width - (this._widthCategoriesBox + this._widthShortcutsBox + this.workspacesWrapper.width);
-        global.log("topPane width = "+this.topPane.width);
-        global.log("shortcuts width = "+this.shortcutsScrollBox.width+" "+this._widthShortcutsBox);
-        global.log("category width = "+this.categoriesScrollBox.width+" "+this._widthCategoriesBox);
+        if (_DEBUG_) global.log("topPane width = "+this.topPane.width);
+        if (_DEBUG_) global.log("shortcuts width = "+this.shortcutsScrollBox.width+" "+this._widthShortcutsBox);
+        if (_DEBUG_) global.log("category width = "+this.categoriesScrollBox.width+" "+this._widthCategoriesBox);
 
         let gridBoxBorder = {left:0,top:0,bottom:0,right:0};
         let gridBoxPadding = {left:0,top:0,bottom:0,right:0};
