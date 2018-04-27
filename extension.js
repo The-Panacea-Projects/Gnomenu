@@ -3852,9 +3852,9 @@ function loadStylesheet() {
     let filename = "gnomenu" + ml + ".css";
 
     // Get current theme stylesheet
-    let themeStylesheet = Main._defaultCssStylesheet;
-    if (Main._cssStylesheet != null)
-        themeStylesheet = Main._cssStylesheet;
+    let themeStylesheet = Main._getDefaultStylesheet();
+    if (Main.getThemeStylesheet() != null)
+        themeStylesheet = Main.getThemeStylesheet();
 
     // Get theme directory
     let themeDirectory = themeStylesheet.get_path() ? GLib.path_get_dirname(themeStylesheet.get_path()) : "";
