@@ -3401,6 +3401,7 @@ const GnoMenuButton = new Lang.Class({
     },
 
     updateCornerPanel() {
+        if (_DEBUG_) global.log("GnoMenuButton: updateCornerPanel");
         if (Main.panel.actor.get_text_direction() == Clutter.TextDirection.RTL) {
             Main.panel._leftCorner.setStyleParent(Main.panel._rightBox);
             Main.panel._rightCorner.setStyleParent(Main.panel._leftBox);
@@ -3410,11 +3411,54 @@ const GnoMenuButton = new Lang.Class({
         }
     },
 
+    updateHotCorner() {
+        if (_DEBUG_) global.log("GnoMenuButton: updateHotCorner");
+        let primary = Main.layoutManager.primaryIndex;
+        let corner = Main.layoutManager.hotCorners[primary];
+
+        // Disable or Enable Hot Corner
+        if (settings.get_boolean('disable-activities-hotcorner')) {
+            if (_DEBUG_) global.log("GnoMenuButton: updateHotCorner disabled hot corner");
+            if (corner && corner.actor) {
+                // This is GS 3.8+ fallback corner. Need to hide actor
+                // to keep from triggering overview
+                if (_DEBUG_) global.log("GnoMenuButton: updateHotCorner corner & actor exist - HIDE");
+                corner.actor.hide();
+            } else {
+                // Need to destroy corner to remove pressure barrier
+                // to keep from triggering overview
+                if (corner && corner._pressureBarrier) {
+                    if (_DEBUG_) global.log("GnoMenuButton: updateHotCorner corner & pressureBarrier exist - DESTROY");
+                    Main.layoutManager.hotCorners.splice(primary, 1);
+                    corner.destroy();
+                }
+            }
+        } else {
+            if (_DEBUG_) global.log("GnoMenuButton: updateHotCorner enabled hot corner");
+            if (corner && corner.actor) {
+                // This is Gs 3.8+ fallback corner. Need to show actor
+                // to trigger overview
+                if (_DEBUG_) global.log("GnoMenuButton: updateHotCorner corner & actor exist ");
+                corner.actor.show();
+            } else {
+                // Need to create corner to setup pressure barrier
+                // to trigger overview
+                if (corner && corner._pressureBarrier) {
+                    if (_DEBUG_) global.log("GnoMenuButton: updateHotCorner corner & pressureBarrier exist - SHOW");
+                } else {
+                    if (_DEBUG_) global.log("GnoMenuButton: updateHotCorner corner & pressureBarrier don't exist - updateHotCorners");
+                    Main.layoutManager._updateHotCorners();
+                }
+            }
+        }
+    },
+
     refresh: function() {
         if (_DEBUG_) global.log("GnoMenuButton: refresh");
         this._clearAll();
         this._display();
         this.updateCornerPanel();
+        this.updateHotCorner();
     },
 
     _clearAll: function() {
@@ -3506,42 +3550,8 @@ const GnoMenuButton = new Lang.Class({
         // if (this.appsMenuButton) this.actor.add(this.appsMenuButton.container);
         if (_DEBUG_) global.log("GnoMenuButton: _display added buttons to gnomenubutton actor");
 
-        // Disable or Enable Hot Corner
-        if (settings.get_boolean('disable-activities-hotcorner')) {
-            if (_DEBUG_) global.log("GnoMenuButton: _display disabled hot corner");
-            let primary = Main.layoutManager.primaryIndex;
-            let corner = Main.layoutManager.hotCorners[primary];
-            if (corner && corner.actor) {
-                // This is GS 3.8+ fallback corner. Need to hide actor
-                // to keep from triggering overview
-                corner.actor.hide();
-            } else {
-                // Need to destroy corner to remove pressure barrier
-                // to keep from triggering overview
-                if (corner && corner._pressureBarrier) {
-                    Main.layoutManager.hotCorners.splice(primary, 1);
-                    corner.destroy();
-                }
-            }
-        } else {
-            if (_DEBUG_) global.log("GnoMenuButton: _display enabled hot corner");
-            let primary = Main.layoutManager.primaryIndex;
-            let corner = Main.layoutManager.hotCorners[primary];
-            if (corner && corner.actor) {
-                // This is Gs 3.8+ fallback corner. Need to show actor
-                // to trigger overview
-                corner.actor.show();
-            } else {
-                // Need to create corner to setup pressure barrier
-                // to trigger overview
-                if (corner && corner._pressureBarrier) {
-                    if (_DEBUG_) global.log("GnoMenuButton: _display corner & pressureBarrier exist ");
-                } else {
-                    if (_DEBUG_) global.log("GnoMenuButton: _display corner & pressureBarrier don't exist - updateHotCorners");
-                    Main.layoutManager._updateHotCorners();
-                }
-            }
-        }
+        // Detect if hot corners have been updated
+        this._hotCornersUpdatedId = Main.layoutManager.connect("hot-corners-changed", Lang.bind(this, this.updateHotCorner));
 
         // Add menu to panel menu manager
         if (this.appsMenuButton) Main.panel.menuManager.addMenu(this.appsMenuButton.menu);
@@ -3691,7 +3701,7 @@ const GnoMenuButton = new Lang.Class({
             newStylesheet = Gio.file_new_for_path(themeDirectory + '/extensions/gno-menu/' + filename);
 
         if (!newStylesheet || !newStylesheet.query_exists(null)) {
-            if (_DEBUG_) global.log("GnoMenuButton: _chengeStylesheet Theme doesn't support gnomenu .. use default stylesheet");
+            if (_DEBUG_) global.log("GnoMenuButton: _chengeStylesheet Theme does_hotCornersUpdatedIdn't support gnomenu .. use default stylesheet");
             let defaultStylesheet = Gio.File.new_for_path(Me.path + "/themes/default/" + filename);
             if (defaultStylesheet.query_exists(null)) {
                 newStylesheet = defaultStylesheet;
@@ -3832,6 +3842,9 @@ const GnoMenuButton = new Lang.Class({
         if (this._overviewPageChangedId)
             Main.overview.disconnect(this._overviewPageChangedId);
 
+        if (this._hotCornersUpdatedId)
+            Main.layoutManager.disconnect(this._hotCornersUpdatedId);
+
         // Unbind menu accelerator key
         Main.wm.removeKeybinding('panel-menu-keyboard-accelerator');
 
@@ -3937,6 +3950,7 @@ function enable() {
     Main.panel.statusArea['gnomenubutton'] = GnoMenu;
     Main.panel._leftBox.insert_child_at_index(GnoMenu.actor, 0);
     GnoMenu.updateCornerPanel();
+    GnoMenu.updateHotCorner();
 }
 
 function disable() {
