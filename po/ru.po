@@ -1,12 +1,12 @@
 # Translator list
-# Ivan Komaritsyn <vantu5z@mail.ru>, 2015, 2016.
+# Ivan Komaritsyn <vantu5z@mail.ru>, 2015 - 2018.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Gno-Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2016-03-20 15:55+0900\n"
+"PO-Revision-Date: 2018-05-13 19:15+0300\n"
 "Last-Translator: Ivan Komaritsyn <vantu5z@mail.ru>\n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -41,23 +41,14 @@ msgstr ""
 msgid "Recent"
 msgstr "Недавние"
 
-msgid "Webmarks"
+msgid "WebBookmarks"
 msgstr "Веб-закладки"
-
-msgid "Favorites"
-msgstr "Избранное"
-
-msgid "Places"
-msgstr "Места"
 
 msgid "Toggle Startup Apps View"
 msgstr "Переключить категорию отображаемую при запуске"
 
-msgid "List View"
-msgstr "В виде списка"
-
-msgid "Type to search..."
-msgstr "Введите запрос для поиска..."
+msgid "List-Grid View"
+msgstr "В виде списка-сетки"
 
 msgid "All Applications"
 msgstr "Все приложения"
@@ -103,14 +94,23 @@ msgid "Browse network"
 msgstr "Обзор сети"
 
 #: prefs.js
+msgid "Panel Buttons"
+msgstr "Кнопки панели"
+
+msgid "Menu Layout"
+msgstr "Настройки вида"
+
+msgid "Apps Grid-List"
+msgstr "Список - Сетка"
+
 msgid "<b>Panel Settings</b>"
 msgstr "<b>Настройки панели</b>"
 
-msgid "Disable activities hot corner"
-msgstr "Отключить «Горячий угол»"
+msgid "Activities hot corner"
+msgstr "«Горячий угол»"
 
-msgid "Remove View button from panel"
-msgstr "Удалить кнопку «Обзор» с панели"
+msgid "View button"
+msgstr "Кнопка «Обзор»"
 
 msgid "Label for View button"
 msgstr "Текст для кнопки «Обзор»"
@@ -118,8 +118,8 @@ msgstr "Текст для кнопки «Обзор»"
 msgid "Use icon with View button"
 msgstr "Показывать иконку для кнопки «Обзор»"
 
-msgid "Remove Apps button from panel"
-msgstr "Удалить кнопку «Приложения» с панели"
+msgid "Apps button"
+msgstr "Кнопка «Приложения»"
 
 msgid "Label for Apps button"
 msgstr "Текст для кнопки «Приложения»"
@@ -127,8 +127,8 @@ msgstr "Текст для кнопки «Приложения»"
 msgid "Use icon with Apps button"
 msgstr "Показывать иконку для кнопки «Приложения»"
 
-msgid "Remove Menu button from panel"
-msgstr "Удалить кнопку «Меню» с панели"
+msgid "Menu button"
+msgstr "Кнопка «Меню»"
 
 msgid "Label for Menu button"
 msgstr "Текст для кнопки «Меню»"
@@ -136,8 +136,14 @@ msgstr "Текст для кнопки «Меню»"
 msgid "Use icon with Menu button"
 msgstr "Показывать иконку для кнопки «Меню»"
 
+msgid "Hide Menu button arrow"
+msgstr "Скрыть стрелочку рядом с кнопкой «Меню»"
+
 msgid "Disable Menu button hot spot"
 msgstr "Отключить горячую область у кнопки «Меню»"
+
+msgid "hot spot hover delay"
+msgstr "задержка при наведении"
 
 msgid "Disable Menu button shortcut key"
 msgstr "Отключить вызов «Меню» по горячей клавише"
@@ -162,12 +168,6 @@ msgstr "Справа"
 msgid "<b>Menu Settings</b>"
 msgstr "<b>Настройки меню</b>"
 
-msgid "Hide User Options Panel"
-msgstr "Скрыть дополнительную панель"
-
-msgid "Hide Shortcuts Panel"
-msgstr "Скрыть панель быстрого доступа"
-
 msgid "Menu layout size"
 msgstr "Размер меню"
 
@@ -177,35 +177,26 @@ msgstr "Нормальный"
 msgid "Compact"
 msgstr "Компактный"
 
+msgid "User Options Panel"
+msgstr "Дополнительная панель"
+
+msgid "Shortcuts Panel"
+msgstr "Панель быстрого доступа"
+
 msgid "Icons to display on Shortcuts Panel"
 msgstr "Элементы на панели быстрого доступа"
 
-msgid "Applications to display at startup"
-msgstr "Приложения показываемые при запуске"
+msgid "Favorites"
+msgstr "Избранные"
 
-msgid "All"
-msgstr "Все"
+msgid "Places"
+msgstr "Места"
 
-msgid "Frequent"
-msgstr "Частые"
+msgid "Size of Shortcuts Panel icons"
+msgstr "Размер иконок для панели быстрого доступа"
 
-msgid "None"
-msgstr "Нет"
-
-msgid "Number of columns in Application Grid"
-msgstr "Количество колонок приложений в сетке"
-
-msgid "Default view mode for applications"
-msgstr "Вид для обзора приложений по умолчанию"
-
-msgid "List"
-msgstr "Список"
-
-msgid "Grid"
-msgstr "Сетка"
-
-msgid "Hide Categories Panel"
-msgstr "Скрыть панель категорий"
+msgid "Categories Panel"
+msgstr "Панель категорий"
 
 msgid "Category selection method"
 msgstr "Метод выбора категории"
@@ -219,14 +210,41 @@ msgstr "Нажатие"
 msgid "Menu hover delay"
 msgstr "Задержка выбора категории при наведении"
 
-msgid "Size of Shortcuts Panel icons"
-msgstr "Размер иконок для панели быстрого доступа"
+msgid "Workspace Thumbnails Panel"
+msgstr "Панель с рабочими местами"
 
-msgid "Size of Application List icons"
-msgstr "Размер иконок для приложений в виде списка"
+msgid "<b>Apps Settings</b>"
+msgstr "<b>Настройки приложений</b>"
 
-msgid "Size of Application Grid icons"
-msgstr "Размер иконок для приложений в виде сетки"
+msgid "Applications to display at startup"
+msgstr "Приложения показываемые при запуске"
 
-msgid "Width of Application Grid labels"
-msgstr "Ширина сетки приложений"
+msgid "All"
+msgstr "Все"
+
+msgid "Frequent"
+msgstr "Часто используемые"
+
+msgid "None"
+msgstr "Нет"
+
+msgid "Default view mode for applications"
+msgstr "Вид для обзора приложений по умолчанию"
+
+msgid "List"
+msgstr "Список"
+
+msgid "Grid"
+msgstr "Сетка"
+
+msgid "<u>Grid:</u> Number of columns"
+msgstr "<u>Сетка:</u> Количество колонок"
+
+msgid "<u>Grid:</u> Width of Application labels"
+msgstr "<u>Сетка:</u> Ширина для названия приложений"
+
+msgid "<u>Grid:</u> Size of Application icons"
+msgstr "<u>Сетка:</u> Размер иконок для приложений"
+
+msgid "<u>List:</u> Size of Application icons"
+msgstr "<u>Список:</u> Размер иконок для приложений"

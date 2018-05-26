@@ -1,6 +1,6 @@
 #!/bin/bash
 # ===========================================================
-# This script creates the en_US.po file from the extension
+# This script creates the en_US.pot file from the extension
 # javascript files containing GetText
 # ===========================================================
 #    grep -P -o '_\(.*?\)' prefs.js |
@@ -17,7 +17,7 @@
 
 #main_dir="/home/cmcentyre/Desktop/Gno-Menu Development/gnomenu@panacier.gmail.com/"
 main_dir=`dirname "${PWD}"`
-output=$main_dir/po/en_US.TXT
+output=$main_dir/po/en_US.pot
 app="Gno-Menu"
 echo "
 msgid \"\"
@@ -46,3 +46,5 @@ do
     sed 's/)/\nmsgstr ""\n/' >> "$output"
 done
 
+# remove string duplicates
+msguniq "$output" -o "$output"
