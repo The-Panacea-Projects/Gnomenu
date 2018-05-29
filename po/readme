@@ -1,12 +1,12 @@
 Add new translation:
   1. Add the language to LANGUAGES file.
-  2. Creat en_US.pot file with string by "build_pot" script.
+  2. Create en_US.pot file with strings by "build_pot" script.
   3. Copy en_US.pot to a po file for your language.
   4. Make translation (you can use Poedit, Gtranslatior or other).
   5. Then run "make_translations" script to build "mo" files.
 
 Update existing translation:
-  1. Creat en_US.pot file with updated string by "build_pot" script.
+  1. Create en_US.pot file with updated strings by "build_pot" script.
   2. Merge en_US.pot file with existing po file:
        Example: msgmerge ru.po en_US.pot > ru_new.po
   3. Update translation. Replace old file by new.
