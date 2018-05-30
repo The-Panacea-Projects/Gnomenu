@@ -2079,25 +2079,28 @@ const PanelMenuButton = new Lang.Class({
         let symbol = event.get_key_symbol();
         let code = event.get_key_code();
         let modifiers = event.get_state();
-        if (!this._validNavigationKeyCode(symbol, code, modifiers)) {
+
+        if (this._validNavigationKeyCode(symbol, code, modifiers)) {
+            this.searchEntry.set_text("");
+            this.searchEntry.grab_key_focus();
+        } else {
             let char = String.fromCharCode(symbol);
             this.searchEntry.set_text(char);
             this.searchEntry.grab_key_focus();
-            return Clutter.EVENT_STOP;
-        } else if (symbol == Clutter.KEY_Tab) {
-            this.searchEntry.set_text("");
-            this.searchEntry.grab_key_focus();
-            return Clutter.EVENT_STOP;
         }
 
-        return Clutter.EVENT_PROPAGATE;
+        return Clutter.EVENT_STOP;
     },
 
     _onSearchKeyPress: function(actor, event) {
         let symbol = event.get_key_symbol();
         let code = event.get_key_code();
         let modifiers = event.get_state();
-        if (symbol == Clutter.KEY_Left || symbol == Clutter.KEY_Right) {
+
+        if (symbol && symbol == Clutter.KEY_Return || symbol == Clutter.KP_Enter) {
+            this.selectActiveContainerItem(symbol, code);
+            return Clutter.EVENT_STOP;
+        } else if (symbol == Clutter.KEY_Right) {
             this._onMenuKeyPress(actor, event);
             return Clutter.EVENT_STOP;
         }
@@ -2113,11 +2116,17 @@ const PanelMenuButton = new Lang.Class({
         let viewMode = this._applicationsViewMode;
 
         this.menu.actor.grab_key_focus();
+
         if (!this._validNavigationKeyCode(symbol, code, modifiers)) {
-            let char = String.fromCharCode(symbol);
-            this.searchEntry.set_text(char);
-            this.searchEntry.grab_key_focus();
-            return Clutter.EVENT_STOP;
+            if (symbol && symbol == Clutter.KEY_Return || symbol == Clutter.KP_Enter) {
+                this.selectActiveContainerItem(symbol, code);
+                return Clutter.EVENT_STOP;
+            } else {
+                let char = String.fromCharCode(symbol);
+                this.searchEntry.set_text(char);
+                this.searchEntry.grab_key_focus();
+                return Clutter.EVENT_STOP;
+            }
         }
 
         let reverse;
@@ -2251,7 +2260,7 @@ const PanelMenuButton = new Lang.Class({
             }
             this._clearTabFocusSelections(this._activeContainer, true);
             this.selectActiveContainerItem(symbol, code);
-            return true;
+            return Clutter.EVENT_STOP;
         }
 
         if (this._activeContainer == this.thumbnailsBox) {
@@ -2267,7 +2276,7 @@ const PanelMenuButton = new Lang.Class({
                 let ws = activeWs.get_neighbor(direction);
                 Main.wm.actionMoveWorkspace(ws);
                 // this._clearTabFocusSelections(this._activeContainer, true);
-                return true;
+                return Clutter.EVENT_STOP;
             }
         }
 
@@ -2283,13 +2292,13 @@ const PanelMenuButton = new Lang.Class({
 
         if (this._activeContainer) {
             if (this.selectActiveContainerItem(symbol, code)) {
-                return true;
+                return Clutter.EVENT_STOP;
             } else {
                 this._clearActiveContainerSelections();
-                return false;
+                return Clutter.EVENT_PROPAGATE;
             }
         } else {
-            return false;
+            return Clutter.EVENT_PROPAGATE;
         }
     },
 
