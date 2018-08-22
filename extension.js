@@ -1464,7 +1464,7 @@ const PanelMenuButton = new Lang.Class({
         // Ignore favorites when sorting
         if (category_menu_id != 'favorites') {
             res.sort(function(a,b) {
-                return a.get_name().toLowerCase() > b.get_name().toLowerCase();
+                return a.get_name().toLowerCase().localeCompare(b.get_name().toLowerCase());
             });
         }
 
