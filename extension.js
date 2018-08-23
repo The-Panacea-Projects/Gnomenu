@@ -762,7 +762,7 @@ const PanelButton = new Lang.Class({
         }
 
         // Add label to button
-        if (nameText.length > 0) {
+        if (nameText && nameText.length > 0) {
                 let label = new St.Label({ text: ' '+nameText});
                 let labelWrapper = new St.Bin();
                 labelWrapper.set_child(label);
@@ -815,8 +815,11 @@ const PanelMenuButton = new Lang.Class({
         }
 
         // Add label to button
-        let labelText = settings.get_strv('panel-menu-label-text')[0];
-        if (labelText.length > 0) {
+        let labelText = null;
+        if (settings.get_boolean('use-panel-menu-label')) {
+            labelText = settings.get_strv('panel-menu-label-text')[0];
+        }
+        if (labelText && labelText.length > 0) {
             let label = new St.Label({ text: ' '+labelText});
             let labelWrapper = new St.Bin();
             labelWrapper.set_child(label);
@@ -3504,7 +3507,10 @@ const GnoMenuButton = new Lang.Class({
         if (_DEBUG_) global.log("GnoMenuButton: _display");
         // Initialize view button
         if (!settings.get_boolean('hide-panel-view')) {
-            let viewLabel = settings.get_strv('panel-view-label-text')[0];
+            let viewLabel = null;
+            if (settings.get_boolean('use-panel-view-label')) {
+                viewLabel = settings.get_strv('panel-view-label-text')[0];
+            }
             let viewIcon = null;
             if (settings.get_boolean('use-panel-view-icon')) {
                 viewIcon = settings.get_strv('panel-view-icon-name')[0];
@@ -3516,7 +3522,10 @@ const GnoMenuButton = new Lang.Class({
 
         // Initialize apps button
         if (!settings.get_boolean('hide-panel-apps')) {
-            let appsLabel = settings.get_strv('panel-apps-label-text')[0];
+            let appsLabel = null;
+            if (settings.get_boolean('use-panel-apps-label')) {
+                appsLabel = settings.get_strv('panel-apps-label-text')[0];
+            }
             let appsIcon = null;
             if (settings.get_boolean('use-panel-apps-icon')) {
                 appsIcon = settings.get_strv('panel-apps-icon-name')[0];
@@ -3781,15 +3790,18 @@ const GnoMenuButton = new Lang.Class({
         if (_DEBUG_) global.log("GnoMenuButton: _bindSettingsChanges");
         settings.connect('changed::hide-panel-view', Lang.bind(this, this.refresh));
         settings.connect('changed::disable-activities-hotcorner', Lang.bind(this, this.refresh));
+        settings.connect('changed::use-panel-view-label', Lang.bind(this, this.refresh));
         settings.connect('changed::panel-view-label-text', Lang.bind(this, this.refresh));
         settings.connect('changed::use-panel-view-icon', Lang.bind(this, this.refresh));
         settings.connect('changed::panel-view-icon-name', Lang.bind(this, this.refresh));
         settings.connect('changed::hide-panel-apps', Lang.bind(this, this.refresh));
+        settings.connect('changed::use-panel-apps-label', Lang.bind(this, this.refresh));
         settings.connect('changed::panel-apps-label-text', Lang.bind(this, this.refresh));
         settings.connect('changed::use-panel-apps-icon', Lang.bind(this, this.refresh));
         settings.connect('changed::panel-apps-icon-name', Lang.bind(this, this.refresh));
         settings.connect('changed::hide-panel-menu', Lang.bind(this, this.refresh));
         settings.connect('changed::disable-panel-menu-keyboard', Lang.bind(this, this.refresh));
+        settings.connect('changed::use-panel-menu-label', Lang.bind(this, this.refresh));
         settings.connect('changed::panel-menu-label-text', Lang.bind(this, this.refresh));
         settings.connect('changed::use-panel-menu-icon', Lang.bind(this, this.refresh));
         settings.connect('changed::hide-panel-menu-arrow', Lang.bind(this, this.refresh));

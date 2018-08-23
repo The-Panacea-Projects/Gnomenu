@@ -151,12 +151,16 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             margin_right: 10
         });
 
-        let customViewLabel = new Gtk.Label({
-            label: _("Label for View button"),
+        let customViewLabel = new Gtk.CheckButton({
+            label: _("Use label with View button"),
             margin_left: 40,
             hexpand: true,
             halign: Gtk.Align.START
         });
+        customViewLabel.set_active(this.settings.get_boolean('use-panel-view-label'));
+        customViewLabel.connect('toggled', Lang.bind(this, function(check) {
+            this.settings.set_boolean('use-panel-view-label', check.get_active());
+        }));
 
         let customViewLabelEntry = new Gtk.Entry({
             halign: Gtk.Align.END
@@ -252,12 +256,16 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             margin_right: 10
         });
 
-        let customAppsLabel = new Gtk.Label({
-            label: _("Label for Apps button"),
+        let customAppsLabel = new Gtk.CheckButton({
+            label: _("Use label with Apps button"),
             margin_left: 40,
             hexpand: true,
             halign: Gtk.Align.START
         });
+        customAppsLabel.set_active(this.settings.get_boolean('use-panel-apps-label'));
+        customAppsLabel.connect('toggled', Lang.bind(this, function(check) {
+            this.settings.set_boolean('use-panel-apps-label', check.get_active());
+        }));
 
         let customAppsLabelEntry = new Gtk.Entry({
             halign: Gtk.Align.END
@@ -351,12 +359,16 @@ const GnoMenuPreferencesWidget = new GObject.Class({
             margin_right: 10
         });
 
-        let customMenuLabel = new Gtk.Label({
-            label: _("Label for Menu button"),
+        let customMenuLabel = new Gtk.CheckButton({
+            label: _("Use label with Menu button"),
             margin_left: 40,
             hexpand: true,
             halign: Gtk.Align.START
         });
+        customMenuLabel.set_active(this.settings.get_boolean('use-panel-menu-label'));
+        customMenuLabel.connect('toggled', Lang.bind(this, function(check) {
+            this.settings.set_boolean('use-panel-menu-label', check.get_active());
+        }));
 
         let customMenuLabelEntry = new Gtk.Entry({
             halign: Gtk.Align.END
@@ -561,13 +573,13 @@ const GnoMenuPreferencesWidget = new GObject.Class({
         this.settings.bind('hide-panel-menu', panelMenuBox, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
 
         /* ADD TO PANEL MENU BUTTON */
-        panelMenuBox.add(customMenuLabelBox);
         panelMenuBox.add(menuButtonPositionBox);
+        panelMenuBox.add(customMenuLabelBox);
         panelMenuBox.add(customMenuIconBox);
         panelMenuBox.add(hideMenuArrowBox);
+        panelMenuBox.add(disableMenuKeyboardAccelBox);
         panelMenuBox.add(disableMenuHotSpotBox);
         panelMenuBox.add(menuHotspotHoverDelayBox);
-        panelMenuBox.add(disableMenuKeyboardAccelBox);
 
         /* ADD TO PANEL SETTINGS */
         // panelSettings.add(panelSettingsTitle);

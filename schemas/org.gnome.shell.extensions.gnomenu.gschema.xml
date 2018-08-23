@@ -40,6 +40,11 @@
       <summary>Remove the view button from the panel</summary>
       <description>Remove the view button from the panel</description>
     </key>
+    <key type="b" name="use-panel-view-label">
+      <default>true</default>
+      <summary>Use custom view button text</summary>
+      <description>Use custom view button text</description>
+    </key>
     <key type="as" name="panel-view-label-text">
         <default><![CDATA[['View']]]></default>
       <summary>Set the custom view button label</summary>
@@ -59,6 +64,11 @@
       <default>false</default>
       <summary>Remove the apps button from the panel</summary>
       <description>Remove the apps button from the panel</description>
+    </key>
+    <key type="b" name="use-panel-apps-label">
+      <default>true</default>
+      <summary>Use custom apps button text</summary>
+      <description>Use custom apps button text</description>
     </key>
     <key type="as" name="panel-apps-label-text">
         <default><![CDATA[['Apps']]]></default>
@@ -84,6 +94,11 @@
       <default>false</default>
       <summary>Hide the menu button dropdown arrow</summary>
       <description>Hide the menu button dropdown arrow</description>
+    </key>
+    <key type="b" name="use-panel-menu-label">
+      <default>true</default>
+      <summary>Use custom menu button text</summary>
+      <description>Use custom menu button text</description>
     </key>
     <key type="as" name="panel-menu-label-text">
         <default><![CDATA[['Menu']]]></default>
