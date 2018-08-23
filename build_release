@@ -1,0 +1,82 @@
+#!/bin/bash
+# usage: build_release [OPTION]
+# creates zip in attic/releases/master/<version_number>
+# <version_number> found in metadata.json
+#
+# options:
+#     -d creates zip in root
+#
+
+APPLICATION="${0##*/}"
+USAGE="$APPLICATION [options] version_number
+
+Builds the installation zip for release and copies it into the releases folder.
+Options:
+    -d      Zip file will be copied into the development branch instead of the releases folder.
+"
+
+# Process options
+while getopts "d" flag; do
+    case "$flag" in
+        d) DEV='y';;
+        *) echo "$USAGE"; exit 1;;
+    esac
+done
+shift $((OPTIND-1))
+
+# Set directory variables
+root_dir=${PWD}
+files_dir=$root_dir
+temp_dir=$root_dir/../attic/releases/build
+
+# Create temp directory
+rm -Rf "$temp_dir"
+mkdir -p "$temp_dir"
+
+# Copy extension files stripping out debug
+cd "$files_dir"
+cat metadata.json > "$temp_dir/metadata.json"
+cat convenience.js | grep -v '_DEBUG_' > "$temp_dir/convenience.js"
+cat extension.js | grep -v '_DEBUG_' > "$temp_dir/extension.js"
+cat placeDisplay.js | grep -v '_DEBUG_' > "$temp_dir/placeDisplay.js"
+cat prefs.js | grep -v '_DEBUG_' > "$temp_dir/prefs.js"
+cat webChromium.js | grep -v '_DEBUG_' > "$temp_dir/webChromium.js"
+cat webEpiphany.js | grep -v '_DEBUG_' > "$temp_dir/webEpiphany.js"
+cat webFirefox.js | grep -v '_DEBUG_' > "$temp_dir/webFirefox.js"
+cat webGoogleChrome.js | grep -v '_DEBUG_' > "$temp_dir/webGoogleChrome.js"
+cat webMidori.js | grep -v '_DEBUG_' > "$temp_dir/webMidori.js"
+cat webOpera.js | grep -v '_DEBUG_' > "$temp_dir/webOpera.js"
+cat workspaceThumbnail.js | grep -v '_DEBUG_' > "$temp_dir/workspaceThumbnail.js"
+
+# Copy extension subfolders
+cp -R schemas/ "$temp_dir/"
+cp -R themes/ "$temp_dir/"
+cp -R locale/ "$temp_dir/"
+cp -R icons/ "$temp_dir/"
+
+# Create release zip
+cd "$temp_dir/"
+zip -r gnomenu@panacier.gmail.com.zip *
+
+# Set release_dir based on development option and metadata version number
+version_number=$(grep \"version\": metadata.json | awk '{print $2}')
+if [ -z "$DEV" ];
+then
+    release_dir=$root_dir/../attic/releases/$version_number
+else
+    release_dir=$root_dir
+fi
+
+# Delete and recreate release directory
+if [ -z "$DEV" ];
+then
+    rm -Rf "$release_dir"
+    mkdir -p "$release_dir"
+fi
+
+# Copy zip file to release directory
+cp gnomenu@panacier.gmail.com.zip "$release_dir/"
+
+# Cleanup - remove temp directory
+rm -Rf "$temp_dir"
+echo "Build completed."
