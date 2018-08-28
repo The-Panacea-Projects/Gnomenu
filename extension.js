@@ -1976,7 +1976,7 @@ const PanelMenuButton = new Lang.Class({
 
     _scrollToActiveThumbnail: function() {
         let thumbnail;
-        let activeWorkspace = global.screen.get_active_workspace();
+        let activeWorkspace = global.workspace_manager.get_active_workspace();
         for (let i = 0; i < this.thumbnailsBox._thumbnails.length; i++) {
             if (this.thumbnailsBox._thumbnails[i].metaWorkspace == activeWorkspace) {
                 thumbnail = this.thumbnailsBox._thumbnails[i];
@@ -2009,7 +2009,7 @@ const PanelMenuButton = new Lang.Class({
     },
 
     _onWorkspacesScrolled: function(actor, event) {
-        let activeWs = global.screen.get_active_workspace();
+        let activeWs = global.workspace_manager.get_active_workspace();
         let direction;
 
         switch (event.get_scroll_direction()) {
@@ -2275,7 +2275,7 @@ const PanelMenuButton = new Lang.Class({
                 direction = Meta.MotionDirection.DOWN;
             }
             if (direction) {
-                let activeWs = global.screen.get_active_workspace();
+                let activeWs = global.workspace_manager.get_active_workspace();
                 let ws = activeWs.get_neighbor(direction);
                 Main.wm.actionMoveWorkspace(ws);
                 // this._clearTabFocusSelections(this._activeContainer, true);
