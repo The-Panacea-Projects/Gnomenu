@@ -852,6 +852,7 @@ const PanelMenuButton = new Lang.Class({
         this._selectedItemIndex = null;
         this._previousSelectedItemIndex = null;
         this._activeContainer = null;
+        this._menuToggleTimeoutId = 0;
 
         this._searchWebBookmarks = new SearchWebBookmarks();
         this._searchWebErrorsShown = false;
