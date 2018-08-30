@@ -3424,10 +3424,14 @@ const GnoMenuButton = new Lang.Class({
         }
     },
 
-    updateHotCorner() {
+    updateHotCorner(source, init) {
         if (_DEBUG_) global.log("GnoMenuButton: updateHotCorner");
         let primary = Main.layoutManager.primaryIndex;
         let corner = Main.layoutManager.hotCorners[primary];
+
+        if (!init && Main.layoutManager.hotCorners.length == 0) {
+            return;
+        }
 
         // Disable or Enable Hot Corner
         if (settings.get_boolean('disable-activities-hotcorner')) {
@@ -3471,7 +3475,7 @@ const GnoMenuButton = new Lang.Class({
         this._clearAll();
         this._display();
         this.updateCornerPanel();
-        this.updateHotCorner();
+        this.updateHotCorner(this, true);
     },
 
     _clearAll: function() {
@@ -3972,7 +3976,7 @@ function enable() {
     Main.panel.statusArea['gnomenubutton'] = GnoMenu;
     Main.panel._leftBox.insert_child_at_index(GnoMenu.actor, 0);
     GnoMenu.updateCornerPanel();
-    GnoMenu.updateHotCorner();
+    GnoMenu.updateHotCorner(this, true);
 }
 
 function disable() {
