@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: Gno-Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2018-05-13 19:15+0300\n"
+"PO-Revision-Date: 2018-09-18 10:01+0300\n"
 "Last-Translator: Ivan Komaritsyn <vantu5z@mail.ru>\n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -112,7 +112,7 @@ msgstr "«Горячий угол»"
 msgid "View button"
 msgstr "Кнопка «Обзор»"
 
-msgid "Label for View button"
+msgid "Use label with View button"
 msgstr "Текст для кнопки «Обзор»"
 
 msgid "Use icon with View button"
@@ -121,7 +121,7 @@ msgstr "Показывать иконку для кнопки «Обзор»"
 msgid "Apps button"
 msgstr "Кнопка «Приложения»"
 
-msgid "Label for Apps button"
+msgid "Use label with Apps button"
 msgstr "Текст для кнопки «Приложения»"
 
 msgid "Use icon with Apps button"
@@ -130,7 +130,7 @@ msgstr "Показывать иконку для кнопки «Приложен
 msgid "Menu button"
 msgstr "Кнопка «Меню»"
 
-msgid "Label for Menu button"
+msgid "Use label with Menu button"
 msgstr "Текст для кнопки «Меню»"
 
 msgid "Use icon with Menu button"
