@@ -3,72 +3,61 @@ msgstr ""
 "Project-Id-Version: Gno-Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2014-11-15 16:09+0900\n"
-"Last-Translator: BALLOON a.k.a. Fu-sen. <fu-sen@shigakeiichi.com>\n"
+"PO-Revision-Date: 2018-09-18 10:01+0300\n"
+"Last-Translator: sicklylife.jp <translation@sicklylife.jp>\n"
 "Language-Team: \n"
-"Language: ja_JP\n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.7\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
-
-#: convenience.js
-
-
-#: extension.js
-
+#: convenience.js extension.js
 msgid "Gno-Menu: Search Firefox bookmarks disabled"
-msgstr "Gno-Menu: Firefox ブックマークの検索は使用できません"
+msgstr "Gno-Menu: Firefox のブックマーク検索は無効です"
 
 msgid ""
 "If you want to search Firefox bookmarks, you must install the required "
-"pacakages: libgir1.2-gda-5.0 (Ubuntu) or libgda-sqlite (Fedora)"
+"pacakages: libgir1.2-gda-5.0 [Ubuntu] or libgda-sqlite [Fedora]"
 msgstr ""
-"もし Firefox ブックマークの検索を使用したい場合は、次のパッケージをインストー"
-"ルする必要があります: libgir1.2-gda-5.0 (Ubuntu) または libgda-sqlite "
-"(Fedora)"
+"Firefox のブックマークを検索したい場合は、次のパッケージをインストー"
+"ルする必要があります: libgir1.2-gda-5.0 [Ubuntu] または libgda-sqlite "
+"[Fedora]"
 
 msgid "Gno-Menu: Search Midori bookmarks disabled"
-msgstr "Gno-Menu: Midori ブックマークの検索は使用できません"
+msgstr "Gno-Menu: Midori のブックマーク検索は無効です"
 
 msgid ""
 "If you want to search Midori bookmarks, you must install the required "
-"pacakages: libgir1.2-gda-5.0 (Ubuntu) or libgda-sqlite (Fedora)"
+"pacakages: libgir1.2-gda-5.0 [Ubuntu] or libgda-sqlite [Fedora]"
 msgstr ""
-"もし Midori ブックマークの検索を使用したい場合は、次のパッケージをインストー"
-"ルする必要があります: libgir1.2-gda-5.0 (Ubuntu) または libgda-sqlite "
-"(Fedora)"
+"Midori のブックマークを検索したい場合は、次のパッケージをインストー"
+"ルする必要があります: libgir1.2-gda-5.0 [Ubuntu] または libgda-sqlite "
+"[Fedora]"
 
 msgid "Recent"
-msgstr "最近"
+msgstr "最近使用したもの"
 
-msgid "Web"
-msgstr "Web"
+msgid "WebBookmarks"
+msgstr "ウェブブックマーク"
 
-msgid "Favorites"
-msgstr "Favorites"
+msgid "Toggle Startup Apps View"
+msgstr "起動するアプリの表示を切り替え"
 
-msgid "Places"
-msgstr "場所"
-
-msgid "List View"
-msgstr "リスト一覧"
-
-msgid "Grid View"
-msgstr "グリット一覧"
-
-msgid "Type to search..."
-msgstr "入力して検索..."
-
-msgid "Frequent Apps"
-msgstr "Frequent Apps"
+msgid "List-Grid View"
+msgstr "リスト表示/グリッド表示"
 
 msgid "All Applications"
 msgstr "すべてのアプリケーション"
 
+msgid "Frequent Apps"
+msgstr "よく使うアプリ"
+
+msgid "Favorite Apps"
+msgstr "お気に入りのアプリ"
+
 msgid "Restart Shell"
-msgstr "シェルの再起動"
+msgstr "Shell の再起動"
 
 msgid "Suspend"
 msgstr "サスペンド"
@@ -88,12 +77,9 @@ msgstr "設定"
 msgid "No GnoMenu stylesheet found"
 msgstr "GnoMenu スタイルシートが見つかりません"
 
-
-
-#: placeDisplay.js
-
+#: metadata.json placeDisplay.js
 msgid "Failed to launch \"%s\""
-msgstr "ランチャー \"%s\" に問題があります"
+msgstr "\"%s\" の起動に失敗しました"
 
 msgid "Home"
 msgstr "ホーム"
@@ -101,129 +87,160 @@ msgstr "ホーム"
 msgid "Computer"
 msgstr "コンピューター"
 
-msgid "Browse Network"
+msgid "Browse network"
 msgstr "ネットワークの閲覧"
 
-
 #: prefs.js
+msgid "Panel Buttons"
+msgstr "パネルのボタン"
+
+msgid "Menu Layout"
+msgstr "メニューレイアウト"
+
+msgid "Apps Grid-List"
+msgstr "アプリのリスト/グリッド"
 
 msgid "<b>Panel Settings</b>"
 msgstr "<b>パネルの設定</b>"
 
-msgid "Disable activities hot corner"
-msgstr "ホットコーナーの動作を無効にする"
+msgid "Activities hot corner"
+msgstr "アクティビティのホットコーナー"
 
-msgid "Remove View button from panel"
-msgstr "パネルの表示ボタンを削除"
+msgid "View button"
+msgstr "View ボタン"
 
-msgid "Label for View button"
-msgstr "Label for View button"
+msgid "Use label with View button"
+msgstr "View ボタンにラベルを使用する"
 
 msgid "Use icon with View button"
-msgstr "Use icon with View button"
+msgstr "View ボタンにアイコンを使用する"
 
-msgid "Remove Apps button from panel"
-msgstr "パネルからアプリボタンを削除"
+msgid "Apps button"
+msgstr "Apps ボタン"
 
-msgid "Label for Apps button"
-msgstr "Label for Apps button"
+msgid "Use label with Apps button"
+msgstr "Apps ボタンにラベルを使用する"
 
 msgid "Use icon with Apps button"
-msgstr "Use icon with Apps button"
+msgstr "Apps ボタンにアイコンを使用する"
 
-msgid "Remove Menu button from panel"
-msgstr "パネルのメニューボタンを削除"
+msgid "Menu button"
+msgstr "Menu ボタン"
 
-msgid "Label for Menu button"
-msgstr "Label for Menu button"
+msgid "Use label with Menu button"
+msgstr "Menu ボタンにラベルを使用する"
 
 msgid "Use icon with Menu button"
-msgstr "Use icon with Menu button"
+msgstr "Menu ボタンにアイコンを使用する"
+
+msgid "Hide Menu button arrow"
+msgstr "Menu ボタンの矢印を隠す"
 
 msgid "Disable Menu button hot spot"
-msgstr "ホットスポットのメニューボタンを無効"
+msgstr "Menu ボタンのホットスポットを無効にする"
+
+msgid "hot spot hover delay"
+msgstr "ホットスポットのホバーの遅延"
 
 msgid "Disable Menu button shortcut key"
-msgstr "ショートカットのメニューボタンを無効"
+msgstr "Menu ボタンのショートカットキーを無効にする"
 
 msgid "Invalid accelerator. Try F12, <Super>space, <Ctrl><Alt><Shift>a, etc."
-msgstr "Invalid accelerator. Try F12, <Super>space, <Ctrl><Alt><Shift>a, etc."
+msgstr ""
+"無効なアクセラレーターです。F12、<Super>space、<Ctrl><Alt><Shift>a、などの表記を試してください。"
+
+msgid "Set Menu button position"
+msgstr "Menu ボタンの位置"
+
+msgid "Left"
+msgstr "左"
+
+msgid "Center"
+msgstr "中央"
+
+msgid "Right"
+msgstr "右"
 
 msgid "<b>Menu Settings</b>"
-msgstr "<b>メニュー設定</b>"
-
-msgid "Hide Shortcuts Panel"
-msgstr "Hide Shortcuts Panel"
+msgstr "<b>メニューの設定</b>"
 
 msgid "Menu layout size"
-msgstr "メニューレイアウトスタイル"
+msgstr "メニューレイアウトサイズ"
 
-msgid "Large"
-msgstr "Large"
+msgid "Normal"
+msgstr "通常"
 
-msgid "Medium"
-msgstr "Medium"
+msgid "Compact"
+msgstr "コンパクト"
 
-msgid "Small"
-msgstr "Small"
+msgid "User Options Panel"
+msgstr "ユーザーオプションパネル"
+
+msgid "Shortcuts Panel"
+msgstr "ショートカットパネル"
 
 msgid "Icons to display on Shortcuts Panel"
-msgstr "Icons to display on Shortcuts Panel"
+msgstr "ショートカットパネルに表示するアイコン"
 
-msgid "Applications to display at startup"
-msgstr "開始時に表示するアプリケーション"
+msgid "Favorites"
+msgstr "お気に入り"
 
-msgid "All"
-msgstr ""
-
-msgid "Frequent"
-msgstr ""
-
-msgid "Default view mode for applications"
-msgstr "アプリケーションの標準表示モード"
-
-msgid "List"
-msgstr "List"
-
-msgid "Grid"
-msgstr "Grid"
-
-msgid "Category selection method"
-msgstr "カテゴリの選択方法"
-
-msgid "Hover"
-msgstr "Hover"
-
-msgid "Click"
-msgstr "Click"
+msgid "Places"
+msgstr "場所"
 
 msgid "Size of Shortcuts Panel icons"
-msgstr "お気に入りパネルアイコンのサイズ"
+msgstr "ショートカットパネルアイコンのサイズ"
 
-msgid "Size of Application List icons"
-msgstr "アプリケーションリストアイコンのサイズ"
+msgid "Categories Panel"
+msgstr "カテゴリーパネル"
 
-msgid "Size of Application Grid icons"
-msgstr "アプリケーショングリットアイコンのサイズ"
+msgid "Category selection method"
+msgstr "カテゴリーの選択方法"
 
+msgid "Hover"
+msgstr "ホバー"
 
-#: webChromium.js
+msgid "Click"
+msgstr "クリック"
 
+msgid "Menu hover delay"
+msgstr "メニューのホバーの遅延"
 
-#: webEpiphany.js
+msgid "Workspace Thumbnails Panel"
+msgstr "ワークスペースサムネイルパネル"
 
+msgid "<b>Apps Settings</b>"
+msgstr "<b>アプリの設定</b>"
 
-#: webFirefox.js
+msgid "Applications to display at startup"
+msgstr "最初に表示するアプリケーション"
 
+msgid "All"
+msgstr "すべて"
 
-#: webGoogleChrome.js
+msgid "Frequent"
+msgstr "よく使うもの"
 
+msgid "None"
+msgstr "なし"
 
-#: webMidori.js
+msgid "Default view mode for applications"
+msgstr "アプリケーションのデフォルトの表示モード"
 
+msgid "List"
+msgstr "リスト"
 
-#: webOpera.js
+msgid "Grid"
+msgstr "グリッド"
 
+msgid "<u>Grid:</u> Number of columns"
+msgstr "<u>グリッド:</u> 列の数"
 
-#: workspaceThumbnail.js
+msgid "<u>Grid:</u> Width of Application labels"
+msgstr "<u>グリッド:</u> アプリケーションラベルの幅"
 
+msgid "<u>Grid:</u> Size of Application icons"
+msgstr "<u>グリッド:</u> アプリケーションアイコンのサイズ"
+
+msgid "<u>List:</u> Size of Application icons"
+msgstr "<u>リスト:</u> アプリケーションアイコンのサイズ"
