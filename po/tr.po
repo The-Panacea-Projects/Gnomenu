@@ -1,0 +1,248 @@
+# Çeviri Listesi
+# Serdar Sağlam <teknomobil@yandex.com>, 2018.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Gno-Menu\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2018-10-03 10:01+0300\n"
+"Last-Translator: Serdar Sağlam <teknomobil@yandex.com>\n"
+"Language-Team: \n"
+"Language: tr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"X-Generator: Gtranslator 2.91.7\n"
+
+#: convenience.js extension.js
+msgid "Gno-Menu: Search Firefox bookmarks disabled"
+msgstr "Gno-Menü: Firefox yer işaretlerini arama devre dışı"
+
+msgid ""
+"If you want to search Firefox bookmarks, you must install the required "
+"pacakages: libgir1.2-gda-5.0 [Ubuntu] or libgda-sqlite [Fedora]"
+msgstr ""
+"Firefox yer imlerinde aramak istiyorsanız, gerekli paketleri yüklemelisiniz"
+"paketler: libgir1.2-gda-5.0 [Ubuntu] veya libgda-sqlite [Fedora]"
+
+msgid "Gno-Menu: Search Midori bookmarks disabled"
+msgstr "Gno-Menü: Midori yer imlerini devre dışı bırak"
+
+msgid ""
+"If you want to search Midori bookmarks, you must install the required "
+"pacakages: libgir1.2-gda-5.0 [Ubuntu] or libgda-sqlite [Fedora]"
+msgstr ""
+"Midori yer imlerinde aramak istiyorsanız, gerekenleri yüklemelisiniz. "
+"paketler: libgir1.2-gda-5.0 [Ubuntu] veya libgda-sqlite [Fedora]"
+
+msgid "Recent"
+msgstr "Son"
+
+msgid "WebBookmarks"
+msgstr "Yerimleri"
+
+msgid "Toggle Startup Apps View"
+msgstr "Başlangıç ​​Uygulamaları Görünümü'nü Değiştir"
+
+msgid "List-Grid View"
+msgstr "Liste Izgara Görünümü"
+
+msgid "All Applications"
+msgstr "Tüm Uygulamalar"
+
+msgid "Frequent Apps"
+msgstr "Sık Kullanılan"
+
+msgid "Favorite Apps"
+msgstr "Favorilerim"
+
+msgid "Restart Shell"
+msgstr "Gnome Shell'i Yeniden Başlat"
+
+msgid "Suspend"
+msgstr "Askıya Al"
+
+msgid "Shutdown"
+msgstr "Kapat"
+
+msgid "Logout User"
+msgstr "Oturumu Kapat"
+
+msgid "Lock Screen"
+msgstr "Ekranı Kilitle"
+
+msgid "Preferences"
+msgstr "Tercihler"
+
+msgid "No GnoMenu stylesheet found"
+msgstr "GnoMenü stil sayfası bulunamadı"
+
+#: metadata.json placeDisplay.js
+msgid "Failed to launch \"%s\""
+msgstr "Uygulama başlatılamadı \"%s\""
+
+msgid "Home"
+msgstr "Başlangıç"
+
+msgid "Computer"
+msgstr "Bilgisayar"
+
+msgid "Browse network"
+msgstr "Ağa göz at"
+
+#: prefs.js
+msgid "Panel Buttons"
+msgstr "Panel Düğmeleri"
+
+msgid "Menu Layout"
+msgstr "Menü Düzeni"
+
+msgid "Apps Grid-List"
+msgstr "Izgara Görünümü"
+
+msgid "<b>Panel Settings</b>"
+msgstr "<b>Panel Ayarları</b>"
+
+msgid "Activities hot corner"
+msgstr "Etkinlikler aktif köşeler"
+
+msgid "View button"
+msgstr "Etkinlikler düğmesi"
+
+msgid "Use label with View button"
+msgstr "Görünüm olarak etiket kullan"
+
+msgid "Use icon with View button"
+msgstr "Görünüm olarak simge kullan"
+
+msgid "Apps button"
+msgstr "Uygulamalar düğmesi"
+
+msgid "Use label with Apps button"
+msgstr "Görünüm olarak etiket kullan"
+
+msgid "Use icon with Apps button"
+msgstr "Görünüm olarak simge kullan"
+
+msgid "Menu button"
+msgstr "Menü düğmesi"
+
+msgid "Use label with Menu button"
+msgstr "Görünüm olarak etiket kullan"
+
+msgid "Use icon with Menu button"
+msgstr "Görünüm olarak simge kullan"
+
+msgid "Hide Menu button arrow"
+msgstr "Menü düğmesi ok tuşu gizle"
+
+msgid "Disable Menu button hot spot"
+msgstr "Menü aktif köşeler devre dışı"
+
+msgid "hot spot hover delay"
+msgstr "aktif köşe gecikme süresi"
+
+msgid "Disable Menu button shortcut key"
+msgstr "Menü kısayollarını devre dışı bırak"
+
+msgid "Invalid accelerator. Try F12, <Super>space, <Ctrl><Alt><Shift>a, etc."
+msgstr "Geçersiz hızlandırıcı. F12'yi deneyin, <Super> boşluk, <Ctrl> <Alt> <Shift> a, vs."
+
+msgid "Set Menu button position"
+msgstr "Menü düğmesi konumunu ayarla"
+
+msgid "Left"
+msgstr "Sol"
+
+msgid "Center"
+msgstr "Ortala"
+
+msgid "Right"
+msgstr "Sağ"
+
+msgid "<b>Menu Settings</b>"
+msgstr "<b>Menü Ayarları</b>"
+
+msgid "Menu layout size"
+msgstr "Menü düzeni boyutu"
+
+msgid "Normal"
+msgstr "Normal"
+
+msgid "Compact"
+msgstr "Kompakt"
+
+msgid "User Options Panel"
+msgstr "Kullanıcı Paneli"
+
+msgid "Shortcuts Panel"
+msgstr "Kısayol Paneli"
+
+msgid "Icons to display on Shortcuts Panel"
+msgstr "Kısayol panelinde görünecek olan"
+
+msgid "Favorites"
+msgstr "Favoriler"
+
+msgid "Places"
+msgstr "Dosyalar"
+
+msgid "Size of Shortcuts Panel icons"
+msgstr "Kısayollar paneli simge boyutu"
+
+msgid "Categories Panel"
+msgstr "Kategoriler Paneli"
+
+msgid "Category selection method"
+msgstr "Kategori seçim biçimi"
+
+msgid "Hover"
+msgstr "Otomatik"
+
+msgid "Click"
+msgstr "Tıklama"
+
+msgid "Menu hover delay"
+msgstr "Menü bekleme gecikmesi"
+
+msgid "Workspace Thumbnails Panel"
+msgstr "Çalışma Alanlarını Göster"
+
+msgid "<b>Apps Settings</b>"
+msgstr "<b>Uygulama Ayarları</b>"
+
+msgid "Applications to display at startup"
+msgstr "Başlangıçta görüntülenecek uygulamalar"
+
+msgid "All"
+msgstr "Tümü"
+
+msgid "Frequent"
+msgstr "Sık Kullanılan"
+
+msgid "None"
+msgstr "Yok"
+
+msgid "Default view mode for applications"
+msgstr "Uygulamalar için varsayılan görünüm"
+
+msgid "List"
+msgstr "Liste"
+
+msgid "Grid"
+msgstr "Izgara"
+
+msgid "<u>Grid:</u> Number of columns"
+msgstr "<u>Izgara:</u> Sütun sayısı"
+
+msgid "<u>Grid:</u> Width of Application labels"
+msgstr "<u>Izgara:</u> Uygulama adı için genişlik"
+
+msgid "<u>Grid:</u> Size of Application icons"
+msgstr "<u>Izgara:</u> Uygulama simge boyutları"
+
+msgid "<u>List:</u> Size of Application icons"
+msgstr "<u>Liste:</u> Uygulama simge boyutları"
