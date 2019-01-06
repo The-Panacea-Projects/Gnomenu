@@ -1,0 +1,229 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Gno-Menu\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2019-01-06 11:24-0500\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2\n"
+
+#: convenience.js extension.js
+msgid "Gno-Menu: Search Firefox bookmarks disabled"
+msgstr "Gno-Menu: Búsqueda de marcadores de Firefox deshabilitados"
+
+msgid "If you want to search Firefox bookmarks, you must install the required pacakages: libgir1.2-gda-5.0 [Ubuntu] or libgda-sqlite [Fedora]"
+msgstr "Si desea buscar marcadores de Firefox, debe instalar los paquetes necesarios: libgl1.2-gda-5.0 [Ubuntu] o libgda-sqlite [Fedora]"
+
+msgid "Gno-Menu: Search Midori bookmarks disabled"
+msgstr "Gno-Menu: Búsqueda de marcadores de Midori deshabilitados"
+
+msgid "If you want to search Midori bookmarks, you must install the required pacakages: libgir1.2-gda-5.0 [Ubuntu] or libgda-sqlite [Fedora]"
+msgstr "Si desea buscar los marcadores de Midori, debe instalar los paquetes necesarios: libgl1.2-gda-5.0 [Ubuntu] o libgda-sqlite [Fedora]"
+
+msgid "Recent"
+msgstr "Reciente"
+
+msgid "Webmarks"
+msgstr "Marcadores Webs"
+
+msgid "Favorites"
+msgstr "Favoritos"
+
+msgid "Places"
+msgstr "Lugares"
+
+msgid "Toggle Startup Apps View"
+msgstr "Alternar vista de aplicaciones de inicio"
+
+msgid "List View"
+msgstr "Vista en lista"
+
+msgid "Grid View"
+msgstr "Vista en cuadrícula"
+
+msgid "Type to search..."
+msgstr "Escribe para buscar..."
+
+msgid "All Applications"
+msgstr "Todas las aplicaciones"
+
+msgid "Frequent Apps"
+msgstr "Aplicaciones frecuentes"
+
+msgid "Favorite Apps"
+msgstr "Aplicaciones favoritas"
+
+msgid "Restart Shell"
+msgstr "Reiniciar Shell"
+
+msgid "Suspend"
+msgstr "Suspender"
+
+msgid "Shutdown"
+msgstr "Apagar"
+
+msgid "Logout User"
+msgstr "Cerrar Sesión"
+
+msgid "Lock Screen"
+msgstr "Bloquear pantalla"
+
+msgid "Preferences"
+msgstr "Preferencias"
+
+msgid "No GnoMenu stylesheet found"
+msgstr "No se ha encontrado ninguna hoja de estilo de GnoMenu"
+
+#: placeDisplay.js
+msgid "Failed to launch \"%s\""
+msgstr "Error al iniciar \"% s\""
+
+msgid "Home"
+msgstr "Casa"
+
+msgid "Computer"
+msgstr "Computadora"
+
+msgid "Browse network"
+msgstr "Navegar por la red"
+
+#: prefs.js
+msgid "<b>Panel Settings</b>"
+msgstr "<b>Configuración del panel</b>"
+
+msgid "Disable activities hot corner"
+msgstr "Deshabilitar las actividades de la esquina"
+
+msgid "Remove View button from panel"
+msgstr "Quitar el botón Ver del panel"
+
+msgid "Label for View button"
+msgstr "Etiqueta para el botón Ver"
+
+msgid "Use icon with View button"
+msgstr "Use el icono con el botón Ver"
+
+msgid "Remove Apps button from panel"
+msgstr "Quitar botón de Aplicaciones del panel"
+
+msgid "Label for Apps button"
+msgstr "Etiqueta para el botón de Aplicaciones"
+
+msgid "Use icon with Apps button"
+msgstr "Usar icono con el botón de aplicaciones"
+
+msgid "Remove Menu button from panel"
+msgstr "Quitar botón de Menú del panel"
+
+msgid "Label for Menu button"
+msgstr "Etiqueta para el botón Menú"
+
+msgid "Use icon with Menu button"
+msgstr "Usar icono con el botón Menú"
+
+msgid "Disable Menu button hot spot"
+msgstr "Deshabilitar el punto de acceso del botón Menú"
+
+msgid "Disable Menu button shortcut key"
+msgstr "Desactivar tecla de acceso directo del botón Menú"
+
+msgid "Invalid accelerator. Try F12, <Super>space, <Ctrl><Alt><Shift>a, etc."
+msgstr "Acelerador no válido. Pruebe F12, <Super>space, <Ctrl><Alt> <Mayús> a, etc."
+
+msgid "Set Menu button position"
+msgstr "Establecer la posición del botón de Menú"
+
+msgid "Left"
+msgstr "Izquierda"
+
+msgid "Center"
+msgstr "Centro"
+
+msgid "Right"
+msgstr "Derecha"
+
+msgid "<b>Menu Settings</b>"
+msgstr "<b>Configuración de Menú</b>"
+
+msgid "Hide User Options Panel"
+msgstr "Ocultar el panel de opciones del usuario"
+
+msgid "Hide Shortcuts Panel"
+msgstr "Ocultar el panel de accesos directos"
+
+msgid "Menu layout size"
+msgstr "Tamaño de diseño del Menú"
+
+msgid "Normal"
+msgstr "Normal"
+
+msgid "Compact"
+msgstr "Compacto"
+
+msgid "Icons to display on Shortcuts Panel"
+msgstr "Iconos para mostrar en el Panel de Accesos Directos"
+
+msgid "Applications to display at startup"
+msgstr "Aplicaciones para mostrar al inicio"
+
+msgid "All"
+msgstr "Todas"
+
+msgid "Frequent"
+msgstr "Frecuentes"
+
+msgid "None"
+msgstr "Ninguna"
+
+msgid "Number of columns in Application Grid"
+msgstr "Número de columnas en la cuadrícula de la aplicación"
+
+msgid "3"
+msgstr "3"
+
+msgid "4"
+msgstr "4"
+
+msgid "5"
+msgstr "5"
+
+msgid "6"
+msgstr "6"
+
+msgid "7"
+msgstr "7"
+
+msgid "Default view mode for applications"
+msgstr "Modo de visualización predeterminado para aplicaciones"
+
+msgid "List"
+msgstr "Lista"
+
+msgid "Grid"
+msgstr "Cuadrícula"
+
+msgid "Hide Categories Panel"
+msgstr "Ocultar panel de categorías"
+
+msgid "Category selection method"
+msgstr "Método de selección de categoría"
+
+msgid "Hover"
+msgstr "Pasar por encima"
+
+msgid "Click"
+msgstr "Hacer Click"
+
+msgid "Size of Shortcuts Panel icons"
+msgstr "Tamaño de los iconos del Panel de Accesos Directos"
+
+msgid "Size of Application List icons"
+msgstr "Tamaño de los iconos de la Lista de Aplicaciones"
+
+msgid "Size of Application Grid icons"
+msgstr "Tamaño de los iconos de Cuadrícula de Aplicación"
