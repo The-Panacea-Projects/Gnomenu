@@ -1,42 +1,42 @@
 # Çeviri Listesi
-# Serdar Sağlam <teknomobil@yandex.com>, 2018.
+# Serdar Sağlam <teknomobil@yandex.com>, 2019.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Gno-Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2018-10-03 10:01+0300\n"
+"PO-Revision-Date: 2019-01-25 00:29+0300\n"
 "Last-Translator: Serdar Sağlam <teknomobil@yandex.com>\n"
 "Language-Team: \n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
-"X-Generator: Gtranslator 2.91.7\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n"
+"%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Poedit 2.2.1\n"
 
 #: convenience.js extension.js
 msgid "Gno-Menu: Search Firefox bookmarks disabled"
 msgstr "Gno-Menü: Firefox yer işaretlerini arama devre dışı"
 
 msgid ""
-"If you want to search Firefox bookmarks, you must install the required "
-"pacakages: libgir1.2-gda-5.0 [Ubuntu] or libgda-sqlite [Fedora]"
+"If you want to search Firefox bookmarks, you must install the required pacakages: "
+"libgir1.2-gda-5.0 [Ubuntu] or libgda-sqlite [Fedora]"
 msgstr ""
-"Firefox yer imlerinde aramak istiyorsanız, gerekli paketleri yüklemelisiniz"
-"paketler: libgir1.2-gda-5.0 [Ubuntu] veya libgda-sqlite [Fedora]"
+"Firefox yer imlerinde aramak istiyorsanız, gerekli paketler yüklenmeli, paketler: "
+"libgir1.2-gda-5.0 [Ubuntu] veya libgda-sqlite [Fedora]"
 
 msgid "Gno-Menu: Search Midori bookmarks disabled"
 msgstr "Gno-Menü: Midori yer imlerini devre dışı bırak"
 
 msgid ""
-"If you want to search Midori bookmarks, you must install the required "
-"pacakages: libgir1.2-gda-5.0 [Ubuntu] or libgda-sqlite [Fedora]"
+"If you want to search Midori bookmarks, you must install the required pacakages: "
+"libgir1.2-gda-5.0 [Ubuntu] or libgda-sqlite [Fedora]"
 msgstr ""
-"Midori yer imlerinde aramak istiyorsanız, gerekenleri yüklemelisiniz. "
-"paketler: libgir1.2-gda-5.0 [Ubuntu] veya libgda-sqlite [Fedora]"
+"Midori yer imlerinde aramak istiyorsanız, gerekli paketler yüklenmeli, paketler: "
+"libgir1.2-gda-5.0 [Ubuntu] veya libgda-sqlite [Fedora]"
 
 msgid "Recent"
 msgstr "Son"
@@ -45,7 +45,7 @@ msgid "WebBookmarks"
 msgstr "Yerimleri"
 
 msgid "Toggle Startup Apps View"
-msgstr "Başlangıç ​​Uygulamaları Görünümü'nü Değiştir"
+msgstr "Başlangıç ​​Uygulamaları Görünümünü Değiştir"
 
 msgid "List-Grid View"
 msgstr "Liste Izgara Görünümü"
@@ -200,7 +200,7 @@ msgid "Category selection method"
 msgstr "Kategori seçim biçimi"
 
 msgid "Hover"
-msgstr "Otomatik"
+msgstr "Duraksama"
 
 msgid "Click"
 msgstr "Tıklama"
