@@ -1,0 +1,326 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Gno-Menu\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2019-01-06 12:04-0500\n"
+"Last-Translator: \n"
+"Language-Team: Dario Vázquez <d3oblongo@gmail.com>\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: convenience.js extension.js
+msgid "Gno-Menu: Search Firefox bookmarks disabled"
+msgstr "Gno-Menu: Búsqueda de marcadores de Firefox deshabilitados"
+
+msgid ""
+"If you want to search Firefox bookmarks, you must install the required "
+"pacakages: libgir1.2-gda-5.0 [Ubuntu] or libgda-sqlite [Fedora]"
+msgstr ""
+"Si desea buscar marcadores de Firefox, debe instalar los paquetes "
+"necesarios: libgl1.2-gda-5.0 [Ubuntu] o libgda-sqlite [Fedora]"
+
+msgid "Gno-Menu: Search Midori bookmarks disabled"
+msgstr "Gno-Menu: Búsqueda de marcadores de Midori deshabilitados"
+
+msgid ""
+"If you want to search Midori bookmarks, you must install the required "
+"pacakages: libgir1.2-gda-5.0 [Ubuntu] or libgda-sqlite [Fedora]"
+msgstr ""
+"Si desea buscar los marcadores de Midori, debe instalar los paquetes "
+"necesarios: libgl1.2-gda-5.0 [Ubuntu] o libgda-sqlite [Fedora]"
+
+msgid "Recent"
+msgstr "Reciente"
+
+msgid "WebBookmarks"
+msgstr "Marcadores Webs"
+
+msgid "Toggle Startup Apps View"
+msgstr "Alternar vista de aplicaciones de inicio"
+
+msgid "List-Grid View"
+msgstr "Vista Lista-Cuadrícula"
+
+msgid "All Applications"
+msgstr "Todas las aplicaciones"
+
+msgid "Frequent Apps"
+msgstr "Aplicaciones frecuentes"
+
+msgid "Favorite Apps"
+msgstr "Aplicaciones favoritas"
+
+msgid "Restart Shell"
+msgstr "Reiniciar Shell"
+
+msgid "Suspend"
+msgstr "Suspender"
+
+msgid "Shutdown"
+msgstr "Apagar"
+
+msgid "Logout User"
+msgstr "Cerrar Sesión"
+
+msgid "Lock Screen"
+msgstr "Bloquear pantalla"
+
+msgid "Preferences"
+msgstr "Preferencias"
+
+msgid "No GnoMenu stylesheet found"
+msgstr "No se ha encontrado ninguna hoja de estilo de GnoMenu"
+
+#: metadata.json placeDisplay.js
+msgid "Failed to launch \"%s\""
+msgstr "Error al iniciar \"% s\""
+
+msgid "Home"
+msgstr "Casa"
+
+msgid "Computer"
+msgstr "Computadora"
+
+msgid "Browse network"
+msgstr "Navegar por la red"
+
+#: prefs.js
+msgid "Panel Buttons"
+msgstr "Botones del panel"
+
+msgid "Menu Layout"
+msgstr "Diseño del Menú"
+
+msgid "Apps Grid-List"
+msgstr "Apps Cuadrícula-Lista"
+
+msgid "<b>Panel Settings</b>"
+msgstr "<b>Configuración del panel</b>"
+
+msgid "Activities hot corner"
+msgstr "Actividades de la esquina"
+
+msgid "View button"
+msgstr "Botón Ver"
+
+msgid "Use label with View button"
+msgstr "Usar etiqueta con el botón Ver"
+
+msgid "Use icon with View button"
+msgstr "Usar icono con el botón Ver"
+
+msgid "Apps button"
+msgstr "Botón de Aplicaciones"
+
+msgid "Use label with Apps button"
+msgstr "Usar etiqueta con el botón de aplicaciones"
+
+msgid "Use icon with Apps button"
+msgstr "Usar icono con el botón de aplicaciones"
+
+msgid "Menu button"
+msgstr "Botón Menú"
+
+msgid "Use label with Menu button"
+msgstr "Usar etiqueta con el botón Menú"
+
+msgid "Use icon with Menu button"
+msgstr "Usar icono con el botón Menú"
+
+msgid "Hide Menu button arrow"
+msgstr "Ocultar la flecha del botón Menú"
+
+msgid "Disable Menu button hot spot"
+msgstr "Deshabilitar el punto de acceso del botón Menú"
+
+msgid "hot spot hover delay"
+msgstr "retardo del punto de acceso"
+
+msgid "0"
+msgstr ""
+
+msgid "100"
+msgstr ""
+
+msgid "150"
+msgstr ""
+
+msgid "175"
+msgstr ""
+
+msgid "200"
+msgstr ""
+
+msgid "250"
+msgstr ""
+
+msgid "300"
+msgstr ""
+
+msgid "350"
+msgstr ""
+
+msgid "400"
+msgstr ""
+
+msgid "Disable Menu button shortcut key"
+msgstr "Desactivar tecla de acceso directo del botón Menú"
+
+msgid "Invalid accelerator. Try F12, <Super>space, <Ctrl><Alt><Shift>a, etc."
+msgstr ""
+"Acelerador no válido. Pruebe F12, <Super>space, <Ctrl><Alt> <Mayús> a, etc."
+
+msgid "Set Menu button position"
+msgstr "Establecer la posición del botón de Menú"
+
+msgid "Left"
+msgstr "Izquierda"
+
+msgid "Center"
+msgstr "Centro"
+
+msgid "Right"
+msgstr "Derecha"
+
+msgid "<b>Menu Settings</b>"
+msgstr "<b>Configuración de Menú</b>"
+
+msgid "Menu layout size"
+msgstr "Tamaño de diseño del Menú"
+
+msgid "Normal"
+msgstr "Normal"
+
+msgid "Compact"
+msgstr "Compacto"
+
+msgid "User Options Panel"
+msgstr "Panel de Ppciones de Usuario"
+
+msgid "Shortcuts Panel"
+msgstr "Panel de Accesos Directos"
+
+msgid "Icons to display on Shortcuts Panel"
+msgstr "Iconos para mostrar en el Panel de Accesos Directos"
+
+msgid "Favorites"
+msgstr "Favoritos"
+
+msgid "Places"
+msgstr "Lugares"
+
+msgid "Size of Shortcuts Panel icons"
+msgstr "Tamaño de los iconos del Panel de Accesos Directos"
+
+msgid "Categories Panel"
+msgstr "Panel de Categorías"
+
+msgid "Category selection method"
+msgstr "Método de selección de categoría"
+
+msgid "Hover"
+msgstr "Pasar por encima"
+
+msgid "Click"
+msgstr "Hacer Click"
+
+msgid "Menu hover delay"
+msgstr "Retraso en el Menú"
+
+msgid "Workspace Thumbnails Panel"
+msgstr "Panel de miniaturas de área de trabajo"
+
+msgid "<b>Apps Settings</b>"
+msgstr "<b>Configuración de Aplicaciones</b>"
+
+msgid "Applications to display at startup"
+msgstr "Aplicaciones para mostrar al inicio"
+
+msgid "All"
+msgstr "Todas"
+
+msgid "Frequent"
+msgstr "Frecuentes"
+
+msgid "None"
+msgstr "Ninguna"
+
+msgid "Default view mode for applications"
+msgstr "Modo de visualización predeterminado para aplicaciones"
+
+msgid "List"
+msgstr "Lista"
+
+msgid "Grid"
+msgstr "Cuadrícula"
+
+msgid "<u>Grid:</u> Number of columns"
+msgstr "<u>Cuadrícula:</u> Número de columnas"
+
+msgid "3"
+msgstr "3"
+
+msgid "4"
+msgstr "4"
+
+msgid "5"
+msgstr "5"
+
+msgid "6"
+msgstr "6"
+
+msgid "7"
+msgstr "7"
+
+msgid "<u>Grid:</u> Width of Application labels"
+msgstr "<u>Cuadrícula:</u> Ancho de las etiquetas de la aplicación"
+
+msgid "32"
+msgstr ""
+
+msgid "48"
+msgstr ""
+
+msgid "64"
+msgstr ""
+
+msgid "80"
+msgstr ""
+
+msgid "96"
+msgstr ""
+
+msgid "112"
+msgstr ""
+
+msgid "128"
+msgstr ""
+
+msgid "<u>Grid:</u> Size of Application icons"
+msgstr "<u>Cuadrícula:</u> Tamaño de los iconos de la aplicación"
+
+msgid "<u>List:</u> Size of Application icons"
+msgstr "<u>Lista:</u> Tamaño de los iconos de la aplicación"
+
+#~ msgid "List View"
+#~ msgstr "Vista en lista"
+
+#~ msgid "Type to search..."
+#~ msgstr "Escribe para buscar..."
+
+#~ msgid "Remove View button from panel"
+#~ msgstr "Quitar el botón Ver del panel"
+
+#~ msgid "Remove Apps button from panel"
+#~ msgstr "Quitar botón de Aplicaciones del panel"
+
+#~ msgid "Remove Menu button from panel"
+#~ msgstr "Quitar botón de Menú del panel"
+
+#~ msgid "Number of columns in Application Grid"
+#~ msgstr "Número de columnas en la cuadrícula de la aplicación"
