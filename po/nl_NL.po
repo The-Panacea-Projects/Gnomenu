@@ -1,0 +1,308 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Gno-Menu\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2019-05-28 12:13+0200\n"
+"Language-Team: Dutch <vistausss@outlook.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2.3\n"
+"Last-Translator: Heimen Stoffels <vistausss@outlook.com>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: nl_NL\n"
+
+#: convenience.js extension.js
+msgid "Gno-Menu: Search Firefox bookmarks disabled"
+msgstr "Gno-Menu: doorzoeken van Firefox-bladwijzers is uitgeschakeld"
+
+msgid ""
+"If you want to search Firefox bookmarks, you must install the required "
+"pacakages: libgir1.2-gda-5.0 [Ubuntu] or libgda-sqlite [Fedora]"
+msgstr ""
+"Als je je Firefox-bladwijzers wilt doorzoeken, dan moet je de vereiste "
+"pakketten installeren: libgir1.2-gda-5.0 [Ubuntu] of libgda-sqlite [Fedora]"
+
+msgid "Gno-Menu: Search Midori bookmarks disabled"
+msgstr "Gno-Menu: doorzoeken van Midori-bladwijzers is uitgeschakeld"
+
+msgid ""
+"If you want to search Midori bookmarks, you must install the required "
+"pacakages: libgir1.2-gda-5.0 [Ubuntu] or libgda-sqlite [Fedora]"
+msgstr ""
+"Als je je Midori-bladwijzers wilt doorzoeken, dan moet je de vereiste "
+"pakketten installeren: libgir1.2-gda-5.0 [Ubuntu] of libgda-sqlite [Fedora]"
+
+msgid "Recent"
+msgstr "Recent"
+
+msgid "WebBookmarks"
+msgstr "Internetbladwijzers"
+
+msgid "Toggle Startup Apps View"
+msgstr "Andere toepassingsweergave bij opstarten"
+
+msgid "List-Grid View"
+msgstr "Lijst-/Roosterweergave"
+
+msgid "All Applications"
+msgstr "Alle toepassingen"
+
+msgid "Frequent Apps"
+msgstr "Vaak gebruikte toepassingen"
+
+msgid "Favorite Apps"
+msgstr "Favoriete toepassingen"
+
+msgid "Restart Shell"
+msgstr "Shell herstarten"
+
+msgid "Suspend"
+msgstr "Pauzestand"
+
+msgid "Shutdown"
+msgstr "Uitschakelen"
+
+msgid "Logout User"
+msgstr "Gebruiker uitloggen"
+
+msgid "Lock Screen"
+msgstr "Scherm vergrendelen"
+
+msgid "Preferences"
+msgstr "Voorkeuren"
+
+msgid "No GnoMenu stylesheet found"
+msgstr "Geen GnoMenu-stijlblad aangetroffen"
+
+#: metadata.json placeDisplay.js
+msgid "Failed to launch \"%s\""
+msgstr "Kan '%s' niet starten"
+
+msgid "Home"
+msgstr "Persoonlijke map"
+
+msgid "Computer"
+msgstr "Computer"
+
+msgid "Browse network"
+msgstr "Netwerk verkennen"
+
+#: prefs.js
+msgid "Panel Buttons"
+msgstr "Paneelknoppen"
+
+msgid "Menu Layout"
+msgstr "Menu-indeling"
+
+msgid "Apps Grid-List"
+msgstr "Rooster-/Lijstweergave"
+
+msgid "<b>Panel Settings</b>"
+msgstr "<b>Paneelinstellingen</b>"
+
+msgid "Activities hot corner"
+msgstr "Activiteitenhoek"
+
+msgid "View button"
+msgstr "Weergaveknop"
+
+msgid "Use label with View button"
+msgstr "Label tonen op weergaveknop"
+
+msgid "Use icon with View button"
+msgstr "Pictogram tonen op weergaveknop"
+
+msgid "Apps button"
+msgstr "Toepassingenknop"
+
+msgid "Use label with Apps button"
+msgstr "Label tonen op toepassingenknop"
+
+msgid "Use icon with Apps button"
+msgstr "Pictogram tonen op toepassingenknop"
+
+msgid "Menu button"
+msgstr "Menuknop"
+
+msgid "Use label with Menu button"
+msgstr "Label tonen op menuknop"
+
+msgid "Use icon with Menu button"
+msgstr "Pictogram tonen op menuknop"
+
+msgid "Hide Menu button arrow"
+msgstr "Pijl op menuknop verbergen"
+
+msgid "Disable Menu button hot spot"
+msgstr "Snelle weergave van menu uitschakelen"
+
+msgid "hot spot hover delay"
+msgstr "zweefvertraging"
+
+msgid "0"
+msgstr "0"
+
+msgid "100"
+msgstr "100"
+
+msgid "150"
+msgstr "150"
+
+msgid "175"
+msgstr "175"
+
+msgid "200"
+msgstr "200"
+
+msgid "250"
+msgstr "250"
+
+msgid "300"
+msgstr "300"
+
+msgid "350"
+msgstr "350"
+
+msgid "400"
+msgstr "400"
+
+msgid "Disable Menu button shortcut key"
+msgstr "Sneltoets van menuknop uitschakelen"
+
+msgid "Invalid accelerator. Try F12, <Super>space, <Ctrl><Alt><Shift>a, etc."
+msgstr ""
+"Ongeldige sneltoets. Probeer F12, <Super>space, <Ctrl><Alt><Shift>a, etc."
+
+msgid "Set Menu button position"
+msgstr "Positie van menuknop instellen"
+
+msgid "Left"
+msgstr "Links"
+
+msgid "Center"
+msgstr "Midden"
+
+msgid "Right"
+msgstr "Rechts"
+
+msgid "<b>Menu Settings</b>"
+msgstr "<b>Menu-instellingen</b>"
+
+msgid "Menu layout size"
+msgstr "Indelingsgrootte"
+
+msgid "Normal"
+msgstr "Normaal"
+
+msgid "Compact"
+msgstr "Compact"
+
+msgid "User Options Panel"
+msgstr "Gebruikersoptiespaneel"
+
+msgid "Shortcuts Panel"
+msgstr "Snelkoppelingspaneel"
+
+msgid "Icons to display on Shortcuts Panel"
+msgstr "Te tonen pictogrammen op snelkoppelingspaneel"
+
+msgid "Favorites"
+msgstr "Favorieten"
+
+msgid "Places"
+msgstr "Locaties"
+
+msgid "Size of Shortcuts Panel icons"
+msgstr "Grootte van pictogrammen op snelkoppelingspaneel"
+
+msgid "Categories Panel"
+msgstr "Categorieënpaneel"
+
+msgid "Category selection method"
+msgstr "Selectiemethode"
+
+msgid "Hover"
+msgstr "Erboven zweven"
+
+msgid "Click"
+msgstr "Klikken"
+
+msgid "Menu hover delay"
+msgstr "Zweefvertraging van menu"
+
+msgid "Workspace Thumbnails Panel"
+msgstr "Werkblad-miniatuurweergavepaneel"
+
+msgid "<b>Apps Settings</b>"
+msgstr "<b>Toepassingsinstellingen</b>"
+
+msgid "Applications to display at startup"
+msgstr "Te tonen toepassingen bij opstarten"
+
+msgid "All"
+msgstr "Alle"
+
+msgid "Frequent"
+msgstr "Vaak gebruikte"
+
+msgid "None"
+msgstr "Geen"
+
+msgid "Default view mode for applications"
+msgstr "Standaard weergavemodus van toepassingen"
+
+msgid "List"
+msgstr "Lijst"
+
+msgid "Grid"
+msgstr "Rooster"
+
+msgid "<u>Grid:</u> Number of columns"
+msgstr "<u>Rooster:</u> aantal kolommen"
+
+msgid "3"
+msgstr "3"
+
+msgid "4"
+msgstr "4"
+
+msgid "5"
+msgstr "5"
+
+msgid "6"
+msgstr "6"
+
+msgid "7"
+msgstr "7"
+
+msgid "<u>Grid:</u> Width of Application labels"
+msgstr "<u>Rooster:</u> breedte van toepassingslabels"
+
+msgid "32"
+msgstr "32"
+
+msgid "48"
+msgstr "48"
+
+msgid "64"
+msgstr "64"
+
+msgid "80"
+msgstr "80"
+
+msgid "96"
+msgstr "96"
+
+msgid "112"
+msgstr "112"
+
+msgid "128"
+msgstr "128"
+
+msgid "<u>Grid:</u> Size of Application icons"
+msgstr "<u>Rooster:</u> grootte van toepassingspictogrammen"
+
+msgid "<u>List:</u> Size of Application icons"
+msgstr "<u>Lijst:</u> grootte van toepassingspictogrammen"
