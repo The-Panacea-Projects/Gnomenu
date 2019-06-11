@@ -19,6 +19,7 @@ const IconTheme = imports.gi.Gtk.IconTheme;
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 const Gtk = imports.gi.Gtk;
+const GObject = imports.gi.GObject;
 const GMenu = imports.gi.GMenu;
 const Clutter = imports.gi.Clutter;
 const St = imports.gi.St;
@@ -38,10 +39,11 @@ const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 const DND = imports.ui.dnd;
 
+const Util = imports.misc.util;
 const ExtensionSystem = imports.ui.extensionSystem;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const WorkspaceThumbnail = Me.imports.workspaceThumbnail;
+const WorkspaceThumbnail = Me.imports.myWorkspaceThumbnail;
 
 const Convenience = Me.imports.convenience;
 let settings = Convenience.getSettings('org.gnome.shell.extensions.gnomenu');
@@ -102,6 +104,21 @@ const MenuButtonPosition = {
     LEFT: 0,
     CENTER: 1,
     RIGHT: 2
+};
+
+
+function getCustIcon(icon_name) {
+        // let iconFile = Gio.File.new_for_path(Me.dir.get_child('icons').get_path() + "/" + icon_name + ".svg");
+        // if (iconFile.query_exists(null)) {
+
+        let iconFilePath = Me.dir.get_child('icons').get_path() + "/" + icon_name + ".svg";
+        if (GLib.file_test(iconFilePath, GLib.FileTest.EXISTS)) {
+    	    let gicon = Gio.icon_new_for_string(iconFilePath);
+    	    return gicon;
+        } else {
+            return false;
+        }
+
 }
 
 /* =========================================================================
@@ -111,27 +128,26 @@ const MenuButtonPosition = {
  * @desc    at https://extensions.gnome.org/extension/557/search-bookmarks/
  * ========================================================================= */
 
-const SearchWebBookmarks = new Lang.Class({
-    Name: 'Gnomenu.SearchWebBookmarks',
+var SearchWebBookmarks = class Gnomenu_SearchWebBookmarks {
 
-    _init: function() {
+    constructor() {
         Chromium.init();
         //Epiphany.init();
         Firefox.init();
         GoogleChrome.init();
         Midori.init();
         Opera.init();
-    },
+    }
 
-    bookmarksSort: function(a, b) {
+    bookmarksSort(a, b) {
         if (a.score < b.score) return 1;
         if (a.score > b.score) return -1;
         if (a.name < b.name) return -1;
         if (a.name > b.name) return 1;
         return 0;
-    },
+    }
 
-    destroy: function() {
+    destroy() {
         Chromium.deinit();
         //Epiphany.deinit();
         Firefox.deinit();
@@ -139,7 +155,7 @@ const SearchWebBookmarks = new Lang.Class({
         Midori.deinit();
         Opera.deinit();
     }
-});
+};
 
 
 /* =========================================================================
@@ -147,10 +163,9 @@ const SearchWebBookmarks = new Lang.Class({
  * @desc    A button with an icon that holds category info
  * ========================================================================= */
 
-const CategoryListButton = new Lang.Class({
-    Name: 'GnoMenu.CategoryListButton',
+var CategoryListButton = class GnoMenu_CategoryListButton {
 
-    _init: function (dir, altNameText, altIconName) {
+    constructor(dir, altNameText, altIconName) {
         this.buttonEnterCallback = null;
         this.buttonLeaveCallback = null;
         this.buttonPressCallback = null;
@@ -183,7 +198,11 @@ const CategoryListButton = new Lang.Class({
         this.buttonbox.add(this.label, {expand: true, x_fill: false, y_fill: false, x_align: St.Align.START, y_align: St.Align.MIDDLE});
         if (categoryIconName) {
             this.iconWrapper = new St.Bin({style_class: 'gnomenu-category-button-icon'});
-            this.icon = new St.Icon({icon_name: categoryIconName, icon_size: iconSize});
+            if (getCustIcon(categoryIconName)) {
+                this.icon = new St.Icon({gicon: getCustIcon(categoryIconName), icon_size: iconSize});
+            } else {
+                this.icon = new St.Icon({icon_name: categoryIconName, icon_size: iconSize});
+            }
             this.iconWrapper.add_actor(this.icon);
             this.buttonbox.add(this.iconWrapper, {expand: false, x_align: St.Align.MIDDLE, y_align: St.Align.MIDDLE});
         }
@@ -191,56 +210,56 @@ const CategoryListButton = new Lang.Class({
         this.actor.set_child(this.buttonbox);
 
         // Connect signals
-        this.actor.connect('touch-event', Lang.bind(this, this._onTouchEvent));
-    },
+        this.actor.connect('touch-event', this._onTouchEvent.bind(this));
+    }
 
-    setIconWrapperStyle: function(style) {
+    setIconWrapperStyle(style) {
         this.iconWrapper.set_style(style);
-    },
+    }
 
-    clearIconWrapperStyle: function() {
+    clearIconWrapperStyle() {
         this.iconWrapper.set_style(null);
-    },
+    }
 
-    setButtonEnterCallback: function(cb) {
+    setButtonEnterCallback(cb) {
         this.buttonEnterCallback = cb;
-        this.actor.connect('enter-event', Lang.bind(this, this.buttonEnterCallback));
-    },
+        this.actor.connect('enter-event', this.buttonEnterCallback.bind(this));
+    }
 
-    setButtonLeaveCallback: function(cb) {
+    setButtonLeaveCallback(cb) {
         this.buttonLeaveCallback = cb;
-        this.actor.connect('leave-event', Lang.bind(this, this.buttonLeaveCallback));
-    },
+        this.actor.connect('leave-event', this.buttonLeaveCallback.bind(this));
+    }
 
-    setButtonPressCallback: function(cb) {
+    setButtonPressCallback(cb) {
         this.buttonPressCallback = cb;
-        this.actor.connect('button-press-event', Lang.bind(this, this.buttonPressCallback));
-    },
+        this.actor.connect('button-press-event', this.buttonPressCallback.bind(this));
+    }
 
-    setButtonReleaseCallback: function(cb) {
+    setButtonReleaseCallback(cb) {
         this.buttonReleaseCallback = cb;
-        this.actor.connect('button-release-event', Lang.bind(this, this.buttonReleaseCallback));
-    },
+        this.actor.connect('button-release-event', this.buttonReleaseCallback.bind(this));
+    }
 
-    select: function() {
+    select() {
         this._ignoreHoverSelect = true;
         this.buttonEnterCallback.call();
-    },
+    }
 
-    unSelect: function() {
+    unSelect() {
         this._ignoreHoverSelect = false;
         this.buttonLeaveCallback.call();
-    },
+    }
 
-    click: function() {
+    click() {
         this.buttonPressCallback.call();
         this.buttonReleaseCallback.call();
-    },
+    }
 
-    _onTouchEvent : function (actor, event) {
+    _onTouchEvent(actor, event) {
         return Clutter.EVENT_PROPAGATE;
     }
-});
+};
 
 
 /* =========================================================================
@@ -248,10 +267,9 @@ const CategoryListButton = new Lang.Class({
  * @desc    A button with an icon that holds app info
  * ========================================================================= */
 
-const ShortcutButton = new Lang.Class({
-    Name: 'GnoMenu.ShortcutButton',
+var ShortcutButton = class GnoMenu_ShortcutButton {
 
-    _init: function (app, appType) {
+    constructor(app, appType) {
         this._app = app;
         this._type = appType;
         let style = "popup-menu-item gnomenu-shortcut-button";
@@ -286,30 +304,27 @@ const ShortcutButton = new Lang.Class({
         this.actor.set_child(this.buttonbox);
 
         // Connect signals
-        this.actor.connect('touch-event', Lang.bind(this, this._onTouchEvent));
+        this.actor.connect('touch-event', this._onTouchEvent.bind(this));
 
         // Connect drag-n-drop signals
         this._draggable = DND.makeDraggable(this.actor);
-        this._draggable.connect('drag-begin', Lang.bind(this,
-            function () {
+        this._draggable.connect('drag-begin', () => {
                 //this._removeMenuTimeout();
                 Main.overview.beginItemDrag(this);
-            }));
-        this._draggable.connect('drag-cancelled', Lang.bind(this,
-            function () {
+            });
+        this._draggable.connect('drag-cancelled', () => {
                 Main.overview.cancelledItemDrag(this);
-            }));
-        this._draggable.connect('drag-end', Lang.bind(this,
-            function () {
+            });
+        this._draggable.connect('drag-end', () => {
                Main.overview.endItemDrag(this);
-            }));
-    },
+            });
+    }
 
-    _onTouchEvent : function (actor, event) {
+    _onTouchEvent(actor, event) {
         return Clutter.EVENT_PROPAGATE;
-    },
+    }
 
-    getDragActor: function() {
+    getDragActor() {
         let appIcon;
         if (this._type == ApplicationType.APPLICATION) {
             appIcon = this._app.create_icon_texture(this._iconSize);
@@ -320,15 +335,15 @@ const ShortcutButton = new Lang.Class({
             appIcon = new St.Icon({gicon: gicon, icon_size: this._iconSize});
         }
         return appIcon;
-    },
+    }
 
     // Returns the original actor that should align with the actor
     // we show as the item is being dragged.
-    getDragActorSource: function() {
+    getDragActorSource() {
         return this.icon;
-    },
+    }
 
-    shellWorkspaceLaunch : function(params) {
+    shellWorkspaceLaunch(params) {
         params = Params.parse(params, { workspace: -1,
                                         timestamp: 0 });
 
@@ -352,7 +367,7 @@ const ShortcutButton = new Lang.Class({
                 GnoMenu.appsMenuButton.menu.toggle();
         }
     }
-});
+};
 
 
 /* =========================================================================
@@ -361,10 +376,9 @@ const ShortcutButton = new Lang.Class({
  * @desc    types of sources (application, places, recent)
  * ========================================================================= */
 
-const AppListButton = new Lang.Class({
-    Name: 'GnoMenu.AppListButton',
+var AppListButton = class GnoMenu_AppListButton {
 
-    _init: function (app, appType) {
+    constructor(app, appType) {
         this._app = app;
         this._type = appType;
         this._stateChangedId = 0;
@@ -407,37 +421,34 @@ const AppListButton = new Lang.Class({
         this.actor.set_child(this.buttonbox);
 
         // Connect signals
-        this.actor.connect('touch-event', Lang.bind(this, this._onTouchEvent));
+        this.actor.connect('touch-event', this._onTouchEvent.bind(this));
         if (appType == ApplicationType.APPLICATION) {
-            this._stateChangedId = this._app.connect('notify::state', Lang.bind(this, this._onStateChanged));
+            this._stateChangedId = this._app.connect('notify::state', this._onStateChanged.bind(this));
         }
 
         // Connect drag-n-drop signals
         this._draggable = DND.makeDraggable(this.actor);
-        this._draggable.connect('drag-begin', Lang.bind(this,
-            function () {
+        this._draggable.connect('drag-begin', () => {
                 //this._removeMenuTimeout();
                 Main.overview.beginItemDrag(this);
-            }));
-        this._draggable.connect('drag-cancelled', Lang.bind(this,
-            function () {
+            });
+        this._draggable.connect('drag-cancelled', () => {
                 Main.overview.cancelledItemDrag(this);
-            }));
-        this._draggable.connect('drag-end', Lang.bind(this,
-            function () {
+            });
+        this._draggable.connect('drag-end', () => {
                Main.overview.endItemDrag(this);
-            }));
+            });
 
         // Check if running state
         this._dot.opacity = 0;
         this._onStateChanged();
-    },
+    }
 
-    _onTouchEvent : function (actor, event) {
+    _onTouchEvent(actor, event) {
         return Clutter.EVENT_PROPAGATE;
-    },
+    }
 
-    _onStateChanged: function() {
+    _onStateChanged() {
         if (this._type == ApplicationType.APPLICATION) {
             if (this._app.state != Shell.AppState.STOPPED) {
                 this._dot.opacity = 255;
@@ -445,9 +456,9 @@ const AppListButton = new Lang.Class({
                 this._dot.opacity = 0;
             }
         }
-    },
+    }
 
-    getDragActor: function() {
+    getDragActor() {
         let appIcon;
         if (this._type == ApplicationType.APPLICATION) {
             appIcon = this._app.create_icon_texture(this._iconSize);
@@ -458,15 +469,15 @@ const AppListButton = new Lang.Class({
             appIcon = new St.Icon({gicon: gicon, icon_size: this._iconSize});
         }
         return appIcon;
-    },
+    }
 
     // Returns the original actor that should align with the actor
     // we show as the item is being dragged.
-    getDragActorSource: function() {
+    getDragActorSource() {
         return this.icon;
-    },
+    }
 
-    shellWorkspaceLaunch : function(params) {
+    shellWorkspaceLaunch(params) {
         params = Params.parse(params, { workspace: -1,
                                         timestamp: 0 });
 
@@ -490,7 +501,7 @@ const AppListButton = new Lang.Class({
                 GnoMenu.appsMenuButton.menu.toggle();
         }
     }
-});
+};
 Signals.addSignalMethods(AppListButton.prototype);
 
 
@@ -500,10 +511,9 @@ Signals.addSignalMethods(AppListButton.prototype);
  * @desc    types of sources (application, places, recent)
  * ========================================================================= */
 
-const AppGridButton = new Lang.Class({
-    Name: 'GnoMenu.AppGridButton',
+var AppGridButton = class GnoMenu_AppGridButton {
 
-    _init: function(app, appType, includeText) {
+    constructor(app, appType, includeText) {
         this._app = app;
         this._type = appType;
         this._stateChangedId = 0;
@@ -563,37 +573,34 @@ const AppGridButton = new Lang.Class({
         this.actor.set_child(this.buttonbox);
 
         // Connect signals
-        this.actor.connect('touch-event', Lang.bind(this, this._onTouchEvent));
+        this.actor.connect('touch-event', this._onTouchEvent.bind(this));
         if (appType == ApplicationType.APPLICATION) {
-            this._stateChangedId = this._app.connect('notify::state', Lang.bind(this, this._onStateChanged));
+            this._stateChangedId = this._app.connect('notify::state', this._onStateChanged.bind(this));
         }
 
         // Connect drag-n-drop signals
         this._draggable = DND.makeDraggable(this.actor);
-        this._draggable.connect('drag-begin', Lang.bind(this,
-            function () {
+        this._draggable.connect('drag-begin', () => {
                 //this._removeMenuTimeout();
                 Main.overview.beginItemDrag(this);
-            }));
-        this._draggable.connect('drag-cancelled', Lang.bind(this,
-            function () {
+            });
+        this._draggable.connect('drag-cancelled', () => {
                 Main.overview.cancelledItemDrag(this);
-            }));
-        this._draggable.connect('drag-end', Lang.bind(this,
-            function () {
+            });
+        this._draggable.connect('drag-end', () => {
                Main.overview.endItemDrag(this);
-            }));
+            });
 
         // Check if running state
         this._dot.opacity = 0;
         this._onStateChanged();
-    },
+    }
 
-    _onTouchEvent : function (actor, event) {
+    _onTouchEvent(actor, event) {
         return Clutter.EVENT_PROPAGATE;
-    },
+    }
 
-    _onStateChanged: function() {
+    _onStateChanged() {
         if (this._type == ApplicationType.APPLICATION) {
             if (this._app.state != Shell.AppState.STOPPED) {
                 this._dot.opacity = 255;
@@ -601,9 +608,9 @@ const AppGridButton = new Lang.Class({
                 this._dot.opacity = 0;
             }
         }
-    },
+    }
 
-    getDragActor: function() {
+    getDragActor() {
         let appIcon;
         if (this._type == ApplicationType.APPLICATION) {
             appIcon = this._app.create_icon_texture(this._iconSize);
@@ -614,15 +621,15 @@ const AppGridButton = new Lang.Class({
             appIcon = new St.Icon({gicon: gicon, icon_size: this._iconSize});
         }
         return appIcon;
-    },
+    }
 
     // Returns the original actor that should align with the actor
     // we show as the item is being dragged.
-    getDragActorSource: function() {
+    getDragActorSource() {
         return this.icon;
-    },
+    }
 
-    shellWorkspaceLaunch : function(params) {
+    shellWorkspaceLaunch(params) {
         params = Params.parse(params, { workspace: -1,
                                         timestamp: 0 });
 
@@ -646,7 +653,7 @@ const AppGridButton = new Lang.Class({
                 GnoMenu.appsMenuButton.menu.toggle();
         }
     }
-});
+};
 Signals.addSignalMethods(AppGridButton.prototype);
 
 
@@ -656,10 +663,9 @@ Signals.addSignalMethods(AppGridButton.prototype);
  * @impl    Used for user/power group buttons
  * ========================================================================= */
 
-const GroupButton = new Lang.Class({
-    Name: 'GnoMenu.GroupButton',
+var GroupButton = class GnoMenu_GroupButton {
 
-    _init: function(iconName, iconSize, labelText, params) {
+    constructor(iconName, iconSize, labelText, params) {
         this._opened = false;
         this.buttonEnterCallback = null;
         this.buttonLeaveCallback = null;
@@ -674,8 +680,12 @@ const GroupButton = new Lang.Class({
 
         if (iconName && iconSize) {
             this._iconSize = iconSize;
-            //this.icon = new St.Icon({icon_name: iconName, icon_size: iconSize, icon_type: St.IconType.SYMBOLIC});
-            this.icon = new St.Icon({icon_name: iconName, icon_size: iconSize});
+            // //this.icon = new St.Icon({icon_name: iconName, icon_size: iconSize, icon_type: St.IconType.SYMBOLIC});
+            if (getCustIcon(iconName)) {
+                this.icon = new St.Icon({gicon: getCustIcon(iconName), icon_size: iconSize});
+            } else {
+                this.icon = new St.Icon({icon_name: iconName, icon_size: iconSize});
+            }
             this.buttonbox.add(this.icon, {x_fill: false, y_fill: false,x_align: St.Align.MIDDLE, y_align: St.Align.MIDDLE});
         }
         if (labelText) {
@@ -688,53 +698,58 @@ const GroupButton = new Lang.Class({
         this.actor.set_child(this.buttonbox);
 
         // Connect signals
-        this.actor.connect('touch-event', Lang.bind(this, this._onTouchEvent));
-    },
+        this.actor.connect('touch-event', this._onTouchEvent.bind(this));
+    }
 
-    setIcon: function(iconName) {
-        let newIcon = new St.Icon({icon_name: iconName, icon_size: this._iconSize});
-        this.buttonbox.replace_child(this.icon, newIcon);
-        this.icon.destroy();
-        this.icon = newIcon;
-    },
+    setIcon(iconName) {
+        if (getCustIcon(iconName)) {
+            this.icon.set_gicon(getCustIcon(iconName));
+        } else {
+            // let newIcon = new St.Icon({icon_name: iconName, icon_size: this._iconSize});
+            // this.buttonbox.replace_child(this.icon, newIcon);
+            // this.icon.destroy();
+            // this.icon = newIcon;
+            this.icon.set_icon_name(iconName);
+        }
+    }
 
-    setButtonEnterCallback: function(cb) {
+    setButtonEnterCallback(cb) {
         this.buttonEnterCallback = cb;
-        this.actor.connect('enter-event', Lang.bind(this, this.buttonEnterCallback));
-    },
+        this.actor.connect('enter-event', this.buttonEnterCallback.bind(this));
+    }
 
-    setButtonLeaveCallback: function(cb) {
+    setButtonLeaveCallback(cb) {
         this.buttonLeaveCallback = cb;
-        this.actor.connect('leave-event', Lang.bind(this, this.buttonLeaveCallback));
-    },
+        this.actor.connect('leave-event', this.buttonLeaveCallback.bind(this));
+    }
 
-    setButtonPressCallback: function(cb) {
+    setButtonPressCallback(cb) {
         this.buttonPressCallback = cb;
-        this.actor.connect('button-press-event', Lang.bind(this, this.buttonPressCallback));
-    },
+        this.actor.connect('button-press-event', this.buttonPressCallback.bind(this));
+    }
 
-    setButtonReleaseCallback: function(cb) {
+    setButtonReleaseCallback(cb) {
         this.buttonReleaseCallback = cb;
-        this.actor.connect('button-release-event', Lang.bind(this, this.buttonReleaseCallback));
-    },
+        this.actor.connect('button-release-event', this.buttonReleaseCallback.bind(this));
+    }
 
-    select: function() {
+    select() {
         this.buttonEnterCallback.call();
-    },
+    }
 
-    unSelect: function() {
+    unSelect() {
         this.buttonLeaveCallback.call();
-    },
+    }
 
-    click: function() {
+    click() {
         this.buttonPressCallback.call();
         this.buttonReleaseCallback.call();
-    },
+    }
 
-    _onTouchEvent : function (actor, event) {
+    _onTouchEvent(actor, event) {
         return Clutter.EVENT_PROPAGATE;
     }
-});
+};
 Signals.addSignalMethods(GroupButton.prototype);
 
 
@@ -744,12 +759,11 @@ Signals.addSignalMethods(GroupButton.prototype);
  * @impl    Used for view/apps buttons on top panel
  * ========================================================================= */
 
-const PanelButton = new Lang.Class({
-    Name: 'GnoMenu.PanelButton',
-    Extends: PanelMenu.Button,
+var PanelButton = GObject.registerClass(
+class GnoMenu_PanelButton extends PanelMenu.Button {
 
-    _init: function(nameText, iconName) {
-        this.parent(0.0, '', true);
+    _init(nameText, iconName) {
+        super._init(0.0, '', true);
 
         this._box = new St.BoxLayout({ style_class: 'gnomenu-panel-button' });
         this.actor.add_actor(this._box);
@@ -778,14 +792,12 @@ const PanelButton = new Lang.Class({
  * @impl    Used for menu button on top panel
  * ========================================================================= */
 
-const PanelMenuButton = new Lang.Class({
-    Name: 'GnoMenu.PanelMenuButton',
-    Extends: PanelMenu.Button,
-
-    _init: function() {
+var PanelMenuButton = GObject.registerClass(
+class GnoMenu_PanelMenuButton extends PanelMenu.Button {
+    _init() {
 
         // NOTE: can't get label to take using this method. Possible Gnome Shell bug?
-        this.parent(0.0, '');
+        super._init(0.0, '');
 
         this.actor.add_style_class_name('panel-button');
         this._bin = new St.Widget({ layout_manager: new Clutter.BinLayout() });
@@ -801,8 +813,8 @@ const PanelMenuButton = new Lang.Class({
             this._hotspot.y = 0;
             this._hotspot.height = 1;
             this._bin.add_child(this._hotspot);
-            this._hotspot.connect('enter-event', Lang.bind(this, this._onHotSpotEntered));
-            this._hotspot.connect('leave-event', Lang.bind(this, this._onHotSpotExited));
+            this._hotspot.connect('enter-event', this._onHotSpotEntered.bind(this));
+            this._hotspot.connect('leave-event', this._onHotSpotExited.bind(this));
         }
 
         // Add icon to button
@@ -831,9 +843,9 @@ const PanelMenuButton = new Lang.Class({
             this._box.add(PopupMenu.arrowIcon(St.Side.BOTTOM));
         }
 
-        this.menu.connect('open-state-changed', Lang.bind(this, this._onOpenStateToggled));
-        this.actor.connect('key-press-event', Lang.bind(this, this._onPanelMenuKeyPress));
-        this.menu.actor.connect('key-press-event', Lang.bind(this, this._onMenuKeyPress));
+        this.menu.connect('open-state-changed', this._onOpenStateToggled.bind(this));
+        this.actor.connect('key-press-event', this._onPanelMenuKeyPress.bind(this));
+        this.menu.actor.connect('key-press-event', this._onMenuKeyPress.bind(this));
 
         this.applicationsByCategory = {};
         this.favorites = [];
@@ -860,34 +872,35 @@ const PanelMenuButton = new Lang.Class({
         this.recentManager = Gtk.RecentManager.get_default();
         this.placesManager = null;
         this._display();
-    },
+    }
 
-    destroy: function() {
-        this.parent();
+    destroy() {
+        // this.parent();
+        super.destroy();
         this._searchWebBookmarks.destroy();
-    },
+    }
 
     // handler for when PanelMenuButton hotspot enter event
-    _onHotSpotEntered: function() {
+    _onHotSpotEntered() {
         if (_DEBUG_) global.log("PanelMenuButton: _onHotSpotEntered");
         let hoverDelay = settings.get_int('panel-menu-hotspot-delay');
-        this._hoverTimeoutId = Mainloop.timeout_add((hoverDelay >0) ? hoverDelay : 0, Lang.bind(this, function() {
+        this._hoverTimeoutId = Mainloop.timeout_add((hoverDelay >0) ? hoverDelay : 0, () => {
             //if (!this.menu.isOpen) {
                 this.menu.toggle();
             //}
             this._hoverTimeoutId = 0;
-         }));
-    },
+         });
+    }
 
     // handler for when PanelMenuButton hotspot leave event
-    _onHotSpotExited: function() {
+    _onHotSpotExited() {
         if (_DEBUG_) global.log("PanelMenuButton: _onHotSpotExited");
         if (this._hoverTimeoutId > 0) {
             Mainloop.source_remove(this._hoverTimeoutId);
         }
-    },
+    }
 
-    _onOpenStateToggled: function(menu, open) {
+    _onOpenStateToggled(menu, open) {
         if (open) {
             // SANITY CHECK - verify hotspot location --------
             //let [x, y] = this.actor.get_transformed_position();
@@ -997,7 +1010,7 @@ const PanelMenuButton = new Lang.Class({
             if (this._menuToggleTimeoutId > 0)
                 Mainloop.source_remove(this._menuToggleTimeoutId);
 
-            this._menuToggleTimeoutId = Mainloop.timeout_add(100, Lang.bind(this, this.delayToggle));
+            this._menuToggleTimeoutId = Mainloop.timeout_add(100, this.delayToggle.bind(this));
 
         } else {
             this.resetSearch();
@@ -1013,23 +1026,23 @@ const PanelMenuButton = new Lang.Class({
 
             this.thumbnailsBox._destroyThumbnails();
         }
-    },
+    }
 
-    delayToggle: function() {
+    delayToggle() {
         this._calculateApplicationsBoxWidth();
         this._resetDisplayApplicationsToStartup();
-    },
+    }
 
-    refresh: function() {
+    refresh() {
         this._clearAll();
         this._display();
-    },
+    }
 
-    _clearAll: function() {
+    _clearAll() {
         this.menu.removeAll();
-    },
+    }
 
-    _setButtonHeight: function(button, height) {
+    _setButtonHeight(button, height) {
         let adjustedHeight = height;
         let buttonMargin, buttonBorder, buttonPadding;
         if (button.get_stage()) {
@@ -1055,9 +1068,9 @@ const PanelMenuButton = new Lang.Class({
             adjustedHeight = height - (buttonBorder.top + buttonBorder.bottom + buttonPadding.top + buttonPadding.bottom);
         }
         button.height = adjustedHeight;
-    },
+    }
 
-    _loadCategories: function(dir, root) {
+    _loadCategories(dir, root) {
         var rootDir = root;
         //if (_DEBUG_) global.log("PanelMenuButton: _loadCategories - dir="+dir.get_menu_id()+" root="+rootDir);
         var iter = dir.iter();
@@ -1088,9 +1101,9 @@ const PanelMenuButton = new Lang.Class({
                 }
             }
         }
-    },
+    }
 
-    _selectCategory: function(button) {
+    _selectCategory(button) {
         this.resetSearch();
         this._clearUserGroupButtons();
         this._clearApplicationsBox(button);
@@ -1100,17 +1113,17 @@ const PanelMenuButton = new Lang.Class({
         } else {
             this._displayApplications(this._listApplications(category.get_menu_id()));
         }
-    },
+    }
 
-    _selectFavorites: function(button) {
+    _selectFavorites(button) {
         this.resetSearch();
         this._clearApplicationsBox(button);
 
         let favorites = this.favorites;
         this._displayApplications(favorites);
-    },
+    }
 
-    _selectAllPlaces: function(button) {
+    _selectAllPlaces(button) {
         this.resetSearch();
         this._clearApplicationsBox(button);
 
@@ -1120,41 +1133,41 @@ const PanelMenuButton = new Lang.Class({
 
         let allPlaces = places.concat(bookmarks.concat(devices));
         this._displayApplications(null, allPlaces);
-    },
+    }
 
-    _selectBookmarks: function(button) {
+    _selectBookmarks(button) {
         this.resetSearch();
         this._clearApplicationsBox(button);
 
         let bookmarks = this._listBookmarks();
         this._displayApplications(null, bookmarks);
-    },
+    }
 
-    _selectDevices: function(button) {
+    _selectDevices(button) {
         this.resetSearch();
         this._clearApplicationsBox(button);
 
         let devices = this._listDevices();
         this._displayApplications(null, devices);
-    },
+    }
 
-    _selectRecent: function(button) {
+    _selectRecent(button) {
         this.resetSearch();
         this._clearApplicationsBox(button);
 
         let recent = this._listRecent();
         this._displayApplications(null, null, recent);
-    },
+    }
 
-    _selectWebBookmarks: function(button) {
+    _selectWebBookmarks(button) {
         this.resetSearch();
         this._clearApplicationsBox(button);
 
         let webBookmarks = this._listWebBookmarks();
         this._displayApplications(null, webBookmarks);
-    },
+    }
 
-    _switchApplicationsView: function(mode) {
+    _switchApplicationsView(mode) {
         this._applicationsViewMode = mode;
         let refresh = true;
 
@@ -1181,9 +1194,9 @@ const PanelMenuButton = new Lang.Class({
 
         this._clearApplicationsBox(null, refresh);
         this._displayApplications(null, null, null, refresh);
-    },
+    }
 
-    _clearCategorySelections: function(container, selectedCategory) {
+    _clearCategorySelections(container, selectedCategory) {
         let categoryActors = container.get_children();
         if (categoryActors) {
             for (let i = 0; i < categoryActors.length; i++) {
@@ -1195,14 +1208,14 @@ const PanelMenuButton = new Lang.Class({
                 }
             }
         }
-    },
+    }
 
-    _clearUserGroupButtons: function() {
+    _clearUserGroupButtons() {
         this.recentCategory._opened = false;
         this.webBookmarksCategory._opened = false;
-    },
+    }
 
-    _clearTabFocusSelections: function(selectedBox, resetSearch) {
+    _clearTabFocusSelections(selectedBox, resetSearch) {
         this._selectedItemIndex = -1;
         this._clearActiveContainerSelections();
         this._adjustThemeForCompatibility();
@@ -1223,6 +1236,7 @@ const PanelMenuButton = new Lang.Class({
             wrapper.set_style(focusStyle);
         } else if (selectedBox == this.thumbnailsBox) {
             let wrapper = this.workspacesScrollBox;
+            // let wrapper = this.workspacesWrapper;
             wrapper.set_style(focusStyle);
         } else if (selectedBox == this.shortcutsBox) {
             let wrapper = this.shortcutsScrollBox;
@@ -1233,9 +1247,9 @@ const PanelMenuButton = new Lang.Class({
 
         if (selectedBox!=this.searchEntry && resetSearch)
             this.resetSearch();
-    },
+    }
 
-    _clearActiveContainerSelections: function(selectedContainerActor) {
+    _clearActiveContainerSelections(selectedContainerActor) {
         if (!this._activeContainer)
             return;
 
@@ -1270,9 +1284,9 @@ const PanelMenuButton = new Lang.Class({
                     actor._delegate.unSelect();
             }
         });
-    },
+    }
 
-    _clearApplicationSelections: function(selectedApplication) {
+    _clearApplicationSelections(selectedApplication) {
         this.applicationsListBox.get_children().forEach(function(actor) {
             if (selectedApplication && (actor == selectedApplication)) {
                 actor.add_style_class_name('selected');
@@ -1288,9 +1302,9 @@ const PanelMenuButton = new Lang.Class({
                 actor.remove_style_class_name('selected');
             }
         });
-    },
+    }
 
-    _clearApplicationsBox: function(selectedCategory, refresh){
+    _clearApplicationsBox(selectedCategory, refresh){
         let listActors = this.applicationsListBox.get_children();
         if (listActors) {
             for (let i=0; i<listActors.length; i++) {
@@ -1322,9 +1336,9 @@ const PanelMenuButton = new Lang.Class({
                 }
             }
         }
-    },
+    }
 
-    _listPlaces: function(pattern) {
+    _listPlaces(pattern) {
         if (!this.placesManager)
             return null;
         let places = this.placesManager.getDefaultPlaces();
@@ -1334,9 +1348,9 @@ const PanelMenuButton = new Lang.Class({
                 res.push(places[id]);
         }
         return res;
-    },
+    }
 
-    _listBookmarks: function(pattern){
+    _listBookmarks(pattern){
         if (!this.placesManager)
             return null;
         let bookmarks = this.placesManager.getBookmarks();
@@ -1346,9 +1360,9 @@ const PanelMenuButton = new Lang.Class({
                 res.push(bookmarks[id]);
         }
         return res;
-    },
+    }
 
-    _listWebBookmarks: function(pattern) {
+    _listWebBookmarks(pattern) {
         if (_DEBUG_) global.log("PanelMenuButton: _listWebBookmarks");
         if (!this._searchWebErrorsShown) {
             if (!Firefox.Gda) {
@@ -1391,9 +1405,9 @@ const PanelMenuButton = new Lang.Class({
 
         res.sort(this._searchWebBookmarks.bookmarksSort);
         return res;
-    },
+    }
 
-    _listDevices: function(pattern) {
+    _listDevices(pattern) {
         if (!this.placesManager)
             return null;
         let devices = this.placesManager.getMounts();
@@ -1403,9 +1417,9 @@ const PanelMenuButton = new Lang.Class({
                 res.push(devices[id]);
         }
         return res;
-    },
+    }
 
-    _listRecent: function(pattern) {
+    _listRecent(pattern) {
         let recentFiles = this.recentManager.get_items();
         let res = new Array();
 
@@ -1423,9 +1437,9 @@ const PanelMenuButton = new Lang.Class({
             }
         }
         return res;
-    },
+    }
 
-    _listApplications: function(category_menu_id, pattern) {
+    _listApplications(category_menu_id, pattern) {
         let applist;
 
         if (category_menu_id == 'all') {
@@ -1473,9 +1487,9 @@ const PanelMenuButton = new Lang.Class({
         }
 
         return res;
-    },
+    }
 
-    _adjustThemeForCompatibility: function() {
+    _adjustThemeForCompatibility() {
         // Adjust menu and top pane padding from theme
         if (this.menu._boxPointer.bin.get_stage()) {
             let child = this.menu._boxPointer.bin.get_child();
@@ -1499,19 +1513,51 @@ const PanelMenuButton = new Lang.Class({
         }
 
         // Adjust certain menu objects for theme color, border, etc.
-        let separatorBorderColor = null, separatorBorderColorAlpha = "1";
+        // let separatorBorderColor = null, separatorBorderColorAlpha = "1";
         let styleBorderColor = "", styleBackgroundColor = "", styleColor = "";
-        if (this._dummySeparator._separator.get_stage()) {
-            let themeNode = this._dummySeparator._separator.get_theme_node();
-            separatorBorderColor = themeNode.get_border_color(St.Side.TOP);
+        // if (this._dummySeparator._separator.get_stage()) {
+        //     let themeNode = this._dummySeparator._separator.get_theme_node();
+        //     separatorBorderColor = themeNode.get_border_color(St.Side.TOP);
+        //     if (separatorBorderColor.alpha) {
+        //         separatorBorderColorAlpha = separatorBorderColor.alpha / 255;
+        //     }
+        //     styleBorderColor = "border-color: rgba(" + separatorBorderColor.red + "," + separatorBorderColor.green + "," + separatorBorderColor.blue + "," + separatorBorderColorAlpha + ")";
+        //     styleBackgroundColor = "background-color: rgba(" + separatorBorderColor.red + "," + separatorBorderColor.green + "," + separatorBorderColor.blue + "," +  separatorBorderColorAlpha + ")";
+        //     styleColor = "color: rgba(" + separatorBorderColor.red + "," + separatorBorderColor.green + "," + separatorBorderColor.blue + "," +  separatorBorderColorAlpha + ")";
+        //
+        // }
+        if (this._dummyBox1.get_stage()) {
+            let themeNode = this._dummyBox1.get_theme_node();
+            let separatorBorderColorAlpha = "1";
+            let separatorBorderColor = themeNode.get_border_color(St.Side.TOP);
+            let backgroundColorAlpha = "1";
+            let backgroundColor = themeNode.get_background_color();
+            if (backgroundColor.alpha) {
+                backgroundColorAlpha = backgroundColor.alpha / 255;
+            }
             if (separatorBorderColor.alpha) {
                 separatorBorderColorAlpha = separatorBorderColor.alpha / 255;
             }
             styleBorderColor = "border-color: rgba(" + separatorBorderColor.red + "," + separatorBorderColor.green + "," + separatorBorderColor.blue + "," + separatorBorderColorAlpha + ")";
             styleBackgroundColor = "background-color: rgba(" + separatorBorderColor.red + "," + separatorBorderColor.green + "," + separatorBorderColor.blue + "," +  separatorBorderColorAlpha + ")";
             styleColor = "color: rgba(" + separatorBorderColor.red + "," + separatorBorderColor.green + "," + separatorBorderColor.blue + "," +  separatorBorderColorAlpha + ")";
-
         }
+        // if (this._dummyBox2.get_stage()) {
+        //     let themeNode = this._dummyBox2.get_theme_node();
+        //     let separatorBorderColorAlpha = "1";
+        //     let separatorBorderColor = themeNode.get_border_color(St.Side.TOP);
+        //     let backgroundColorAlpha = "1";
+        //     let backgroundColor = themeNode.get_background_color();
+        //     if (backgroundColor.alpha) {
+        //         backgroundColorAlpha = backgroundColor.alpha / 255;
+        //     }
+        //     if (separatorBorderColor.alpha) {
+        //         separatorBorderColorAlpha = separatorBorderColor.alpha / 255;
+        //     }
+        //     // styleBorderColor = "border-color: rgba(" + separatorBorderColor.red + "," + separatorBorderColor.green + "," + separatorBorderColor.blue + "," + separatorBorderColorAlpha + ")";
+        //     // styleBackgroundColor = "background-color: rgba(" + backgroundColor.red + "," + backgroundColor.green + "," + backgroundColor.blue + "," +  backgroundColorAlpha + ")";
+        //     // styleColor = "color: rgba(" + separatorBorderColor.red + "," + separatorBorderColor.green + "," + separatorBorderColor.blue + "," +  separatorBorderColorAlpha + ")";
+        // }
 
         // Style used by category buttons to indicate selected state
         this._styleColor = styleColor;
@@ -1529,10 +1575,10 @@ const PanelMenuButton = new Lang.Class({
 
         // Reset to user theme
         this.workspacesScrollBox.set_style(null);
-        this.applicationsBoxWrapper.set_style(null);
-    },
+        // this.applicationsBoxWrapper.set_style(null);
+    }
 
-    _calculateApplicationsBoxWidth: function() {
+    _calculateApplicationsBoxWidth() {
         // Calculate visible menu boxes and adjust application scroll box width accordingly
         let minWidth = this.topPane.width - (this._widthCategoriesBox + this._widthShortcutsBox + this.workspacesWrapper.width);
         this.bottomPane.width = this.topPane.width;
@@ -1645,9 +1691,9 @@ const PanelMenuButton = new Lang.Class({
         }
 
         this._clearApplicationsBox();
-    },
+    }
 
-    _resetDisplayApplicationsToStartup: function() {
+    _resetDisplayApplicationsToStartup() {
         if (this._startupAppsView == StartupAppsDisplay.ALL) {
             // TODO: All apps hardcoded at category position 0
             let allAppCategoryButton = this.categoriesBox.get_child_at_index(0)._delegate;
@@ -1677,9 +1723,9 @@ const PanelMenuButton = new Lang.Class({
         } else {
             this._clearApplicationsBox();
         }
-    },
+    }
 
-    _displayApplications: function(apps, places, recent, refresh) {
+    _displayApplications(apps, places, recent, refresh) {
         let viewMode = this._applicationsViewMode;
         let appType;
 
@@ -1702,55 +1748,55 @@ const PanelMenuButton = new Lang.Class({
                 if (refresh || !this._applications[app]) {
                     if (viewMode == ApplicationsViewMode.LIST) { // ListView
                         let appListButton = new AppListButton(app, appType);
-                        appListButton.actor.connect('enter-event', Lang.bind(this, function() {
+                        appListButton.actor.connect('enter-event', () => {
                           appListButton.actor.add_style_class_name('selected');
                            this.selectedAppTitle.set_text(appListButton._app.get_name());
                            if (appListButton._app.get_description()) this.selectedAppDescription.set_text(appListButton._app.get_description());
                            else this.selectedAppDescription.set_text("");
-                        }));
-                        appListButton.actor.connect('leave-event', Lang.bind(this, function() {
+                        });
+                        appListButton.actor.connect('leave-event', () => {
                           appListButton.actor.remove_style_class_name('selected');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
-                        }));
-                        appListButton.actor.connect('button-press-event', Lang.bind(this, function() {
+                        });
+                        appListButton.actor.connect('button-press-event', () => {
                             appListButton.actor.add_style_pseudo_class('pressed');
-                        }));
-                        appListButton.actor.connect('button-release-event', Lang.bind(this, function() {
+                        });
+                        appListButton.actor.connect('button-release-event', () => {
                            appListButton.actor.remove_style_pseudo_class('pressed');
                           appListButton.actor.remove_style_class_name('selected');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
                            appListButton._app.open_new_window(-1);
                            this.menu.close();
-                        }));
+                        });
                         this.applicationsListBox.add_actor(appListButton.actor);
                     } else { // GridView
                         let includeTextLabel = (settings.get_int('apps-grid-label-width') > 0) ? true : false;
                         let appGridButton = new AppGridButton(app, appType, includeTextLabel);
                         appGridButton.buttonbox.width = this._appGridButtonWidth;
-                        appGridButton.actor.connect('enter-event', Lang.bind(this, function() {
+                        appGridButton.actor.connect('enter-event', () => {
                           appGridButton.actor.add_style_class_name('selected');
                            this.selectedAppTitle.set_text(appGridButton._app.get_name());
                            if (appGridButton._app.get_description()) this.selectedAppDescription.set_text(appGridButton._app.get_description());
                            else this.selectedAppDescription.set_text("");
-                        }));
-                        appGridButton.actor.connect('leave-event', Lang.bind(this, function() {
+                        });
+                        appGridButton.actor.connect('leave-event', () => {
                           appGridButton.actor.remove_style_class_name('selected');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
-                        }));
-                        appGridButton.actor.connect('button-press-event', Lang.bind(this, function() {
+                        });
+                        appGridButton.actor.connect('button-press-event', () => {
                             appGridButton.actor.add_style_pseudo_class('pressed');
-                        }));
-                        appGridButton.actor.connect('button-release-event', Lang.bind(this, function() {
+                        });
+                        appGridButton.actor.connect('button-release-event', () => {
                            appGridButton.actor.remove_style_pseudo_class('pressed');
                           appGridButton.actor.remove_style_class_name('selected');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
                            appGridButton._app.open_new_window(-1);
                            this.menu.close();
-                        }));
+                        });
                         let gridLayout = this.applicationsGridBox.layout_manager;
                         gridLayout.pack(appGridButton.actor, column, rownum);
                         column ++;
@@ -1779,21 +1825,21 @@ const PanelMenuButton = new Lang.Class({
                 if (refresh || !this._places[app.name]) {
                     if (viewMode == ApplicationsViewMode.LIST) { // ListView
                         let appListButton = new AppListButton(app, appType);
-                        appListButton.actor.connect('enter-event', Lang.bind(this, function() {
+                        appListButton.actor.connect('enter-event', () => {
                           appListButton.actor.add_style_class_name('selected');
                            this.selectedAppTitle.set_text(appListButton._app.name);
                            if (appListButton._app.description) this.selectedAppDescription.set_text(appListButton._app.description);
                            else this.selectedAppDescription.set_text("");
-                        }));
-                        appListButton.actor.connect('leave-event', Lang.bind(this, function() {
+                        });
+                        appListButton.actor.connect('leave-event', () => {
                           appListButton.actor.remove_style_class_name('selected');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
-                        }));
-                        appListButton.actor.connect('button-press-event', Lang.bind(this, function() {
+                        });
+                        appListButton.actor.connect('button-press-event', () => {
                             appListButton.actor.add_style_pseudo_class('pressed');
-                        }));
-                        appListButton.actor.connect('button-release-event', Lang.bind(this, function() {
+                        });
+                        appListButton.actor.connect('button-release-event', () => {
                            appListButton.actor.remove_style_pseudo_class('pressed');
                           appListButton.actor.remove_style_class_name('selected');
                            this.selectedAppTitle.set_text("");
@@ -1804,26 +1850,26 @@ const PanelMenuButton = new Lang.Class({
                                appListButton._app.launch();
                            }
                            this.menu.close();
-                        }));
+                        });
                         this.applicationsListBox.add_actor(appListButton.actor);
                     } else { // GridView
                         let appGridButton = new AppGridButton(app, appType, true);
                         appGridButton.buttonbox.width = this._appGridButtonWidth;
-                        appGridButton.actor.connect('enter-event', Lang.bind(this, function() {
+                        appGridButton.actor.connect('enter-event', () => {
                           appGridButton.actor.add_style_class_name('selected');
                            this.selectedAppTitle.set_text(appGridButton._app.name);
                            if (appGridButton._app.description) this.selectedAppDescription.set_text(appGridButton._app.description);
                            else this.selectedAppDescription.set_text("");
-                        }));
-                        appGridButton.actor.connect('leave-event', Lang.bind(this, function() {
+                        });
+                        appGridButton.actor.connect('leave-event', () => {
                           appGridButton.actor.remove_style_class_name('selected');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
-                        }));
-                        appGridButton.actor.connect('button-press-event', Lang.bind(this, function() {
+                        });
+                        appGridButton.actor.connect('button-press-event', () => {
                             appGridButton.actor.add_style_pseudo_class('pressed');
-                        }));
-                        appGridButton.actor.connect('button-release-event', Lang.bind(this, function() {
+                        });
+                        appGridButton.actor.connect('button-release-event', () => {
                            appGridButton.actor.remove_style_pseudo_class('pressed');
                           appGridButton.actor.remove_style_class_name('selected');
                            this.selectedAppTitle.set_text("");
@@ -1834,7 +1880,7 @@ const PanelMenuButton = new Lang.Class({
                                appGridButton._app.launch();
                            }
                            this.menu.close();
-                        }));
+                        });
                         let gridLayout = this.applicationsGridBox.layout_manager;
                         gridLayout.pack(appGridButton.actor, column, rownum);
                         column ++;
@@ -1864,54 +1910,54 @@ const PanelMenuButton = new Lang.Class({
                 if (refresh || !this._recent[app.name]) {
                     if (viewMode == ApplicationsViewMode.LIST) { // ListView
                         let appListButton = new AppListButton(app, appType);
-                        appListButton.actor.connect('enter-event', Lang.bind(this, function() {
+                        appListButton.actor.connect('enter-event', () => {
                           appListButton.actor.add_style_class_name('selected');
                            this.selectedAppTitle.set_text(appListButton._app.name);
                            if (appListButton._app.description) this.selectedAppDescription.set_text(appListButton._app.description);
                            else this.selectedAppDescription.set_text("");
-                        }));
-                        appListButton.actor.connect('leave-event', Lang.bind(this, function() {
+                        });
+                        appListButton.actor.connect('leave-event', () => {
                           appListButton.actor.remove_style_class_name('selected');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
-                        }));
-                        appListButton.actor.connect('button-press-event', Lang.bind(this, function() {
+                        });
+                        appListButton.actor.connect('button-press-event', () => {
                             appListButton.actor.add_style_pseudo_class('pressed');
-                        }));
-                        appListButton.actor.connect('button-release-event', Lang.bind(this, function() {
+                        });
+                        appListButton.actor.connect('button-release-event', () => {
                            appListButton.actor.remove_style_pseudo_class('pressed');
                           appListButton.actor.remove_style_class_name('selected');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
                            Gio.app_info_launch_default_for_uri(app.uri, global.create_app_launch_context(0, -1));
                            this.menu.close();
-                        }));
+                        });
                         this.applicationsListBox.add_actor(appListButton.actor);
                     } else { // GridView
                         let appGridButton = new AppGridButton(app, appType, true);
                         appGridButton.buttonbox.width = this._appGridButtonWidth;
-                        appGridButton.actor.connect('enter-event', Lang.bind(this, function() {
+                        appGridButton.actor.connect('enter-event', () => {
                           appGridButton.actor.add_style_class_name('selected');
                            this.selectedAppTitle.set_text(appGridButton._app.name);
                            if (appGridButton._app.description) this.selectedAppDescription.set_text(appGridButton._app.description);
                            else this.selectedAppDescription.set_text("");
-                        }));
-                        appGridButton.actor.connect('leave-event', Lang.bind(this, function() {
+                        });
+                        appGridButton.actor.connect('leave-event', () => {
                           appGridButton.actor.remove_style_class_name('selected');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
-                        }));
-                        appGridButton.actor.connect('button-press-event', Lang.bind(this, function() {
+                        });
+                        appGridButton.actor.connect('button-press-event', () => {
                             appGridButton.actor.add_style_pseudo_class('pressed');
-                        }));
-                        appGridButton.actor.connect('button-release-event', Lang.bind(this, function() {
+                        });
+                        appGridButton.actor.connect('button-release-event', () => {
                            appGridButton.actor.remove_style_pseudo_class('pressed');
                           appGridButton.actor.remove_style_class_name('selected');
                            this.selectedAppTitle.set_text("");
                            this.selectedAppDescription.set_text("");
                            Gio.app_info_launch_default_for_uri(app.uri, global.create_app_launch_context(0, -1));
                            this.menu.close();
-                        }));
+                        });
                         let gridLayout = this.applicationsGridBox.layout_manager;
                         gridLayout.pack(appGridButton.actor, column, rownum);
                         column ++;
@@ -1925,9 +1971,9 @@ const PanelMenuButton = new Lang.Class({
             }
         }
 
-    },
+    }
 
-    _scrollToActiveContainerButton: function(buttonActor) {
+    _scrollToActiveContainerButton(buttonActor) {
         let sBox;
         if (this._activeContainer == this.shortcutsBox) {
             sBox = this.shortcutsScrollBox;
@@ -1947,9 +1993,9 @@ const PanelMenuButton = new Lang.Class({
         if (current_scroll_value > buttonBox.y1-20) new_scroll_value = buttonBox.y1-20;
         if (box_height+current_scroll_value < buttonBox.y2+20) new_scroll_value = buttonBox.y2-box_height+20;
         if (new_scroll_value!=current_scroll_value) vscroll.get_adjustment().set_value(new_scroll_value);
-    },
+    }
 
-    _onAplicationsScrolled: function(actor, event) {
+    _onAplicationsScrolled(actor, event) {
         if (!this._appGridButtonHeight)
             return Clutter.EVENT_PROPAGATE;
 
@@ -1973,9 +2019,9 @@ const PanelMenuButton = new Lang.Class({
             vscroll.get_adjustment().set_value(newScrollValue);
 
         return Clutter.EVENT_STOP;
-    },
+    }
 
-    _scrollToActiveThumbnail: function() {
+    _scrollToActiveThumbnail() {
         let thumbnail;
         let activeWorkspace = global.workspace_manager.get_active_workspace();
         for (let i = 0; i < this.thumbnailsBox._thumbnails.length; i++) {
@@ -2007,9 +2053,10 @@ const PanelMenuButton = new Lang.Class({
         }
 
         vscroll.get_adjustment().set_value(newScrollValue);
-    },
+    }
 
-    _onWorkspacesScrolled: function(actor, event) {
+    _onWorkspacesScrolled(actor, event) {
+        global.log("WORKSPACE SCROLLED");
         let activeWs = global.workspace_manager.get_active_workspace();
         let direction;
 
@@ -2029,9 +2076,9 @@ const PanelMenuButton = new Lang.Class({
         }
 
         return Clutter.EVENT_STOP;
-    },
+    }
 
-    _validSearchKeyCode: function(keycode) {
+    _validSearchKeyCode(keycode) {
         let valid = false;
         valid =
             (keycode > 47 && keycode < 58)   || // number keys
@@ -2042,9 +2089,9 @@ const PanelMenuButton = new Lang.Class({
             (keycode > 218 && keycode < 223);   // [\]' (in order)
 
         return valid;
-    },
+    }
 
-    _validNavigationKeyCode: function(symbol, code, modifiers) {
+    _validNavigationKeyCode(symbol, code, modifiers) {
         let valid = false;
         valid =
             symbol == Clutter.KEY_Tab ||
@@ -2077,9 +2124,9 @@ const PanelMenuButton = new Lang.Class({
             symbol == Clutter.KEY_F12;
 
         return valid;
-    },
+    }
 
-    _onPanelMenuKeyPress: function(actor, event) {
+    _onPanelMenuKeyPress(actor, event) {
         let symbol = event.get_key_symbol();
         let code = event.get_key_code();
         let modifiers = event.get_state();
@@ -2094,9 +2141,9 @@ const PanelMenuButton = new Lang.Class({
         }
 
         return Clutter.EVENT_STOP;
-    },
+    }
 
-    _onSearchKeyPress: function(actor, event) {
+    _onSearchKeyPress(actor, event) {
         let symbol = event.get_key_symbol();
         let code = event.get_key_code();
         let modifiers = event.get_state();
@@ -2110,9 +2157,9 @@ const PanelMenuButton = new Lang.Class({
         }
 
         return Clutter.EVENT_PROPAGATE;
-    },
+    }
 
-    _onMenuKeyPress: function(actor, event) {
+    _onMenuKeyPress(actor, event) {
         let symbol = event.get_key_symbol();
         let code = event.get_key_code();
         let modifiers = event.get_state();
@@ -2304,9 +2351,9 @@ const PanelMenuButton = new Lang.Class({
         } else {
             return Clutter.EVENT_PROPAGATE;
         }
-    },
+    }
 
-    selectActiveContainerItem: function(symbol, code, isFromSearch) {
+    selectActiveContainerItem(symbol, code, isFromSearch) {
         // Any items in container?
         let children = new Array();
         if (this._activeContainer.get_children) {
@@ -2448,20 +2495,20 @@ const PanelMenuButton = new Lang.Class({
         }
 
         return true;
-    },
+    }
 
-    resetSearch: function(){
+    resetSearch(){
         this.searchEntry.set_text("");
         this.searchActive = false;
-    },
+    }
 
-    resetSearchWithFocus: function(){
+    resetSearchWithFocus(){
         this.searchEntry.grab_key_focus();
         this.searchEntry.set_text("");
         this.searchActive = false;
-    },
+    }
 
-    _onSearchTextChanged: function (se, prop) {
+    _onSearchTextChanged(se, prop) {
         if (this.searchActive) {
             if (this.searchEntry.get_text() == "") {
                 this._resetDisplayApplicationsToStartup();
@@ -2481,10 +2528,10 @@ const PanelMenuButton = new Lang.Class({
             this.searchEntry.set_secondary_icon(this._searchActiveIcon);
 
             if (this._searchIconClickedId == 0) {
-                this._searchIconClickedId = this.searchEntry.connect('secondary-icon-clicked', Lang.bind(this, function() {
+                this._searchIconClickedId = this.searchEntry.connect('secondary-icon-clicked', () => {
                     this.resetSearchWithFocus();
                     this._resetDisplayApplicationsToStartup();
-                }));
+                });
             }
         } else {
             if (this._searchIconClickedId > 0)
@@ -2503,10 +2550,10 @@ const PanelMenuButton = new Lang.Class({
         if (this._searchTimeoutId > 0)
             return;
 
-        this._searchTimeoutId = Mainloop.timeout_add(150, Lang.bind(this, this._doSearch));
-    },
+        this._searchTimeoutId = Mainloop.timeout_add(150, this._doSearch.bind(this));
+    }
 
-    _doSearch: function(){
+    _doSearch(){
         this._searchTimeoutId = 0;
         let pattern = this.searchEntryText.get_text().replace(/^\s+/g, '').replace(/\s+$/g, '').toLowerCase();
         if (pattern==this._previousSearchPattern) return false;
@@ -2544,15 +2591,21 @@ const PanelMenuButton = new Lang.Class({
         this.selectActiveContainerItem(null, null, true);
 
         return false;
-    },
+    }
 
-    _display: function() {
+    _display() {
         if (_DEBUG_) global.log("PanelMenuButton: _display");
 
         // popupMenuSection holds the mainbox
         let section = new PopupMenu.PopupMenuSection();
         this._dummySeparator = new PopupMenu.PopupSeparatorMenuItem();
         this._dummySeparator.opacity = 0;
+        this._dummyBox1 = new St.BoxLayout({ style_class: 'datemenu-calendar-column', reactive: false });
+        this._dummyBox1.opacity = 0;
+        this._dummyBox1.set_size(0, 0);
+        this._dummyBox2 = new St.BoxLayout({ style_class: 'popup-menu popup-sub-menu', reactive: false });
+        this._dummyBox2.opacity = 0;
+        // this._dummyColumn = new
         this._dummyButton = new St.Button({style_class: 'button'});
         this._dummyButton.opacity = 0;
         this._dummyButton.set_size(0, 0);
@@ -2579,12 +2632,12 @@ const PanelMenuButton = new Lang.Class({
         // categoriesScrollBox allows categories or workspaces to scroll vertically
         this.categoriesScrollBox = new St.ScrollView({ reactive: true, x_fill: true, y_fill: false, y_align: St.Align.START, style_class: 'gnomenu-categories-workspaces-scrollbox' });
         let vscrollCategories = this.categoriesScrollBox.get_vscroll_bar();
-        vscrollCategories.connect('scroll-start', Lang.bind(this, function() {
+        vscrollCategories.connect('scroll-start', () => {
             this.menu.passEvents = true;
-        }));
-        vscrollCategories.connect('scroll-stop', Lang.bind(this, function() {
+        });
+        vscrollCategories.connect('scroll-stop', () => {
             this.menu.passEvents = false;
-        }));
+        });
         this.categoriesScrollBox.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER);
         this.categoriesScrollBox.set_mouse_scrolling(true);
 
@@ -2604,20 +2657,20 @@ const PanelMenuButton = new Lang.Class({
 
         // Create 'recent' category button
         this.recentCategory = new GroupButton( "folder-recent-symbolic", userGroupButtonIconSize, null, {style_class: 'gnomenu-user-group-button'});
-        this.recentCategory.setButtonEnterCallback(Lang.bind(this, function() {
+        this.recentCategory.setButtonEnterCallback(() => {
             this.recentCategory.actor.add_style_class_name('selected');
             this.selectedAppTitle.set_text(_('Recent'));
             this.selectedAppDescription.set_text('');
-        }));
-        this.recentCategory.setButtonLeaveCallback(Lang.bind(this, function() {
+        });
+        this.recentCategory.setButtonLeaveCallback(() => {
             this.recentCategory.actor.remove_style_class_name('selected');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
-        }));
-        this.recentCategory.setButtonPressCallback(Lang.bind(this, function() {
+        });
+        this.recentCategory.setButtonPressCallback(() => {
             this.recentCategory.actor.add_style_pseudo_class('pressed');
-        }));
-        this.recentCategory.setButtonReleaseCallback(Lang.bind(this, function() {
+        });
+        this.recentCategory.setButtonReleaseCallback(() => {
             this.menu.actor.grab_key_focus();
             this.recentCategory.actor.remove_style_pseudo_class('pressed');
             if (this.recentCategory._opened) {
@@ -2631,24 +2684,24 @@ const PanelMenuButton = new Lang.Class({
                 this.selectedAppTitle.set_text(this.recentCategory.label.get_text());
                 this.selectedAppDescription.set_text('');
             }
-        }));
+        });
 
         // Create 'webBookmarks' category button
         this.webBookmarksCategory = new GroupButton( "web-browser-symbolic", userGroupButtonIconSize, null, {style_class: 'gnomenu-user-group-button'});
-        this.webBookmarksCategory.setButtonEnterCallback(Lang.bind(this, function() {
+        this.webBookmarksCategory.setButtonEnterCallback(() => {
             this.webBookmarksCategory.actor.add_style_class_name('selected');
             this.selectedAppTitle.set_text(_('WebBookmarks'));
             this.selectedAppDescription.set_text('');
-        }));
-        this.webBookmarksCategory.setButtonLeaveCallback(Lang.bind(this, function() {
+        });
+        this.webBookmarksCategory.setButtonLeaveCallback(() => {
             this.webBookmarksCategory.actor.remove_style_class_name('selected');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
-        }));
-        this.webBookmarksCategory.setButtonPressCallback(Lang.bind(this, function() {
+        });
+        this.webBookmarksCategory.setButtonPressCallback(() => {
             this.webBookmarksCategory.actor.add_style_pseudo_class('pressed');
-        }));
-        this.webBookmarksCategory.setButtonReleaseCallback(Lang.bind(this, function() {
+        });
+        this.webBookmarksCategory.setButtonReleaseCallback(() => {
             this.menu.actor.grab_key_focus();
             this.webBookmarksCategory.actor.remove_style_pseudo_class('pressed');
             if (this.webBookmarksCategory._opened) {
@@ -2662,7 +2715,7 @@ const PanelMenuButton = new Lang.Class({
                 this.selectedAppTitle.set_text(this.webBookmarksCategory.label.get_text());
                 this.selectedAppDescription.set_text('');
             }
-        }));
+        });
 
         this.userGroupBox.add(this.recentCategory.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         this.userGroupBox.add(this.webBookmarksCategory.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
@@ -2690,20 +2743,20 @@ const PanelMenuButton = new Lang.Class({
         this.viewModeBox = new St.BoxLayout({ style_class: 'gnomenu-view-mode-box'+viewModeAdditionalStyle });
 
         this.toggleStartupAppsView = new GroupButton("view-toggle-apps-symbolic", viewModeButtonIconSize, null, {style_class: 'gnomenu-view-mode-button'});
-        this.toggleStartupAppsView.setButtonEnterCallback(Lang.bind(this, function() {
+        this.toggleStartupAppsView.setButtonEnterCallback(() => {
             this.toggleStartupAppsView.actor.add_style_class_name('selected');
             this.selectedAppTitle.set_text(_('Toggle Startup Apps View'));
             this.selectedAppDescription.set_text('');
-        }));
-        this.toggleStartupAppsView.setButtonLeaveCallback(Lang.bind(this, function() {
+        });
+        this.toggleStartupAppsView.setButtonLeaveCallback(() => {
             this.toggleStartupAppsView.actor.remove_style_class_name('selected');
             this.selectedAppTitle.set_text(_('Toggle Startup Apps View'));
             this.selectedAppDescription.set_text('');
-        }));
-        this.toggleStartupAppsView.setButtonPressCallback(Lang.bind(this, function() {
+        });
+        this.toggleStartupAppsView.setButtonPressCallback(() => {
             this.toggleStartupAppsView.actor.add_style_pseudo_class('pressed');
-        }));
-        this.toggleStartupAppsView.setButtonReleaseCallback(Lang.bind(this, function() {
+        });
+        this.toggleStartupAppsView.setButtonReleaseCallback(() => {
             this.menu.actor.grab_key_focus();
             this.toggleStartupAppsView.actor.remove_style_pseudo_class('pressed');
             this.selectedAppTitle.set_text(_('Toggle Startup Apps View'));
@@ -2713,24 +2766,24 @@ const PanelMenuButton = new Lang.Class({
                 this._startupAppsView = StartupAppsDisplay.ALL;
             }
             this._resetDisplayApplicationsToStartup();
-        }));
+        });
 
 
         this.toggleListGridView = new GroupButton(viewModeButtonIcon, viewModeButtonIconSize, null, {style_class: 'gnomenu-view-mode-button'});
-        this.toggleListGridView.setButtonEnterCallback(Lang.bind(this, function() {
+        this.toggleListGridView.setButtonEnterCallback(() => {
             this.toggleListGridView.actor.add_style_class_name('selected');
             this.selectedAppTitle.set_text(_('List-Grid View'));
             this.selectedAppDescription.set_text('');
-        }));
-        this.toggleListGridView.setButtonLeaveCallback(Lang.bind(this, function() {
+        });
+        this.toggleListGridView.setButtonLeaveCallback(() => {
             this.toggleListGridView.actor.remove_style_class_name('selected');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
-        }));
-        this.toggleListGridView.setButtonPressCallback(Lang.bind(this, function() {
+        });
+        this.toggleListGridView.setButtonPressCallback(() => {
             this.toggleListGridView.actor.add_style_pseudo_class('pressed');
-        }));
-        this.toggleListGridView.setButtonReleaseCallback(Lang.bind(this, function() {
+        });
+        this.toggleListGridView.setButtonReleaseCallback(() => {
             this.menu.actor.grab_key_focus();
             this.toggleListGridView.actor.remove_style_pseudo_class('pressed');
             this.selectedAppTitle.set_text('');
@@ -2742,7 +2795,7 @@ const PanelMenuButton = new Lang.Class({
                 this.toggleListGridView.setIcon('view-grid-symbolic');
                 this._switchApplicationsView(ApplicationsViewMode.LIST);
             }
-        }));
+        });
 
         this.viewModeBox.add(this.toggleStartupAppsView.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         this.viewModeBox.add(this.toggleListGridView.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
@@ -2780,8 +2833,8 @@ const PanelMenuButton = new Lang.Class({
         this.searchBox.add(this.searchEntry, {expand: true, x_align:St.Align.START, y_align:St.Align.START});
         this.searchActive = false;
         this.searchEntryText = this.searchEntry.clutter_text;
-        this.searchEntryText.connect('text-changed', Lang.bind(this, this._onSearchTextChanged));
-        this.searchEntryText.connect('key-press-event', Lang.bind(this, this._onSearchKeyPress));
+        this.searchEntryText.connect('text-changed', this._onSearchTextChanged.bind(this));
+        this.searchEntryText.connect('key-press-event', this._onSearchKeyPress.bind(this));
         this._previousSearchPattern = "";
 
 
@@ -2789,12 +2842,12 @@ const PanelMenuButton = new Lang.Class({
         this.shortcutsBox = new St.BoxLayout({ style_class: 'gnomenu-shortcuts-box', vertical: true });
         this.shortcutsScrollBox = new St.ScrollView({ x_fill: true, y_fill: false, y_align: St.Align.START, style_class: 'gnomenu-shortcuts-scrollbox' });
         let vscrollShortcuts = this.shortcutsScrollBox.get_vscroll_bar();
-        vscrollShortcuts.connect('scroll-start', Lang.bind(this, function() {
+        vscrollShortcuts.connect('scroll-start', () => {
             this.menu.passEvents = true;
-        }));
-        vscrollShortcuts.connect('scroll-stop', Lang.bind(this, function() {
+        });
+        vscrollShortcuts.connect('scroll-stop', () => {
             this.menu.passEvents = false;
-        }));
+        });
         this.shortcutsScrollBox.add_actor(this.shortcutsBox);
         this.shortcutsScrollBox.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER);
         this.shortcutsScrollBox.set_mouse_scrolling(true);
@@ -2853,7 +2906,7 @@ const PanelMenuButton = new Lang.Class({
             let app = shortcuts[i];
             let shortcutButton = new ShortcutButton(app, shortcutType);
             this.shortcutsBox.add_actor(shortcutButton.actor);
-            shortcutButton.actor.connect('enter-event', Lang.bind(this, function() {
+            shortcutButton.actor.connect('enter-event', () => {
                 shortcutButton.actor.add_style_class_name('selected');
                 if (settings.get_enum('shortcuts-display') == ShortcutsDisplay.PLACES) {
                     this.selectedAppTitle.set_text(shortcutButton._app.name);
@@ -2863,16 +2916,16 @@ const PanelMenuButton = new Lang.Class({
                     if (shortcutButton._app.get_description()) this.selectedAppDescription.set_text(shortcutButton._app.get_description());
                     else this.selectedAppDescription.set_text("");
                 }
-            }));
-            shortcutButton.actor.connect('leave-event', Lang.bind(this, function() {
+            });
+            shortcutButton.actor.connect('leave-event', () => {
                 shortcutButton.actor.remove_style_class_name('selected');
                 this.selectedAppTitle.set_text("");
                 this.selectedAppDescription.set_text("");
-            }));
-            shortcutButton.actor.connect('button-press-event', Lang.bind(this, function() {
+            });
+            shortcutButton.actor.connect('button-press-event', () => {
                 shortcutButton.actor.add_style_pseudo_class('pressed');
-            }));
-            shortcutButton.actor.connect('button-release-event', Lang.bind(this, function() {
+            });
+            shortcutButton.actor.connect('button-release-event', () => {
                 shortcutButton.actor.remove_style_pseudo_class('pressed');
                 shortcutButton.actor.remove_style_class_name('selected');
                 this.selectedAppTitle.set_text("");
@@ -2887,29 +2940,31 @@ const PanelMenuButton = new Lang.Class({
                     shortcutButton._app.open_new_window(-1);
                 }
                 this.menu.close();
-            }));
+            });
         }
 
         // // Workspaces thumbnails Box and Wrapper
         this.thumbnailsBoxFiller = new St.BoxLayout({ style_class: 'gnomenu-workspaces-filler', vertical: true });
-        this.thumbnailsBox = new WorkspaceThumbnail.myThumbnailsBox(gsVersion, settings, this.menu, this.thumbnailsBoxFiller);
+        // this.thumbnailsBox = new St.BoxLayout({ style_class: 'gnomenu-workspaces-filler', vertical: true });
+        this.thumbnailsBox = new WorkspaceThumbnail.MyThumbnailsBox(settings, this.menu, this.thumbnailsBoxFiller);
         this.workspacesWrapper = new St.BoxLayout({ style_class: 'gnomenu-workspaces-wrapper' });
         this.workspacesWrapper.add(this.thumbnailsBoxFiller, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
+        // this.workspacesWrapper.add(this.thumbnailsBox, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
         this.workspacesWrapper.add(this.thumbnailsBox.actor, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
 
-        // workspacesScrollBox allows workspace thumbnails to scroll vertically
+        // // workspacesScrollBox allows workspace thumbnails to scroll vertically
         this.workspacesScrollBox = new St.ScrollView({ reactive: true, x_fill: true, y_fill: false, y_align: St.Align.START, style_class: 'gnomenu-workspaces-scrollbox' });
-        this.workspacesScrollBox.connect('scroll-event', Lang.bind(this, this._onWorkspacesScrolled));
-        let vscrollWorkspaces = this.workspacesScrollBox.get_vscroll_bar();
-        vscrollWorkspaces.connect('scroll-start', Lang.bind(this, function() {
-            this.menu.passEvents = true;
-        }));
-        vscrollWorkspaces.connect('scroll-stop', Lang.bind(this, function() {
-            this.menu.passEvents = false;
-        }));
+        this.workspacesScrollBox.connect('scroll-event', this._onWorkspacesScrolled.bind(this));
+        // let vscrollWorkspaces = this.workspacesScrollBox.get_vscroll_bar();
+        // vscrollWorkspaces.connect('scroll-start', () => {
+        //     this.menu.passEvents = true;
+        // });
+        // vscrollWorkspaces.connect('scroll-stop', () => {
+        //     this.menu.passEvents = false;
+        // });
         this.workspacesScrollBox.add_actor(this.workspacesWrapper);
-        this.workspacesScrollBox.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER);
-        this.workspacesScrollBox.set_mouse_scrolling(true);
+        // this.workspacesScrollBox.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER);
+        // this.workspacesScrollBox.set_mouse_scrolling(true);
 
         // CategoriesBox
         this.categoriesBox = new St.BoxLayout({ style_class: 'gnomenu-categories-box', vertical: true });
@@ -2919,7 +2974,7 @@ const PanelMenuButton = new Lang.Class({
 
         // Load 'all applications' category
         let allAppCategory = new CategoryListButton('all', _('All Applications'), 'gnomenu-go-previous-symbolic');
-        allAppCategory.setButtonEnterCallback(Lang.bind(this, function() {
+        allAppCategory.setButtonEnterCallback(() => {
             allAppCategory.actor.add_style_class_name('selected');
             this.selectedAppTitle.set_text(allAppCategory.label.get_text());
             this.selectedAppDescription.set_text('');
@@ -2929,14 +2984,14 @@ const PanelMenuButton = new Lang.Class({
 
             if (settings.get_enum('category-selection-method') == SelectMethod.HOVER ) {
                 let hoverDelay = settings.get_int('category-hover-delay');
-                this._hoverTimeoutId = Mainloop.timeout_add((hoverDelay >0) ? hoverDelay : 0, Lang.bind(this, function() {
+                this._hoverTimeoutId = Mainloop.timeout_add((hoverDelay >0) ? hoverDelay : 0, () => {
                     this._selectCategory(allAppCategory);
                     this.menu.actor.grab_key_focus();
                     this._hoverTimeoutId = 0;
-                }));
+                });
             }
-        }));
-        allAppCategory.setButtonLeaveCallback(Lang.bind(this, function() {
+        });
+        allAppCategory.setButtonLeaveCallback(() => {
             allAppCategory.actor.remove_style_class_name('selected');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
@@ -2946,11 +3001,11 @@ const PanelMenuButton = new Lang.Class({
                     Mainloop.source_remove(this._hoverTimeoutId);
                 }
             }
-        }));
-        allAppCategory.setButtonPressCallback(Lang.bind(this, function() {
+        });
+        allAppCategory.setButtonPressCallback(() => {
             allAppCategory.actor.add_style_pseudo_class('pressed');
-        }));
-        allAppCategory.setButtonReleaseCallback(Lang.bind(this, function() {
+        });
+        allAppCategory.setButtonReleaseCallback(() => {
             this.menu.actor.grab_key_focus();
             allAppCategory.actor.remove_style_pseudo_class('pressed');
             allAppCategory.actor.remove_style_class_name('selected');
@@ -2958,12 +3013,12 @@ const PanelMenuButton = new Lang.Class({
             this._selectCategory(allAppCategory);
             this.selectedAppTitle.set_text(allAppCategory.label.get_text());
             this.selectedAppDescription.set_text('');
-        }));
+        });
         this.categoriesBox.add_actor(allAppCategory.actor);
 
         // Load 'frequent applications' category
         let freqAppCategory = new CategoryListButton('frequent', _('Frequent Apps'), 'gnomenu-go-previous-symbolic');
-        freqAppCategory.setButtonEnterCallback(Lang.bind(this, function() {
+        freqAppCategory.setButtonEnterCallback(() => {
             freqAppCategory.actor.add_style_class_name('selected');
             this.selectedAppTitle.set_text(freqAppCategory.label.get_text());
             this.selectedAppDescription.set_text('');
@@ -2973,14 +3028,14 @@ const PanelMenuButton = new Lang.Class({
 
             if (settings.get_enum('category-selection-method') == SelectMethod.HOVER ) {
                 let hoverDelay = settings.get_int('category-hover-delay');
-                this._hoverTimeoutId = Mainloop.timeout_add((hoverDelay >0) ? hoverDelay : 0, Lang.bind(this, function() {
+                this._hoverTimeoutId = Mainloop.timeout_add((hoverDelay >0) ? hoverDelay : 0, () => {
                     this._selectCategory(freqAppCategory);
                     this.menu.actor.grab_key_focus();
                     this._hoverTimeoutId = 0;
-                 }));
+                 });
             }
-        }));
-        freqAppCategory.setButtonLeaveCallback(Lang.bind(this, function() {
+        });
+        freqAppCategory.setButtonLeaveCallback(() => {
             freqAppCategory.actor.remove_style_class_name('selected');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
@@ -2990,11 +3045,11 @@ const PanelMenuButton = new Lang.Class({
                     Mainloop.source_remove(this._hoverTimeoutId);
                 }
             }
-        }));
-        freqAppCategory.setButtonPressCallback(Lang.bind(this, function() {
+        });
+        freqAppCategory.setButtonPressCallback(() => {
             freqAppCategory.actor.add_style_pseudo_class('pressed');
-        }));
-        freqAppCategory.setButtonReleaseCallback(Lang.bind(this, function() {
+        });
+        freqAppCategory.setButtonReleaseCallback(() => {
             this.menu.actor.grab_key_focus();
             freqAppCategory.actor.remove_style_pseudo_class('pressed');
             freqAppCategory.actor.remove_style_class_name('selected');
@@ -3002,12 +3057,12 @@ const PanelMenuButton = new Lang.Class({
             this._selectCategory(freqAppCategory);
             this.selectedAppTitle.set_text(freqAppCategory.label.get_text());
             this.selectedAppDescription.set_text('');
-        }));
+        });
         this.categoriesBox.add_actor(freqAppCategory.actor);
 
         // Load 'favorite applications' category
         let favAppCategory = new CategoryListButton('favorites', _('Favorite Apps'), 'gnomenu-go-previous-symbolic');
-        favAppCategory.setButtonEnterCallback(Lang.bind(this, function() {
+        favAppCategory.setButtonEnterCallback(() => {
             favAppCategory.actor.add_style_class_name('selected');
             this.selectedAppTitle.set_text(favAppCategory.label.get_text());
             this.selectedAppDescription.set_text('');
@@ -3017,14 +3072,14 @@ const PanelMenuButton = new Lang.Class({
 
             if (settings.get_enum('category-selection-method') == SelectMethod.HOVER ) {
                 let hoverDelay = settings.get_int('category-hover-delay');
-                this._hoverTimeoutId = Mainloop.timeout_add((hoverDelay >0) ? hoverDelay : 0, Lang.bind(this, function() {
+                this._hoverTimeoutId = Mainloop.timeout_add((hoverDelay >0) ? hoverDelay : 0, () => {
                     this._selectCategory(favAppCategory);
                     this.menu.actor.grab_key_focus();
                     this._hoverTimeoutId = 0;
-                }));
+                });
             }
-        }));
-        favAppCategory.setButtonLeaveCallback(Lang.bind(this, function() {
+        });
+        favAppCategory.setButtonLeaveCallback(() => {
             favAppCategory.actor.remove_style_class_name('selected');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
@@ -3034,11 +3089,11 @@ const PanelMenuButton = new Lang.Class({
                     Mainloop.source_remove(this._hoverTimeoutId);
                 }
             }
-        }));
-        favAppCategory.setButtonPressCallback(Lang.bind(this, function() {
+        });
+        favAppCategory.setButtonPressCallback(() => {
             favAppCategory.actor.add_style_pseudo_class('pressed');
-        }));
-        favAppCategory.setButtonReleaseCallback(Lang.bind(this, function() {
+        });
+        favAppCategory.setButtonReleaseCallback(() => {
             this.menu.actor.grab_key_focus();
             favAppCategory.actor.remove_style_pseudo_class('pressed');
             favAppCategory.actor.remove_style_class_name('selected');
@@ -3046,7 +3101,7 @@ const PanelMenuButton = new Lang.Class({
             this._selectCategory(favAppCategory);
             this.selectedAppTitle.set_text(favAppCategory.label.get_text());
             this.selectedAppDescription.set_text('');
-        }));
+        });
         this.categoriesBox.add_actor(favAppCategory.actor);
 
         // Load rest of categories
@@ -3063,7 +3118,7 @@ const PanelMenuButton = new Lang.Class({
                 this._loadCategories(dir);
                 if (this.applicationsByCategory[dir.get_menu_id()].length>0){
                     let appCategory = new CategoryListButton(dir, null, 'gnomenu-go-previous-symbolic');
-                    appCategory.setButtonEnterCallback(Lang.bind(this, function() {
+                    appCategory.setButtonEnterCallback(() => {
                         appCategory.actor.add_style_class_name('selected');
                         this.selectedAppTitle.set_text(appCategory.label.get_text());
                         this.selectedAppDescription.set_text('');
@@ -3073,14 +3128,14 @@ const PanelMenuButton = new Lang.Class({
 
                         if (settings.get_enum('category-selection-method') == SelectMethod.HOVER ) {
                             let hoverDelay = settings.get_int('category-hover-delay');
-                            this._hoverTimeoutId = Mainloop.timeout_add((hoverDelay >0) ? hoverDelay : 0, Lang.bind(this, function() {
+                            this._hoverTimeoutId = Mainloop.timeout_add((hoverDelay >0) ? hoverDelay : 0, () => {
                                 this._selectCategory(appCategory);
                                 this.menu.actor.grab_key_focus();
                                 this._hoverTimeoutId = 0;
-                            }));
+                            });
                         }
-                    }));
-                    appCategory.setButtonLeaveCallback(Lang.bind(this, function() {
+                    });
+                    appCategory.setButtonLeaveCallback(() => {
                         appCategory.actor.remove_style_class_name('selected');
                         this.selectedAppTitle.set_text('');
                         this.selectedAppDescription.set_text('');
@@ -3090,18 +3145,18 @@ const PanelMenuButton = new Lang.Class({
                                 Mainloop.source_remove(this._hoverTimeoutId);
                             }
                         }
-                    }));
-                    appCategory.setButtonPressCallback(Lang.bind(this, function() {
+                    });
+                    appCategory.setButtonPressCallback(() => {
                         appCategory.actor.add_style_pseudo_class('pressed');
-                    }));
-                    appCategory.setButtonReleaseCallback(Lang.bind(this, function() {
+                    });
+                    appCategory.setButtonReleaseCallback(() => {
                         this.menu.actor.grab_key_focus();
                         appCategory.actor.remove_style_pseudo_class('pressed');
                         appCategory.actor.remove_style_class_name('selected');
                         this._selectCategory(appCategory);
                         this.selectedAppTitle.set_text(appCategory.label.get_text());
                         this.selectedAppDescription.set_text('');
-                    }));
+                    });
                     this.categoriesBox.add_actor(appCategory.actor);
                 }
             }
@@ -3115,20 +3170,20 @@ const PanelMenuButton = new Lang.Class({
             powerGroupButtonIconSize = 16;
 
         this.systemRestart = new GroupButton('refresh-symbolic', powerGroupButtonIconSize, null, {style_class: 'gnomenu-power-group-button'});
-        this.systemRestart.setButtonEnterCallback(Lang.bind(this, function() {
+        this.systemRestart.setButtonEnterCallback(() => {
             this.systemRestart.actor.add_style_class_name('selected');
             this.selectedAppTitle.set_text(_('Restart Shell'));
             this.selectedAppDescription.set_text('');
-        }));
-        this.systemRestart.setButtonLeaveCallback(Lang.bind(this, function() {
+        });
+        this.systemRestart.setButtonLeaveCallback(() => {
             this.systemRestart.actor.remove_style_class_name('selected');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
-        }));
-        this.systemRestart.setButtonPressCallback(Lang.bind(this, function() {
+        });
+        this.systemRestart.setButtonPressCallback(() => {
             this.systemRestart.actor.add_style_pseudo_class('pressed');
-        }));
-        this.systemRestart.setButtonReleaseCallback(Lang.bind(this, function() {
+        });
+        this.systemRestart.setButtonReleaseCallback(() => {
             // code to refresh shell
             this.systemRestart.actor.remove_style_pseudo_class('pressed');
             this.systemRestart.actor.remove_style_class_name('selected');
@@ -3136,22 +3191,22 @@ const PanelMenuButton = new Lang.Class({
             this.selectedAppDescription.set_text('');
             this.menu.close();
             global.reexec_self();
-        }));
+        });
         this.systemSuspend = new GroupButton('suspend-symbolic', powerGroupButtonIconSize, null, {style_class: 'gnomenu-power-group-button'});
-        this.systemSuspend.setButtonEnterCallback(Lang.bind(this, function() {
+        this.systemSuspend.setButtonEnterCallback(() => {
             this.systemSuspend.actor.add_style_class_name('selected');
             this.selectedAppTitle.set_text(_('Suspend'));
             this.selectedAppDescription.set_text('');
-        }));
-        this.systemSuspend.setButtonLeaveCallback(Lang.bind(this, function() {
+        });
+        this.systemSuspend.setButtonLeaveCallback(() => {
             this.systemSuspend.actor.remove_style_class_name('selected');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
-        }));
-        this.systemSuspend.setButtonPressCallback(Lang.bind(this, function() {
+        });
+        this.systemSuspend.setButtonPressCallback(() => {
             this.systemSuspend.actor.add_style_pseudo_class('pressed');
-        }));
-        this.systemSuspend.setButtonReleaseCallback(Lang.bind(this, function() {
+        });
+        this.systemSuspend.setButtonReleaseCallback(() => {
             // code to suspend
             this.systemSuspend.actor.remove_style_pseudo_class('pressed');
             this.systemSuspend.actor.remove_style_class_name('selected');
@@ -3161,29 +3216,28 @@ const PanelMenuButton = new Lang.Class({
 
             //NOTE: alternate is to check if (Main.panel.statusArea.userMenu._haveSuspend) is true
             let loginManager = LoginManager.getLoginManager();
-            loginManager.canSuspend(Lang.bind(this,
-                function(result) {
+            loginManager.canSuspend((result) => {
                     if (result) {
                         Main.overview.hide();
                         loginManager.suspend();
                     }
-            }));
-        }));
+            });
+        });
         this.systemShutdown = new GroupButton('shutdown-symbolic', powerGroupButtonIconSize, null, {style_class: 'gnomenu-power-group-button'});
-        this.systemShutdown.setButtonEnterCallback(Lang.bind(this, function() {
+        this.systemShutdown.setButtonEnterCallback(() => {
             this.systemShutdown.actor.add_style_class_name('selected');
             this.selectedAppTitle.set_text(_('Shutdown'));
             this.selectedAppDescription.set_text('');
-        }));
-        this.systemShutdown.setButtonLeaveCallback(Lang.bind(this, function() {
+        });
+        this.systemShutdown.setButtonLeaveCallback(() => {
             this.systemShutdown.actor.remove_style_class_name('selected');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
-        }));
-        this.systemShutdown.setButtonPressCallback(Lang.bind(this, function() {
+        });
+        this.systemShutdown.setButtonPressCallback(() => {
             this.systemShutdown.actor.add_style_pseudo_class('pressed');
-        }));
-        this.systemShutdown.setButtonReleaseCallback(Lang.bind(this, function() {
+        });
+        this.systemShutdown.setButtonReleaseCallback(() => {
             // code to shutdown (power off)
             // ToDo: GS38 itterates through SystemLoginSession to check for open sessions
             // and displays an openSessionWarnDialog
@@ -3193,22 +3247,22 @@ const PanelMenuButton = new Lang.Class({
             this.selectedAppDescription.set_text('');
             this.menu.close();
             this._session.ShutdownRemote();
-        }));
+        });
         this.logoutUser = new GroupButton('user-logout-symbolic', powerGroupButtonIconSize, null, {style_class: 'gnomenu-power-group-button'});
-        this.logoutUser.setButtonEnterCallback(Lang.bind(this, function() {
+        this.logoutUser.setButtonEnterCallback(() => {
             this.logoutUser.actor.add_style_class_name('selected');
             this.selectedAppTitle.set_text(_('Logout User'));
             this.selectedAppDescription.set_text('');
-        }));
-        this.logoutUser.setButtonLeaveCallback(Lang.bind(this, function() {
+        });
+        this.logoutUser.setButtonLeaveCallback(() => {
             this.logoutUser.actor.remove_style_class_name('selected');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
-        }));
-        this.logoutUser.setButtonPressCallback(Lang.bind(this, function() {
+        });
+        this.logoutUser.setButtonPressCallback(() => {
             this.logoutUser.actor.add_style_pseudo_class('pressed');
-        }));
-        this.logoutUser.setButtonReleaseCallback(Lang.bind(this, function() {
+        });
+        this.logoutUser.setButtonReleaseCallback(() => {
             // code to logout user
             this.logoutUser.actor.remove_style_pseudo_class('pressed');
             this.logoutUser.actor.remove_style_class_name('selected');
@@ -3216,22 +3270,22 @@ const PanelMenuButton = new Lang.Class({
             this.selectedAppDescription.set_text('');
             this.menu.close();
             this._session.LogoutRemote(0);
-        }));
+        });
         this.lockScreen = new GroupButton('user-lock-symbolic', powerGroupButtonIconSize, null, {style_class: 'gnomenu-power-group-button'});
-        this.lockScreen.setButtonEnterCallback(Lang.bind(this, function() {
+        this.lockScreen.setButtonEnterCallback(() => {
             this.lockScreen.actor.add_style_class_name('selected');
             this.selectedAppTitle.set_text(_('Lock Screen'));
             this.selectedAppDescription.set_text('');
-        }));
-        this.lockScreen.setButtonLeaveCallback(Lang.bind(this, function() {
+        });
+        this.lockScreen.setButtonLeaveCallback(() => {
             this.lockScreen.actor.remove_style_class_name('selected');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
-        }));
-        this.lockScreen.setButtonPressCallback(Lang.bind(this, function() {
+        });
+        this.lockScreen.setButtonPressCallback(() => {
             this.lockScreen.actor.add_style_pseudo_class('pressed');
-        }));
-        this.lockScreen.setButtonReleaseCallback(Lang.bind(this, function() {
+        });
+        this.lockScreen.setButtonReleaseCallback(() => {
             // code for lock options
             this.lockScreen.actor.remove_style_pseudo_class('pressed');
             this.lockScreen.actor.remove_style_class_name('selected');
@@ -3240,7 +3294,7 @@ const PanelMenuButton = new Lang.Class({
             this.menu.close();
             Main.overview.hide();
             Main.screenShield.lock(true);
-        }));
+        });
 
         this.powerGroupBox.add(this.systemRestart.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         this.powerGroupBox.add(this.systemSuspend.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
@@ -3250,14 +3304,14 @@ const PanelMenuButton = new Lang.Class({
 
         // ApplicationsBox (ListView / GridView)
         this.applicationsScrollBox = new St.ScrollView({ x_fill: true, y_fill: false, y_align: St.Align.START, style_class: 'vfade gnomenu-applications-scrollbox' });
-        this.applicationsScrollBox.connect('scroll-event', Lang.bind(this, this._onAplicationsScrolled));
+        this.applicationsScrollBox.connect('scroll-event', this._onAplicationsScrolled.bind(this));
         let vscrollApplications = this.applicationsScrollBox.get_vscroll_bar();
-        vscrollApplications.connect('scroll-start', Lang.bind(this, function() {
+        vscrollApplications.connect('scroll-start', () => {
             this.menu.passEvents = true;
-        }));
-        vscrollApplications.connect('scroll-stop', Lang.bind(this, function() {
+        });
+        vscrollApplications.connect('scroll-stop', () => {
             this.menu.passEvents = false;
-        }));
+        });
 
         this.applicationsListBox = new St.BoxLayout({ style_class: 'gnomenu-applications-list-box', vertical:true, x_expand:true});
         this.applicationsGridBox = new St.Widget({ layout_manager: new Clutter.TableLayout(), reactive:true, style_class: 'gnomenu-applications-grid-box'});
@@ -3276,28 +3330,28 @@ const PanelMenuButton = new Lang.Class({
             preferencesGroupButtonIconSize = 16;
 
         this.extensionPreferences = new GroupButton('control-center-alt-symbolic', preferencesGroupButtonIconSize, null, {style_class: 'gnomenu-preferences-group-button'});
-        this.extensionPreferences.setButtonEnterCallback(Lang.bind(this, function() {
+        this.extensionPreferences.setButtonEnterCallback(() => {
             this.extensionPreferences.actor.add_style_class_name('selected');
             this.selectedAppTitle.set_text(_('Preferences'));
             this.selectedAppDescription.set_text('');
-        }));
-        this.extensionPreferences.setButtonLeaveCallback(Lang.bind(this, function() {
+        });
+        this.extensionPreferences.setButtonLeaveCallback(() => {
             this.extensionPreferences.actor.remove_style_class_name('selected');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
-        }));
-        this.extensionPreferences.setButtonPressCallback(Lang.bind(this, function() {
+        });
+        this.extensionPreferences.setButtonPressCallback(() => {
             this.extensionPreferences.actor.add_style_pseudo_class('pressed');
-        }));
-        this.extensionPreferences.setButtonReleaseCallback(Lang.bind(this, function() {
+        });
+        this.extensionPreferences.setButtonReleaseCallback(() => {
             // code to show extension preferences
             this.extensionPreferences.actor.remove_style_pseudo_class('pressed');
             this.extensionPreferences.actor.remove_style_class_name('selected');
             this.selectedAppTitle.set_text('');
             this.selectedAppDescription.set_text('');
-            Main.Util.trySpawnCommandLine(PREFS_DIALOG);
+            Util.trySpawnCommandLine(PREFS_DIALOG);
             this.menu.close();
-        }));
+        });
         this.preferencesGroupBox.add(this.extensionPreferences.actor, {x_fill:false, y_fill:false, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
 
 
@@ -3325,11 +3379,14 @@ const PanelMenuButton = new Lang.Class({
         middlePane.add(this.categoriesScrollBox, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
         middlePane.add(this.applicationsScrollBox, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
         middlePane.add(this.workspacesScrollBox, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
+        // middlePane.add(this.workspacesWrapper, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
 
         // bottomPane packs horizontally
         let bottomPaneSpacer1 = new St.Label({text: '', style_class: 'gnomenu-spacer'});
         this.bottomPane.add(this._dummyButton);
         this.bottomPane.add(this._dummyButton2);
+        this.bottomPane.add(this._dummyBox1);
+        this.bottomPane.add(this._dummyBox2);
         this.bottomPane.add(bottomPaneSpacer1, {expand: true, x_align:St.Align.MIDDLE, y_align:St.Align.MIDDLE});
         this.bottomPane.add(this.selectedAppBox, {expand: false, x_align:St.Align.END, y_align:St.Align.MIDDLE});
 
@@ -3380,27 +3437,26 @@ const PanelMenuButton = new Lang.Class({
  * @desc    The main panel object that holds view/apps/menu buttons
  * ========================================================================= */
 
-const GnoMenuButton = new Lang.Class({
-    Name: 'GnoMenu.GnoMenuPanelButton',
+var GnoMenuButton = class GnoMenu_GnoMenuPanelButton {
 
-    _init: function() {
+    constructor() {
 
         // Connect theme context for when theme changes
-        this._themeChangedId = St.ThemeContext.get_for_stage(global.stage).connect('changed', Lang.bind(this, this._onStyleChanged));
+        this._themeChangedId = St.ThemeContext.get_for_stage(global.stage).connect('changed', this._onStyleChanged.bind(this));
 
         // Connect gtk icontheme for when icons change
-        this._iconsChangedId = IconTheme.get_default().connect('changed', Lang.bind(this, this._onIconsChanged));
+        this._iconsChangedId = IconTheme.get_default().connect('changed', this._onIconsChanged.bind(this));
 
         // Connect to AppSys for when new application installed
-        this._installedChangedId = Shell.AppSystem.get_default().connect('installed-changed', Lang.bind(this, this._onAppInstalledChanged));
+        this._installedChangedId = Shell.AppSystem.get_default().connect('installed-changed', this._onAppInstalledChanged.bind(this));
 
         // Connect to AppFavorites for when favorites change
-        this._favoritesChangedId = AppFavorites.getAppFavorites().connect('changed', Lang.bind(this, this._onFavoritesChanged));
+        this._favoritesChangedId = AppFavorites.getAppFavorites().connect('changed', this._onFavoritesChanged.bind(this));
 
         // Connect to Main.overview for when overview mode showing or hiding
-        this._overviewShownId = Main.overview.connect('shown', Lang.bind(this, this._onOverviewShown));
-        this._overviewHiddenId = Main.overview.connect('hidden', Lang.bind(this, this._onOverviewHidden));
-        this._overviewPageChangedId = Main.overview.viewSelector.connect('page-changed', Lang.bind(this, this._onOverviewPageChanged));
+        this._overviewShownId = Main.overview.connect('shown', this._onOverviewShown.bind(this));
+        this._overviewHiddenId = Main.overview.connect('hidden', this._onOverviewHidden.bind(this));
+        this._overviewPageChangedId = Main.overview.viewSelector.connect('page-changed', this._onOverviewPageChanged.bind(this));
 
         // Bind Preference Settings
         this._bindSettingsChanges();
@@ -3411,7 +3467,7 @@ const GnoMenuButton = new Lang.Class({
         this._setHotSpotTimeoutId = 0;
         this._display();
 
-    },
+    }
 
     updateCornerPanel() {
         if (_DEBUG_) global.log("GnoMenuButton: updateCornerPanel");
@@ -3422,7 +3478,7 @@ const GnoMenuButton = new Lang.Class({
             Main.panel._leftCorner.setStyleParent(Main.panel._leftBox);
             Main.panel._rightCorner.setStyleParent(Main.panel._rightBox);
         }
-    },
+    }
 
     updateHotCorner(source, init) {
         if (_DEBUG_) global.log("GnoMenuButton: updateHotCorner");
@@ -3468,17 +3524,17 @@ const GnoMenuButton = new Lang.Class({
                 }
             }
         }
-    },
+    }
 
-    refresh: function() {
+    refresh() {
         if (_DEBUG_) global.log("GnoMenuButton: refresh");
         this._clearAll();
         this._display();
         this.updateCornerPanel();
         this.updateHotCorner(this, true);
-    },
+    }
 
-    _clearAll: function() {
+    _clearAll() {
         if (_DEBUG_) global.log("GnoMenuButton: _clearAll");
         if (this._hotCorner) this.actor.remove_actor(this._hotCorner.actor);
         if (this._hotCorner) this._hotCorner.destroy();
@@ -3506,9 +3562,9 @@ const GnoMenuButton = new Lang.Class({
         }
         this.appsMenuButton = null;
         if (_DEBUG_) global.log("GnoMenuButton: _clearAll destroyed menu button");
-    },
+    }
 
-    _display: function() {
+    _display() {
         if (_DEBUG_) global.log("GnoMenuButton: _display");
         // Initialize view button
         if (!settings.get_boolean('hide-panel-view')) {
@@ -3521,7 +3577,7 @@ const GnoMenuButton = new Lang.Class({
                 viewIcon = settings.get_strv('panel-view-icon-name')[0];
             }
             this.viewButton = new PanelButton(viewLabel, viewIcon);
-            this.viewButton.actor.connect('button-release-event', Lang.bind(this, this._onViewButtonRelease));
+            this.viewButton.actor.connect('button-release-event', this._onViewButtonRelease.bind(this));
         }
         if (_DEBUG_) global.log("GnoMenuButton: _display initialized view button");
 
@@ -3536,7 +3592,7 @@ const GnoMenuButton = new Lang.Class({
                 appsIcon = settings.get_strv('panel-apps-icon-name')[0];
             }
             this.appsButton = new PanelButton(appsLabel, appsIcon);
-            this.appsButton.actor.connect('button-release-event', Lang.bind(this, this._onAppsButtonRelease));
+            this.appsButton.actor.connect('button-release-event', this._onAppsButtonRelease.bind(this));
         }
         if (_DEBUG_) global.log("GnoMenuButton: _display initialized apps button");
 
@@ -3548,11 +3604,10 @@ const GnoMenuButton = new Lang.Class({
             // Bind menu accelerator key
             if (!settings.get_boolean('disable-panel-menu-keyboard')) {
                 Main.wm.addKeybinding('panel-menu-keyboard-accelerator', settings, Meta.KeyBindingFlags.NONE, Shell.ActionMode.NORMAL | Shell.ActionMode.POPUP,
-                    Lang.bind(this, function() {
+                    () => {
                         if (this.appsMenuButton)
                             this.appsMenuButton.menu.toggle();
-                    })
-                );
+                    });
             }
         }
 
@@ -3574,14 +3629,14 @@ const GnoMenuButton = new Lang.Class({
         if (_DEBUG_) global.log("GnoMenuButton: _display added buttons to gnomenubutton actor");
 
         // Detect if hot corners have been updated
-        this._hotCornersUpdatedId = Main.layoutManager.connect("hot-corners-changed", Lang.bind(this, this.updateHotCorner));
+        this._hotCornersUpdatedId = Main.layoutManager.connect("hot-corners-changed", this.updateHotCorner.bind(this));
 
         // Add menu to panel menu manager
         if (this.appsMenuButton) Main.panel.menuManager.addMenu(this.appsMenuButton.menu);
-    },
+    }
 
     // handler for when view panel button clicked
-    _onViewButtonRelease: function() {
+    _onViewButtonRelease() {
         if (_DEBUG_) global.log("GnoMenuButton: _onViewButtonRelease");
         if (Main.overview.visible) {
             if (!Main.overview.viewSelector._showAppsButton.checked) {
@@ -3596,10 +3651,10 @@ const GnoMenuButton = new Lang.Class({
             // this.viewButton.actor.add_style_pseudo_class('active');
             Main.overview.show();
         }
-    },
+    }
 
     // handler for when apps panel button clicked
-    _onAppsButtonRelease: function() {
+    _onAppsButtonRelease() {
         if (_DEBUG_) global.log("GnoMenuButton: _onAppsButtonRelease");
         if (Main.overview.visible) {
             if (Main.overview.viewSelector._showAppsButton.checked) {
@@ -3615,9 +3670,9 @@ const GnoMenuButton = new Lang.Class({
             Main.overview.viewSelector._showAppsButton.checked = true;
             // this.appsButton.actor.add_style_pseudo_class('active');
         }
-    },
+    }
 
-    _onOverviewShown: function() {
+    _onOverviewShown() {
         if (Main.overview.viewSelector._activePage == Main.overview.viewSelector._appsPage) {
             if (this.appsButton) {
                 this.appsButton.actor.add_style_pseudo_class('active');
@@ -3633,17 +3688,17 @@ const GnoMenuButton = new Lang.Class({
                 this.viewButton.actor.add_style_pseudo_class('active');
             }
         }
-    },
+    }
 
-    _onOverviewHidden: function() {
+    _onOverviewHidden() {
         if (this.appsButton)
             this.appsButton.actor.remove_style_pseudo_class('active');
 
         if (this.viewButton)
             this.viewButton.actor.remove_style_pseudo_class('active');
-    },
+    }
 
-    _onOverviewPageChanged: function() {
+    _onOverviewPageChanged() {
         if (Main.overview.viewSelector._activePage == Main.overview.viewSelector._appsPage) {
             if (this.appsButton) {
                 this.appsButton.actor.add_style_pseudo_class('active');
@@ -3659,10 +3714,10 @@ const GnoMenuButton = new Lang.Class({
                 this.viewButton.actor.add_style_pseudo_class('active');
             }
         }
-    },
+    }
 
     // function called during init to position hot corner for GS 3.4-GS3.6
-    _positionHotCorner: function() {
+    _positionHotCorner() {
         if (_DEBUG_) global.log("GnoMenuButton: _positionHotCorner");
         // The hot corner needs to be outside any padding/alignment
         // that has been imposed on us
@@ -3684,10 +3739,10 @@ const GnoMenuButton = new Lang.Class({
 
         this._hotCorner.actor.set_position(hotBox.x1, hotBox.y1);
         this._hotCorner.actor.set_size(hotBox.x2-hotBox.x1, hotBox.y2-hotBox.y1);
-    },
+    }
 
     // handler for when theme changes
-    _onStyleChanged: function() {
+    _onStyleChanged() {
         if (_DEBUG_) global.log("GnoMenuButton: _onStyleChanged");
         let ret = this._changeStylesheet();
         //if (ret) {
@@ -3697,9 +3752,9 @@ const GnoMenuButton = new Lang.Class({
             //if (this.actor) this.actor.grab_key_focus();
             //global.stage.set_key_focus(null);
         //}
-    },
+    }
 
-    _changeStylesheet: function() {
+    _changeStylesheet() {
         if (_DEBUG_) global.log("GnoMenuButton: _changeStylesheet");
         // Get menu layout
         let ml = "-m";
@@ -3770,82 +3825,82 @@ const GnoMenuButton = new Lang.Class({
         if (this.appsMenuButton) this.appsMenuButton.refresh();
 
         return true;
-    },
+    }
 
     // handler for when new application installed
-    _onAppInstalledChanged: function() {
+    _onAppInstalledChanged() {
         if (_DEBUG_) global.log("GnoMenuButton: _onAppInstalledChanged");
         if (this.appsMenuButton) this.appsMenuButton.refresh();
-    },
+    }
 
     // handler for when favorites change
-    _onFavoritesChanged: function() {
+    _onFavoritesChanged() {
         if (_DEBUG_) global.log("GnoMenuButton: _onFavoritesChanged");
         if (this.appsMenuButton) this.appsMenuButton.refresh();
-    },
+    }
 
     // handler for when icons change
-    _onIconsChanged: function() {
+    _onIconsChanged() {
         if (_DEBUG_) global.log("GnoMenuButton: _onIconsChanged");
         if (this.appsMenuButton) this.appsMenuButton.refresh();
-    },
+    }
 
     // function to bind preference setting changes
-    _bindSettingsChanges: function() {
+    _bindSettingsChanges() {
         if (_DEBUG_) global.log("GnoMenuButton: _bindSettingsChanges");
-        settings.connect('changed::hide-panel-view', Lang.bind(this, this.refresh));
-        settings.connect('changed::disable-activities-hotcorner', Lang.bind(this, this.refresh));
-        settings.connect('changed::use-panel-view-label', Lang.bind(this, this.refresh));
-        settings.connect('changed::panel-view-label-text', Lang.bind(this, this.refresh));
-        settings.connect('changed::use-panel-view-icon', Lang.bind(this, this.refresh));
-        settings.connect('changed::panel-view-icon-name', Lang.bind(this, this.refresh));
-        settings.connect('changed::hide-panel-apps', Lang.bind(this, this.refresh));
-        settings.connect('changed::use-panel-apps-label', Lang.bind(this, this.refresh));
-        settings.connect('changed::panel-apps-label-text', Lang.bind(this, this.refresh));
-        settings.connect('changed::use-panel-apps-icon', Lang.bind(this, this.refresh));
-        settings.connect('changed::panel-apps-icon-name', Lang.bind(this, this.refresh));
-        settings.connect('changed::hide-panel-menu', Lang.bind(this, this.refresh));
-        settings.connect('changed::disable-panel-menu-keyboard', Lang.bind(this, this.refresh));
-        settings.connect('changed::use-panel-menu-label', Lang.bind(this, this.refresh));
-        settings.connect('changed::panel-menu-label-text', Lang.bind(this, this.refresh));
-        settings.connect('changed::use-panel-menu-icon', Lang.bind(this, this.refresh));
-        settings.connect('changed::hide-panel-menu-arrow', Lang.bind(this, this.refresh));
-        settings.connect('changed::panel-menu-icon-name', Lang.bind(this, this.refresh));
-        settings.connect('changed::disable-panel-menu-hotspot', Lang.bind(this, this.refresh));
-        settings.connect('changed::panel-menu-position', Lang.bind(this, this.refresh));
+        settings.connect('changed::hide-panel-view', this.refresh.bind(this));
+        settings.connect('changed::disable-activities-hotcorner', this.refresh.bind(this));
+        settings.connect('changed::use-panel-view-label', this.refresh.bind(this));
+        settings.connect('changed::panel-view-label-text', this.refresh.bind(this));
+        settings.connect('changed::use-panel-view-icon', this.refresh.bind(this));
+        settings.connect('changed::panel-view-icon-name', this.refresh.bind(this));
+        settings.connect('changed::hide-panel-apps', this.refresh.bind(this));
+        settings.connect('changed::use-panel-apps-label', this.refresh.bind(this));
+        settings.connect('changed::panel-apps-label-text', this.refresh.bind(this));
+        settings.connect('changed::use-panel-apps-icon', this.refresh.bind(this));
+        settings.connect('changed::panel-apps-icon-name', this.refresh.bind(this));
+        settings.connect('changed::hide-panel-menu', this.refresh.bind(this));
+        settings.connect('changed::disable-panel-menu-keyboard', this.refresh.bind(this));
+        settings.connect('changed::use-panel-menu-label', this.refresh.bind(this));
+        settings.connect('changed::panel-menu-label-text', this.refresh.bind(this));
+        settings.connect('changed::use-panel-menu-icon', this.refresh.bind(this));
+        settings.connect('changed::hide-panel-menu-arrow', this.refresh.bind(this));
+        settings.connect('changed::panel-menu-icon-name', this.refresh.bind(this));
+        settings.connect('changed::disable-panel-menu-hotspot', this.refresh.bind(this));
+        settings.connect('changed::panel-menu-position', this.refresh.bind(this));
 
-        settings.connect('changed::category-selection-method', Lang.bind(this, function() {
+        settings.connect('changed::category-selection-method', () => {
             if (this.appsMenuButton) this.appsMenuButton.refresh();
-        }));
-        settings.connect('changed::shortcuts-display', Lang.bind(this, function() {
+        });
+        settings.connect('changed::shortcuts-display', () => {
             if (this.appsMenuButton) this.appsMenuButton.refresh();
-        }));
-        settings.connect('changed::shortcuts-icon-size', Lang.bind(this, function() {
+        });
+        settings.connect('changed::shortcuts-icon-size', () => {
             if (this.appsMenuButton) this.appsMenuButton.refresh();
-        }));
-        settings.connect('changed::menu-layout', Lang.bind(this, function() {
+        });
+        settings.connect('changed::menu-layout', () => {
             let ret = this._changeStylesheet();
             if (this.appsMenuButton) this.appsMenuButton.refresh();
-        }));
-        settings.connect('changed::hide-useroptions', Lang.bind(this, function() {
+        });
+        settings.connect('changed::hide-useroptions', () => {
             if (this.appsMenuButton) this.appsMenuButton.refresh();
-        }));
-        settings.connect('changed::hide-shortcuts', Lang.bind(this, function() {
+        });
+        settings.connect('changed::hide-shortcuts', () => {
             if (this.appsMenuButton) this.appsMenuButton.refresh();
-        }));
-        settings.connect('changed::hide-categories', Lang.bind(this, function() {
+        });
+        settings.connect('changed::hide-categories', () => {
             if (this.appsMenuButton) this.appsMenuButton.refresh();
-        }));
-        settings.connect('changed::apps-grid-column-count', Lang.bind(this, function() {
+        });
+        settings.connect('changed::apps-grid-column-count', () => {
             if (this.appsMenuButton) this.appsMenuButton.refresh();
-        }));
-        settings.connect('changed::hide-workspaces', Lang.bind(this, function() {
+        });
+        settings.connect('changed::hide-workspaces', () => {
             if (this.appsMenuButton) this.appsMenuButton.refresh();
-        }));
-    },
+        });
+    }
 
     // function to destroy GnoMenuButton
-    destroy: function() {
+    destroy() {
         // Disconnect global signals
         if (this._installedChangedId)
             Shell.AppSystem.get_default().disconnect(this._installedChangedId);
@@ -3881,7 +3936,7 @@ const GnoMenuButton = new Lang.Class({
         this.actor.destroy();
     }
 
-});
+};
 
 
 
@@ -4000,10 +4055,4 @@ function disable() {
 
 function init() {
     Convenience.initTranslations();
-
-    // Add extension icons to icon theme directory path
-    // TODO: move this to enable/disable?
-    // GS patch https://bugzilla.gnome.org/show_bug.cgi?id=675561
-    let theme = IconTheme.get_default();
-    theme.append_search_path(Me.path + "/icons");
 }

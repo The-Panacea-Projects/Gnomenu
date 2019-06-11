@@ -92,45 +92,44 @@ function getSettings(schema) {
 }
 
 // try to simplify global signals handling
-const globalSignalHandler = new Lang.Class({
-    Name: 'workspacesToDock.globalSignalHandler',
+var globalSignalHandler = class GnoMenu_globalSignalHandler {
 
-    _init: function() {
+    constructor() {
         this._signals = new Object();
-    },
+    }
 
-    push: function(/*unlimited 3-long array arguments*/){
+    push(/*unlimited 3-long array arguments*/){
         this._addSignals('generic', arguments);
-    },
+    }
 
-    disconnect: function() {
+    disconnect() {
         for (let label in this._signals) {
             this.disconnectWithLabel(label);
         }
-    },
+    }
 
-    pushWithLabel: function(label /* plus unlimited 3-long array arguments*/) {
+    pushWithLabel(label /* plus unlimited 3-long array arguments*/) {
         // skip first element of the arguments array;
         let elements = new Array;
         for (let i = 1 ; i< arguments.length; i++) {
             elements.push(arguments[i]);
         }
         this._addSignals(label, elements);
-    },
+    }
 
-    _addSignals: function(label, elements) {
+    _addSignals(label, elements) {
         if (this._signals[label] == undefined) {
             this._signals[label] = new Array();
         }
-        for (let i = 0; i < elements.length; i++) { 
+        for (let i = 0; i < elements.length; i++) {
             let object = elements[i][0];
             let event = elements[i][1];
             let id = object.connect(event, elements[i][2]);
             this._signals[label].push([object, id]);
         }
-    },
+    }
 
-    disconnectWithLabel: function(label) {
+    disconnectWithLabel(label) {
         if (this._signals[label]) {
             for (let i = 0; i < this._signals[label].length; i++) {
                 this._signals[label][i][0].disconnect(this._signals[label][i][1]);
@@ -138,4 +137,4 @@ const globalSignalHandler = new Lang.Class({
             delete this._signals[label];
         }
     }
-});
+};

@@ -160,6 +160,10 @@
 .gnomenu-workspace-thumbnails {
     spacing: .9em; }
 
+#gnomenuMenuMainbox .workspace-thumbnail {
+    padding: 2px;
+}
+
 #gnomenuMenuMainbox .workspace-thumbnail-indicator {
     padding: 0;
     border-radius: 3px;
@@ -272,8 +276,3 @@
     padding-top: 3px;
     padding-right: 8px;
     font-size: 10pt; }
-
-
-
-
-

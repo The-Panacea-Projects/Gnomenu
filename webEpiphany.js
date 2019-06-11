@@ -109,7 +109,7 @@ function init() {
     _bookmarksMonitor = _bookmarksFile.monitor_file(
         Gio.FileMonitorFlags.NONE, null);
     _callbackId = _bookmarksMonitor.connect(
-        'changed', Lang.bind(this, _readBookmarks));
+        'changed', _readBookmarks.bind(this));
 
     _readBookmarks();
 }

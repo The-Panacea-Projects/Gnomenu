@@ -154,7 +154,7 @@ function _readProfiles() {
                 _bookmarksMonitor = _bookmarksFile.monitor_file(
                     Gio.FileMonitorFlags.NONE, null);
                 _callbackId2 = _bookmarksMonitor.connect(
-                    'changed', Lang.bind(this, _readBookmarks));
+                    'changed', _readBookmarks.bind(this));
                 _readBookmarks();
                 return;
             }
@@ -205,7 +205,7 @@ function init() {
     _profilesMonitor = _profilesFile.monitor_file(
         Gio.FileMonitorFlags.NONE, null);
     _callbackId1 = _profilesMonitor.connect(
-        'changed', Lang.bind(this, _readProfiles));
+        'changed', _readProfiles.bind(this));
 
     _readProfiles();
 }

@@ -28,10 +28,13 @@ const N_ = function(x) { return x; }
 
 let UseSymbolicIcons = false;
 
-const PlaceInfo = new Lang.Class({
-    Name: 'PlaceInfo',
+var PlaceInfo = class GnoMenu_PlaceInfo {
 
-    _init: function(kind, file, name, icon) {
+    constructor() {
+        this._init.apply(this, arguments);
+    }
+
+    _init(kind, file, name, icon) {
         this.kind = kind;
         this.file = file;
         if (_DEBUG_) global.log("PlacesInfo: _init - kind = "+kind);
@@ -41,13 +44,13 @@ const PlaceInfo = new Lang.Class({
         if (_DEBUG_) global.log("PlacesInfo: _init - name = "+this.name);
         this.icon = icon ? new Gio.ThemedIcon({ name: icon }) : this.getIcon();
         if (_DEBUG_) global.log("PlacesInfo: _init - icon = "+this.icon);
-    },
+    }
 
-    isRemovable: function() {
+    isRemovable() {
         return false;
-    },
+    }
 
-    launch: function(timestamp) {
+    launch(timestamp) {
         //let time = global.get_current_time();
         let launchContext = global.create_app_launch_context(0, -1);
         launchContext.set_timestamp(timestamp);
@@ -65,9 +68,9 @@ const PlaceInfo = new Lang.Class({
                 Main.notifyError(_("Failed to launch \"%s\"").format(this.name), e.message);
             }
         }
-    },
+    }
 
-    getIcon: function() {
+    getIcon() {
         if (_DEBUG_) global.log("PlacesInfo: getIcon");
         try {
             let info;
@@ -97,9 +100,9 @@ const PlaceInfo = new Lang.Class({
                 }
             }
         }
-    },
+    }
 
-    _getFileName: function() {
+    _getFileName() {
         if (_DEBUG_) global.log("PlacesInfo: _getFileName");
         try {
             let info = this.file.query_info('standard::display-name', 0, null);
@@ -110,26 +113,25 @@ const PlaceInfo = new Lang.Class({
                 return this.file.get_basename();
             }
         }
-    },
-});
+    }
 
-const PlaceDeviceInfo = new Lang.Class({
-    Name: 'PlaceDeviceInfo',
-    Extends: PlaceInfo,
 
-    _init: function(kind, mount) {
+};
+
+var PlaceDeviceInfo = class GnoMenu_PlaceDeviceInfo extends PlaceInfo {
+
+    _init(kind, mount) {
         this._mount = mount;
-        this.parent(kind, mount.get_root(), mount.get_name());
-    },
+        super._init(kind, mount.get_root(), mount.get_name());
+    }
 
-    getIcon: function() {
+    getIcon() {
         if (UseSymbolicIcons)
             return this._mount.get_symbolic_icon();
         else
             return this._mount.get_icon();
-
     }
-});
+};
 
 const DEFAULT_DIRECTORIES = [
     GLib.UserDirectory.DIRECTORY_DOCUMENTS,
@@ -139,10 +141,9 @@ const DEFAULT_DIRECTORIES = [
     GLib.UserDirectory.DIRECTORY_VIDEOS
 ];
 
-const PlacesManager = new Lang.Class({
-    Name: 'PlacesManager',
+var PlacesManager = class GnoMenu_PlacesManager {
 
-    _init: function(useSymbolic) {
+    constructor(useSymbolic) {
         UseSymbolicIcons = useSymbolic;
 
         this._places = {
@@ -187,37 +188,37 @@ const PlacesManager = new Lang.Class({
 
         if (this._bookmarksFile) {
             this._monitor = this._bookmarksFile.monitor_file(Gio.FileMonitorFlags.NONE, null);
-            this._monitor.connect('changed', Lang.bind(this, function () {
+            this._monitor.connect('changed', () => {
                 if (this._bookmarkTimeoutId > 0)
                     return;
                 /* Defensive event compression */
-                this._bookmarkTimeoutId = Mainloop.timeout_add(100, Lang.bind(this, function () {
+                this._bookmarkTimeoutId = Mainloop.timeout_add(100, () => {
                     this._bookmarkTimeoutId = 0;
                     this._reloadBookmarks();
                     return false;
-                }));
-            }));
+                });
+            });
             if (_DEBUG_) global.log("PlacesManager: _init - bookmarksFile signal connected");
             this._reloadBookmarks();
             if (_DEBUG_) global.log("PlacesManager: _init - bookmarks reloaded");
         }
-    },
+    }
 
-    _connectVolumeMonitorSignals: function() {
+    _connectVolumeMonitorSignals() {
         if (_DEBUG_) global.log("PlacesManager: _connectVolumeMonitorSignals");
         const signals = ['volume-added', 'volume-removed', 'volume-changed',
                          'mount-added', 'mount-removed', 'mount-changed',
                          'drive-connected', 'drive-disconnected', 'drive-changed'];
 
         this._volumeMonitorSignals = [];
-        let func = Lang.bind(this, this._updateMounts);
+        let func = this._updateMounts.bind(this);
         for (let i = 0; i < signals.length; i++) {
             let id = this._volumeMonitor.connect(signals[i], func);
             this._volumeMonitorSignals.push(id);
         }
-    },
+    }
 
-    destroy: function() {
+    destroy() {
         for (let i = 0; i < this._volumeMonitorSignals.length; i++)
             this._volumeMonitor.disconnect(this._volumeMonitorSignals[i]);
 
@@ -225,9 +226,9 @@ const PlacesManager = new Lang.Class({
             this._monitor.cancel();
         if (this._bookmarkTimeoutId)
             Mainloop.source_remove(this._bookmarkTimeoutId);
-    },
+    }
 
-    _updateMounts: function() {
+    _updateMounts() {
         if (_DEBUG_) global.log("PlacesManager: _updateMounts");
         this._places.devices = [];
         this._places.network = [];
@@ -308,9 +309,9 @@ const PlacesManager = new Lang.Class({
 
         this.emit('devices-updated');
         this.emit('network-updated');
-    },
+    }
 
-    _findBookmarksFile: function() {
+    _findBookmarksFile() {
         if (_DEBUG_) global.log("PlacesManager: _findBookmarksFile");
         let paths = [
             GLib.build_filenamev([GLib.get_user_config_dir(), 'gtk-3.0', 'bookmarks']),
@@ -326,9 +327,9 @@ const PlacesManager = new Lang.Class({
 
         if (_DEBUG_) global.log("PlacesManager: _findBookmarksFile - not found .. returning NULL");
         return null;
-    },
+    }
 
-    _reloadBookmarks: function() {
+    _reloadBookmarks() {
         if (_DEBUG_) global.log("PlacesManager: _reloadBookmarks");
         this._bookmarks = [];
 
@@ -376,32 +377,32 @@ const PlacesManager = new Lang.Class({
         this._places.bookmarks = bookmarks;
 
         this.emit('bookmarks-updated');
-    },
+    }
 
-    _addMount: function(kind, mount) {
+    _addMount(kind, mount) {
         if (_DEBUG_) global.log("PlacesManager: _reloadBookmarks");
         let devItem = new PlaceDeviceInfo(kind, mount);
         this._places[kind].push(devItem);
-    },
+    }
 
-    getPlace: function (kind) {
+    getPlace(kind) {
         return this._places[kind];
-    },
+    }
 
-    getAllPlaces: function() {
+    getAllPlaces() {
         return this._places['special'].concat(this._places['bookmarks'], this._places['devices']);
-    },
+    }
 
-    getDefaultPlaces: function() {
+    getDefaultPlaces() {
         return this._places['special'];
-    },
+    }
 
-    getBookmarks: function() {
+    getBookmarks() {
         return this._places['bookmarks'];
-    },
+    }
 
-    getMounts: function() {
+    getMounts() {
         return this._places['devices'];
     }
-});
+};
 Signals.addSignalMethods(PlacesManager.prototype);
