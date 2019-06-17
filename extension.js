@@ -2869,7 +2869,7 @@ class GnoMenu_PanelMenuButton extends PanelMenu.Button {
         if (_DEBUG_) global.log("PanelMenuButton: _display - end loading favorites");
 
         // Load Frequent Apps
-        let mostUsed = Shell.AppUsage.get_default().get_most_used('');
+        let mostUsed = Shell.AppUsage.get_default().get_most_used();
         for (let i=0; i<mostUsed.length; i++) {
             if (mostUsed[i].get_app_info().should_show())
                 this.frequentApps.push(mostUsed[i]);
