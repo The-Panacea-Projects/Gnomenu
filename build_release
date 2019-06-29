@@ -46,7 +46,7 @@ cat webFirefox.js | grep -v '_DEBUG_' > "$temp_dir/webFirefox.js"
 cat webGoogleChrome.js | grep -v '_DEBUG_' > "$temp_dir/webGoogleChrome.js"
 cat webMidori.js | grep -v '_DEBUG_' > "$temp_dir/webMidori.js"
 cat webOpera.js | grep -v '_DEBUG_' > "$temp_dir/webOpera.js"
-cat workspaceThumbnail.js | grep -v '_DEBUG_' > "$temp_dir/workspaceThumbnail.js"
+cat myWorkspaceThumbnail.js | grep -v '_DEBUG_' > "$temp_dir/myWorkspaceThumbnail.js"
 
 # Copy extension subfolders
 cp -R schemas/ "$temp_dir/"
@@ -79,4 +79,4 @@ cp gnomenu@panacier.gmail.com.zip "$release_dir/"
 
 # Cleanup - remove temp directory
 rm -Rf "$temp_dir"
-echo "Build completed."
+echo "Build completed to [${release_dir}]."
