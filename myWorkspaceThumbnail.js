@@ -620,7 +620,7 @@ class GnoMenu_MyThumbnailsBox extends St.Widget {
                       style_class: 'gnomenu-workspace-thumbnails',
                       request_mode: Clutter.RequestMode.WIDTH_FOR_HEIGHT });
 
-        this.actor = this;
+         // this.actor = this;
         this.actor._delegate = this;
 
         this.actor.add_style_class_name('gnomenu-workspaces-background');
