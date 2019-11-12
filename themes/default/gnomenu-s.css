@@ -1,0 +1,285 @@
+
+
+/* ::::::::::  PANEL- BUTTONS :::::::::::: */
+
+.gnomenu-panel-button,
+.gnomenu-panel-menu-button {
+    spacing: 4px; }
+
+/* :::::::::: POWER-GROUP-BOX  :::::::::::: */
+
+.gnomenu-power-group-box {
+    padding-right: 13px;
+    padding-left: 5px;
+    border: 0px;
+    border-right: 1px;
+    spacing: 6px; }
+
+/*  power-group-buttons  */
+
+.gnomenu-power-group-button {
+    border-radius: 3px;
+    border: 1px;
+    padding: 0;
+    width: 26px; }
+
+/* ::::::::::  USER-GROUP-BOX :::::::::::: */
+
+.gnomenu-user-group-box {
+    padding-left: 13px;
+    border: 0px;
+    spacing: 6px; }
+
+/*  user-group-buttons  */
+
+.gnomenu-user-group-button {
+    border-radius: 3px;
+    border: 1px;
+    padding: 0;
+    width: 26px; }
+
+/* ::::::::::  VIEW-MODE-BOX :::::::::::: */
+
+.gnomenu-view-mode-box {
+    padding-right: 13px;
+    padding-left: 6px;
+    border: 0px;
+    border-right: 1px;
+    spacing: 6px; }
+
+.gnomenu-view-mode-button {
+    border-radius: 3px;
+    border: 1px;
+    padding: 0;
+    width: 26px; }
+
+/* ::::::::::  SEARCH-ENTRY :::::::::::: */
+
+#gnomenuMenuMainbox StEntry {
+    margin-top: 1px;
+    margin-bottom: 1px;
+    margin-right: 13px;
+    margin-left: 13px;
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.0);
+    background-color: rgba(255, 255, 255, 0.0); }
+
+#gnomenuMenuMainbox .search-entry,
+#gnomenuMenuMainbox .search-entry:focus {
+    border-radius: 3px;
+    border: 1px;
+    padding: 0;
+    min-width: 354px; }
+
+#gnomenuMenuMainbox .search-entry-icon {
+    icon-size: 16px;
+    padding: 0;
+    width: 26px;
+    height: 26px; }
+
+/* :::::::::: PREFERENCES-GROUP-BOX  :::::::::::: */
+
+.gnomenu-preferences-group-box {
+    padding-left: 13px;
+    border: 0px;
+    border-left: 1px;
+    spacing: 0; }
+
+/*  power-group-buttons  */
+
+.gnomenu-preferences-group-button {
+    border-radius: 3px;
+    border: 1px;
+    padding: 0;
+    width: 26px; }
+
+/* ::::::::::  SHORTCUTS-SCROLLBOX :::::::::::: */
+
+.gnomenu-shortcuts-scrollbox {
+    background-color: rgba(255, 255, 255, 0.02);
+    border-radius: 5px 0 0 5px;
+    border: 1px;
+    padding: 4px; }
+
+.gnomenu-shortcuts-box {
+    spacing: 6px; }
+
+/*  shortcut-buttons  */
+
+.gnomenu-shortcut-button {
+    border-radius: 3px;
+    border: 1px;
+    padding: 1px; }
+
+.gnomenu-shortcut-symbolic-button {
+    border-width: 1px;
+    padding: 3px; }
+
+/* ::::::::::  CATEGORIES :::::::::::: */
+
+.gnomenu-categories-workspaces-wrapper {
+    padding: 0px; }
+
+.gnomenu-categories-workspaces-scrollbox {
+    background-color: rgba(255, 255, 255, 0.02);
+    border-radius: 0px;
+    border: 1px;
+    border-left: 0;
+    height: 410px;
+    padding: 0; }
+
+.gnomenu-categories-box {
+    padding: 4px;
+    padding-right: 0px;
+    spacing: 6px;  }
+
+.gnomenu-category-button {
+    background-color: rgba(255, 255, 255, 0.0);
+    border-radius: 0;
+    border: 1px;
+    border-right: 0;
+    padding: 0px; }
+
+.gnomenu-category-button:hover {
+    font-weight: bold;}
+
+.gnomenu-category-button-box {
+    min-height: 26px;
+    max-height: 26px; }
+
+.gnomenu-category-button-label {
+    font-size: 10pt;
+    padding-left: 7px; }
+
+.gnomenu-category-button-icon {
+    color: rgba(0,0,0,0); }
+
+.gnomenu-category-button.popup-sub-menu {
+    border: 1px ;
+    font-weight: bold; }
+
+/* ::::::::::  WORKSPACES :::::::::::: */
+
+.gnomenu-workspaces-wrapper {
+    padding: 0px; }
+
+.gnomenu-workspaces-scrollbox {
+    padding: 0px; }
+
+.gnomenu-workspace-thumbnails {
+    spacing: .62em; }
+
+#gnomenuMenuMainbox .workspace-thumbnail {
+    padding: 2px;
+}
+
+#gnomenuMenuMainbox .workspace-thumbnail-indicator {
+    padding: 0;
+    border-radius: 4px;
+    border: 2px solid; }
+
+.gnomenu-workspaces-background {
+    padding: 2px;
+    padding-left: 6px; }
+
+/* :::::::::: APPLICATIONS-SCROLLBOX  :::::::::::: */
+
+.gnomenu-applications-scrollbox {
+    border: 1px;
+    border-left-width: 0px;
+    border-radius: 0px 5px 5px 0px; }
+
+#gnomenuMenuMainbox StScrollView.vfade {
+    -st-vfade-offset: 0px;
+}
+
+#gnomenuMenuMainbox StScrollView.hfade {
+    -st-hfade-offset: 0px; }
+
+/*  scrollbar  */
+
+#gnomenuMenuMainbox StScrollView StScrollBar {
+    min-width: 0px;
+    min-height: 0px; }
+
+#gnomenuMenuMainbox StScrollBar StButton#vhandle,
+#gnomenuMenuMainbox StScrollBar StButton#hhandle {
+    margin: 0px; }
+
+/* :::::::::: APPLICATIONS-LIST-BOX  :::::::::::: */
+
+.gnomenu-applications-list-box {
+    padding: 4px;
+    spacing: 6px; }
+
+/*  list-buttons  */
+
+.gnomenu-application-list-button {
+    min-height: 26px;
+    max-height: 26px;
+    border-radius: 2px;
+    border: 1px;
+    padding: 0 8px; }
+
+.gnomenu-application-list-button-label {
+    padding-left: 16px; }
+
+.gnomenu-application-list-button-icon {
+    padding-top: 3px; }
+
+/* :::::::::: APPLICATIONS-GRID-BOX  :::::::::::: */
+
+.gnomenu-applications-grid-box {
+    padding: 4px; }
+
+    /*grid-buttons*/
+
+.gnomenu-application-grid-button {
+    height: 60px;
+    margin-bottom: 6px;
+    border-radius: 3px;
+    border: 1px; }
+
+.gnomenu-application-grid-button.col3 {
+    padding: 0px 5px;
+    min-width: 132px; }
+
+.gnomenu-application-grid-button.col4 {
+    padding: 0px 5px;
+    min-width: 96px; }
+
+.gnomenu-application-grid-button.col5 {
+    padding: 0px 5px;
+    min-width: 74px; }
+
+.gnomenu-application-grid-button.col6 {
+    padding: 0px 5px;
+    min-width: 60px; }
+
+.gnomenu-application-grid-button.col7 {
+    padding: 0px 5px;
+    min-width: 50px; }
+
+    /*grid-button-labels*/
+
+.gnomenu-application-grid-button-label {
+    font-size: 8pt;
+    font-weight: bold;
+    padding: 0;
+    text-align: center; }
+
+/* :::::::::: SELECTED-APP-BOX  :::::::::::: */
+
+.gnomenu-selected-app-box {
+    text-align: right;
+    margin-top: 15px;
+    margin-bottom: 15px; }
+
+.gnomenu-selected-app-title {
+    padding-right: 6px;
+    font-weight: bold;
+    font-size: 12pt; }
+
+.gnomenu-selected-app-description {
+    padding-top: 3px;
+    padding-right: 8px;
+    font-size: 10pt; }
