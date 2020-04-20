@@ -1615,7 +1615,7 @@ class GnoMenu_PanelMenuButton extends PanelMenu.Button {
                 let app = apps[0];
                 let appGridButton = new AppGridButton(app, appType, true);
                 let gridLayout = this.applicationsGridBox.layout_manager;
-                gridLayout.pack(appGridButton.actor, 0, 0);
+				gridLayout.attach(appGridButton.actor, 0, 0, 1, 1);
                 if (appGridButton.actor.get_stage()) {
                     let themeNode = appGridButton.actor.get_theme_node();
                     buttonMargin = {
@@ -1798,7 +1798,7 @@ class GnoMenu_PanelMenuButton extends PanelMenu.Button {
                            this.menu.close();
                         });
                         let gridLayout = this.applicationsGridBox.layout_manager;
-                        gridLayout.pack(appGridButton.actor, column, rownum);
+						gridLayout.attach(appGridButton.actor, column, rownum, 1, 1);
                         column ++;
                         if (column > this._appGridColumns-1) {
                             column = 0;
@@ -1882,7 +1882,7 @@ class GnoMenu_PanelMenuButton extends PanelMenu.Button {
                            this.menu.close();
                         });
                         let gridLayout = this.applicationsGridBox.layout_manager;
-                        gridLayout.pack(appGridButton.actor, column, rownum);
+						gridLayout.attach(appGridButton.actor, column, rownum, 1, 1);
                         column ++;
                         if (column > this._appGridColumns-1) {
                             column = 0;
@@ -1959,7 +1959,7 @@ class GnoMenu_PanelMenuButton extends PanelMenu.Button {
                            this.menu.close();
                         });
                         let gridLayout = this.applicationsGridBox.layout_manager;
-                        gridLayout.pack(appGridButton.actor, column, rownum);
+						gridLayout.attach(appGridButton.actor, column, rownum, 1, 1);
                         column ++;
                         if (column > this._appGridColumns-1) {
                             column = 0;
@@ -3314,7 +3314,7 @@ class GnoMenu_PanelMenuButton extends PanelMenu.Button {
         });
 
         this.applicationsListBox = new St.BoxLayout({ style_class: 'gnomenu-applications-list-box', vertical:true, x_expand:true});
-        this.applicationsGridBox = new St.Widget({ layout_manager: new Clutter.TableLayout(), reactive:true, style_class: 'gnomenu-applications-grid-box'});
+        this.applicationsGridBox = new St.Widget({ layout_manager: new Clutter.GridLayout(), reactive:true, style_class: 'gnomenu-applications-grid-box'});
         this.applicationsBoxWrapper = new St.BoxLayout({ style_class: 'gnomenu-applications-box-wrapper' });
         this.applicationsBoxWrapper.add(this.applicationsGridBox, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
         this.applicationsBoxWrapper.add(this.applicationsListBox, {x_fill:false, y_fill: false, x_align: St.Align.START, y_align: St.Align.START});
@@ -3445,7 +3445,7 @@ var GnoMenuButton = class GnoMenu_GnoMenuPanelButton {
         this._themeChangedId = St.ThemeContext.get_for_stage(global.stage).connect('changed', this._onStyleChanged.bind(this));
 
         // Connect gtk icontheme for when icons change
-        this._iconsChangedId = IconTheme.get_default().connect('changed', this._onIconsChanged.bind(this));
+        this._iconsChangedId = null; //IconTheme.get_default().connect('changed', this._onIconsChanged.bind(this));
 
         // Connect to AppSys for when new application installed
         this._installedChangedId = Shell.AppSystem.get_default().connect('installed-changed', this._onAppInstalledChanged.bind(this));
